@@ -9,15 +9,27 @@
 *{box-sizing:border-box}
 body{margin:0;overflow:hidden;background:#000;font-family:Arial;color:white;touch-action:none}
 canvas{display:block}
-button{background:#252a30dd;color:white;border:1px solid #777;padding:12px;border-radius:4px;font-weight:bold;touch-action:none}
-#menu{position:fixed;inset:0;z-index:20;display:flex;align-items:center;justify-content:center;flex-direction:column;text-align:center;background:radial-gradient(#17191c,#000 75%)}
+button{
+ background:#252a30dd;color:white;border:1px solid #777;
+ padding:12px;border-radius:4px;font-weight:bold;touch-action:none;
+ cursor:pointer;transition:background .15s,border-color .15s
+}
+button:active{background:#a80f18;border-color:#ff5555}
+#menu{
+ position:fixed;inset:0;z-index:20;display:flex;align-items:center;
+ justify-content:center;flex-direction:column;text-align:center;
+ background:radial-gradient(#17191c,#000 75%)
+}
 h1{font-size:clamp(28px,6vw,52px)}
 h1 span{color:#d71920}
 #menu p{color:#999;letter-spacing:2px;font-size:12px}
 #play{background:#a80f18;border-color:#ed4545;padding:14px 25px}
 #hud{display:none;position:fixed;inset:0;pointer-events:none}
 #brand{position:absolute;top:15px;left:15px;font-size:13px;letter-spacing:2px;text-shadow:0 2px 5px #000}
-#crosshair{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:7px;height:7px;border:1px solid #ddd;border-radius:50%}
+#crosshair{
+ position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
+ width:7px;height:7px;border:1px solid #ddd;border-radius:50%
+}
 #controls{position:absolute;bottom:18px;left:15px;pointer-events:auto}
 .pad{display:grid;grid-template-columns:repeat(3,53px);grid-template-rows:repeat(2,53px);gap:5px}
 .pad button{padding:0;background:#252a30cc;font-size:20px}
@@ -26,62 +38,107 @@ h1 span{color:#d71920}
 #down{grid-column:2;grid-row:2}
 #right{grid-column:3;grid-row:2}
 #lookHint{position:absolute;right:15px;bottom:125px;color:#aaa;font-size:10px}
-#actions{position:absolute;right:14px;bottom:18px;display:flex;flex-direction:column;gap:6px;pointer-events:auto}
-#actions button{min-width:94px;padding:10px;background:#171a1dcc}
-#battery{position:absolute;top:15px;right:15px;background:#101318dd;padding:9px 12px;border:1px solid #555;font-size:12px}
+#actions{
+ position:absolute;right:14px;bottom:18px;display:flex;
+ flex-direction:column;gap:7px;pointer-events:auto
+}
+#actions button{
+ min-width:112px;padding:11px 12px;background:#171a1ddd;
+ border:1px solid #777;border-left:3px solid #a80f18;
+ text-align:left;font-size:11px;letter-spacing:.5px
+}
+#actions button:active{background:#a80f18;border-color:#ff5555}
+#battery{
+ position:absolute;top:15px;right:15px;background:#101318dd;
+ padding:9px 12px;border:1px solid #555;font-size:12px
+}
 #batteryBar{width:100px;height:5px;background:#333;margin-top:5px}
 #batteryFill{height:100%;width:100%;background:#d5d5d5}
-#inventoryText{position:absolute;top:52px;left:15px;color:#ddd;font-size:12px;text-shadow:0 2px 4px black}
-#message{position:absolute;top:68%;left:50%;transform:translateX(-50%);font-size:13px;color:#ddd;text-align:center;text-shadow:0 2px 6px black}
-#backpackPanel{display:none;position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:min(340px,90vw);padding:18px;background:#101318f5;border:1px solid #777;pointer-events:auto;z-index:10}
+#inventoryText{
+ position:absolute;top:52px;left:15px;color:#ddd;font-size:12px;
+ text-shadow:0 2px 4px black
+}
+#message{
+ position:absolute;top:68%;left:50%;transform:translateX(-50%);
+ font-size:13px;color:#ddd;text-align:center;text-shadow:0 2px 6px black;
+ width:90%;pointer-events:none
+}
+#backpackPanel{
+ display:none;position:absolute;left:50%;top:50%;
+ transform:translate(-50%,-50%);width:min(340px,90vw);
+ padding:18px;background:#101318f5;border:1px solid #777;
+ pointer-events:auto;z-index:10
+}
 #backpackPanel h3{text-align:center;letter-spacing:2px;margin-top:0}
 #backpackSlots{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
-.backpackSlot{height:70px;background:#252a30;border:1px solid #666;display:flex;align-items:center;justify-content:center;flex-direction:column;font-size:11px;cursor:pointer}
+.backpackSlot{
+ height:70px;background:#252a30;border:1px solid #666;
+ display:flex;align-items:center;justify-content:center;
+ flex-direction:column;font-size:11px;cursor:pointer
+}
 .backpackSlot.selected{border:2px solid #d71920}
-#closeBag{width:100%;margin-top:12px}
-#footer{position:absolute;bottom:5px;width:100%;text-align:center;color:#777;font-size:10px;pointer-events:none}
+#closeBag{width:100%;margin-top:12px;background:#a80f18;border-color:#ed4545}
+#footer{
+ position:absolute;bottom:5px;width:100%;text-align:center;
+ color:#777;font-size:10px;pointer-events:none
+}
 @media(min-width:701px){#lookHint{display:none}}
+@media(max-width:700px){
+ #actions{right:10px;bottom:15px;gap:6px}
+ #actions button{min-width:100px;padding:10px;font-size:10px}
+ #controls{left:10px;bottom:15px}
+ .pad{grid-template-columns:repeat(3,48px);grid-template-rows:repeat(2,48px)}
+ #battery{top:12px;right:10px}
+}
 </style>
 </head>
 <body>
 
 <div id="menu">
-<h1>ENCONTRE UMA <span>SAÍDA!</span></h1>
-<p>AB GAMES APRESENTA</p>
-<h2>SALA 02 — SEM ENERGIA</h2>
-<p>INSTALAÇÃO INDUSTRIAL</p>
-<button id="play">ENTRAR NA SALA</button>
-<p>PC: WASD + MOUSE<br>CELULAR: BOTÕES + ARRASTAR NA TELA</p>
+ <h1>ENCONTRE UMA <span>SAÍDA!</span></h1>
+ <p>AB GAMES APRESENTA</p>
+ <h2>SALA 02 — SEM ENERGIA</h2>
+ <p>INSTALAÇÃO INDUSTRIAL</p>
+ <button id="play">ENTRAR NA SALA</button>
+ <p>PC: WASD + MOUSE<br>CELULAR: BOTÕES + ARRASTAR NA TELA</p>
 </div>
 
 <div id="hud">
-<div id="brand">AB GAMES // SALA 02</div>
-<div id="crosshair"></div>
-<div id="battery">LANTERNA <span id="batteryNumber">100%</span><div id="batteryBar"><div id="batteryFill"></div></div></div>
-<div id="inventoryText">MOCHILA: I | OBJETO: NENHUM</div>
-<div id="controls">
-<div class="pad">
-<button id="up">▲</button>
-<button id="left">◀</button>
-<button id="down">▼</button>
-<button id="right">▶</button>
-</div>
-</div>
-<div id="lookHint">ARRASTE PARA OLHAR</div>
-<div id="actions">
-<button id="bagButton">MOCHILA [I]</button>
-<button id="lightButton">LANTERNA [F]</button>
-<button id="useButton">PEGAR [E]</button>
-<button id="storeButton">GUARDAR [G]</button>
-<button id="dropButton">SOLTAR [Q]</button>
-</div>
-<div id="backpackPanel">
-<h3>MOCHILA</h3>
-<div id="backpackSlots"></div>
-<button id="closeBag">FECHAR</button>
-</div>
-<div id="message"></div>
-<div id="footer">ENCONTRE UMA SAÍDA! — AB GAMES</div>
+ <div id="brand">AB GAMES // SALA 02</div>
+ <div id="crosshair"></div>
+ <div id="battery">
+  LANTERNA <span id="batteryNumber">100%</span>
+  <div id="batteryBar"><div id="batteryFill"></div></div>
+ </div>
+ <div id="inventoryText">MOCHILA: I | OBJETO: NENHUM</div>
+
+ <div id="controls">
+  <div class="pad">
+   <button id="up">▲</button>
+   <button id="left">◀</button>
+   <button id="down">▼</button>
+   <button id="right">▶</button>
+  </div>
+ </div>
+
+ <div id="lookHint">ARRASTE PARA OLHAR</div>
+
+ <div id="actions">
+  <button id="bagButton">MOCHILA [I]</button>
+  <button id="lightButton">LANTERNA [F]</button>
+  <button id="useButton">PEGAR [E]</button>
+  <button id="storeButton">GUARDAR [G]</button>
+  <button id="dropButton">SOLTAR [Q]</button>
+ </div>
+
+ <div id="backpackPanel">
+  <h3>MOCHILA</h3>
+  <div id="backpackSlots"></div>
+  <button id="closeBag">FECHAR</button>
+ </div>
+
+ <div id="message"></div>
+ <div id="footer">ENCONTRE UMA SAÍDA! — AB GAMES</div>
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/0.160.0/three.min.js"></script>
@@ -106,6 +163,7 @@ document.body.appendChild(renderer.domElement);
 function mat(color,roughness=1,metalness=0){
  return new THREE.MeshStandardMaterial({color,roughness,metalness});
 }
+
 const floorMat=mat(0x30343a);
 const wallMat=mat(0x242930);
 const metalMat=mat(0x65717b,.65,.7);
@@ -124,12 +182,14 @@ function box(x,y,z,w,h,d,material){
  scene.add(obj);
  return obj;
 }
+
 function cylinder(x,y,z,r1,r2,h,material,segments=16){
  const obj=new THREE.Mesh(new THREE.CylinderGeometry(r1,r2,h,segments),material);
  obj.position.set(x,y,z);
  scene.add(obj);
  return obj;
 }
+
 function pipe(x1,y1,z1,x2,y2,z2,r,material=metalMat){
  const a=new THREE.Vector3(x1,y1,z1);
  const b=new THREE.Vector3(x2,y2,z2);
@@ -141,7 +201,7 @@ function pipe(x1,y1,z1,x2,y2,z2,r,material=metalMat){
  return obj;
 }
 
-// SALA 120 x 100
+// SALA INDUSTRIAL 120 x 100
 box(0,-.25,0,120,.5,100,floorMat);
 box(0,8,-50,120,16,.5,wallMat);
 box(0,8,50,120,16,.5,wallMat);
@@ -158,63 +218,78 @@ for(let z=-45;z<=45;z+=10){
  box(59.7,1,z,.08,.18,3,yellowMat);
 }
 
-// Ambiente quase imperceptível: sem iluminação fixa.
+// Ambiente sem iluminação fixa
 scene.add(new THREE.HemisphereLight(0x202735,0x08090c,.035));
 
 function createGenerator(x,z){
  box(x,.16,z,6.2,.32,4.8,darkMetal);
  box(x,.36,z,5.8,.15,4.4,metalMat);
+
  for(const sx of [-2.35,2.35]){
   for(const sz of [-1.65,1.65]){
    box(x+sx,.55,z+sz,.42,.45,.42,blackMat);
    box(x+sx,.33,z+sz,.65,.12,.65,metalMat);
   }
  }
+
  box(x,1.75,z,5.15,2.45,3.65,bodyMat);
  box(x,3.05,z,4.85,.2,3.4,metalMat);
  box(x-2.61,1.75,z,.12,2.1,3.4,darkMetal);
  box(x+2.61,1.75,z,.12,2.1,3.4,darkMetal);
+
  cylinder(x,1.65,z+1.95,.82,.82,1.05,darkMetal,24);
  cylinder(x,1.65,z+2.51,.68,.68,.12,metalMat,24);
  cylinder(x,1.65,z+2.59,.4,.4,.08,blackMat,20);
+
  for(let i=0;i<4;i++){
   cylinder(x,1.65,z+2.08+i*.12,.84,.84,.045,metalMat,24);
  }
+
  for(let i=0;i<8;i++){
   const a=i*Math.PI/4;
   cylinder(x+Math.cos(a)*.57,1.65+Math.sin(a)*.57,z+2.62,.055,.055,.045,darkMetal,8);
  }
+
  box(x,3.22,z,3.7,.15,2.5,metalMat);
+
  for(let i=0;i<9;i++){
   box(x-2.69,.95+i*.18,z-.95,.08,.075,1.7,metalMat);
   box(x+2.69,.95+i*.18,z-.95,.08,.075,1.7,metalMat);
  }
+
  box(x,2.35,z+1.91,1.65,1.2,.16,darkMetal);
  box(x,2.4,z+2.01,1.35,.72,.07,blackMat);
  box(x,2.48,z+2.06,.82,.35,.04,screenMat);
  box(x-.48,1.97,z+2.07,.14,.14,.06,greenMat);
  box(x-.2,1.97,z+2.07,.14,.14,.06,orangeMat);
  box(x+.08,1.97,z+2.07,.14,.14,.06,redLightMat);
+
  for(let i=0;i<3;i++){
   cylinder(x-.45+i*.45,1.65,z+2.05,.09,.09,.07,darkMetal,12);
  }
+
  box(x,3.35,z+1.65,.85,.2,.08,yellowMat);
+
  for(const sx of [-2.42,2.42]){
   for(const sy of [.8,2.7]){
    cylinder(x+sx,sy,z+1.87,.065,.065,.08,darkMetal,8);
   }
  }
+
  for(let i=0;i<3;i++){
   const px=x-1.5+i*1.5;
   cylinder(px,3.48,z-.7,.16,.16,.6,metalMat);
   cylinder(px,3.8,z-.7,.12,.12,.1,darkMetal);
  }
+
  pipe(x+2.65,2.5,z-.8,x+3.4,2.5,z-.8,.2);
  pipe(x+3.4,2.5,z-.8,x+3.4,3.4,z-.8,.2);
+
  for(let i=0;i<3;i++){
   box(x-1+i,3.4,z-1.5,.45,.12,.5,darkMetal);
  }
 }
+
 createGenerator(-30,-18);
 createGenerator(0,-18);
 createGenerator(30,-18);
@@ -230,10 +305,12 @@ for(let x=-50;x<=50;x+=10){
  box(x,9.5,-47.5,.35,1,.35,darkMetal);
  box(x,9.5,47.5,.35,1,.35,darkMetal);
 }
+
 for(let z=-40;z<=40;z+=20){
  pipe(-55,11,z,55,11,z,.1);
  pipe(-55,11.6,z,55,11.6,z,.055,darkMetal);
 }
+
 for(let x=-55;x<=55;x+=10)box(x,15.4,0,.3,.3,98,metalMat);
 for(let z=-45;z<=45;z+=10)box(0,15.4,z,118,.3,.3,metalMat);
 
@@ -244,6 +321,7 @@ for(let x of [-50,-40,-20,20,40,50]){
   box(x,14.8,z,.95,.35,.95,metalMat);
  }
 }
+
 for(let z=-40;z<=40;z+=20){
  box(-55,5,z,.5,10,.5,metalMat);
  box(55,5,z,.5,10,.5,metalMat);
@@ -251,13 +329,15 @@ for(let z=-40;z<=40;z+=20){
  pipe(55,1,z,55,12,z,.09,darkMetal);
 }
 
-// ESCADA ORIGINAL
+// ESCADA
 const stairSteps=16,stairRise=.25,stairDepth=.75;
+
 function createStairFlight(x,zStart,direction,yStart){
  const totalLength=stairSteps*stairDepth;
  const endZ=zStart+direction*totalLength;
  const endY=yStart+stairSteps*stairRise;
  const sideOffset=3.6/2+.12;
+
  for(let i=0;i<stairSteps;i++){
   const z=zStart+direction*(i*stairDepth+stairDepth/2);
   const y=yStart+(i+1)*stairRise;
@@ -265,25 +345,31 @@ function createStairFlight(x,zStart,direction,yStart){
   box(x,y+.006,z+direction*stairDepth*.28,3.42,.025,.07,darkMetal);
   box(x,y-.24,z,3.35,.12,.16,darkMetal);
  }
+
  for(const side of [-1,1]){
   const railX=x+side*sideOffset;
   pipe(railX,yStart-.1,zStart,railX,endY-.1,endZ,.16,darkMetal);
+
   for(let i=0;i<=stairSteps;i+=4){
    const t=i/stairSteps;
    const z=zStart+direction*t*totalLength;
    const y=yStart+t*stairSteps*stairRise;
    pipe(railX,y+.05,z,railX,y+1.05,z,.065,metalMat);
   }
+
   pipe(railX,yStart+1.05,zStart,railX,endY+1.05,endZ,.085,metalMat);
   pipe(railX,yStart+.55,zStart,railX,endY+.55,endZ,.045,darkMetal);
  }
 }
+
 createStairFlight(24.5,17,-1,0);
 createStairFlight(29.5,5,1,4);
+
 box(27,4,4.65,9.5,.3,3.2,metalMat);
 box(27,3.78,4.65,8.8,.12,2.6,darkMetal);
 box(29.5,8,19,9,.35,7,metalMat);
 box(29.5,7.78,19,8.5,.12,6.5,darkMetal);
+
 for(let x=26;x<=33;x+=2)box(x,6.9,19,.2,2,.2,darkMetal);
 
 for(const x of [25.2,33.8]){
@@ -292,6 +378,7 @@ for(const x of [25.2,33.8]){
  pipe(x,9.25,17,x,9.25,21,.07,metalMat);
  pipe(x,8.75,17,x,8.75,21,.045,darkMetal);
 }
+
 for(let z=17;z<=21;z+=2){
  pipe(25.2,8.2,z,25.2,9.25,z,.06,metalMat);
  pipe(33.8,8.2,z,33.8,9.25,z,.06,metalMat);
@@ -301,6 +388,7 @@ for(let x=10;x<25;x+=2){
  box(x+1,8,19,2,.3,5,metalMat);
  box(x+1,8.17,19,1.65,.035,4.55,darkMetal);
 }
+
 box(25.2,8,19,1.2,.3,5,metalMat);
 box(25.2,8.17,19,1,.035,4.5,darkMetal);
 
@@ -310,12 +398,14 @@ for(let x=11;x<=25;x+=4){
  pipe(x,6.9,16.7,x,7.8,19,.09,metalMat);
  pipe(x,6.9,21.3,x,7.8,19,.09,metalMat);
 }
+
 for(const z of [16.35,21.65]){
  for(let x=10;x<=29;x+=3)pipe(x,8.15,z,x,9.35,z,.065,metalMat);
  pipe(10,9.35,z,29.5,9.35,z,.085,metalMat);
  pipe(10,8.75,z,29.5,8.75,z,.045,darkMetal);
  for(let x=10;x<=29;x+=3)box(x,8.72,z,.12,1.1,.12,darkMetal);
 }
+
 box(19.5,8.19,16.48,18,.035,.12,yellowMat);
 box(19.5,8.19,21.52,18,.035,.12,yellowMat);
 
@@ -323,6 +413,7 @@ box(9.75,10,19,.45,3.5,4.7,darkMetal);
 box(9.48,10,19,.08,2.8,4.2,metalMat);
 box(9.42,10.45,19,.08,1.25,1.9,blackMat);
 box(9.36,10.45,19,.035,.95,1.55,screenMat);
+
 for(let i=0;i<4;i++)box(9.35,9.45,17.85+i*.75,.06,.16,.16,darkMetal);
 for(let i=0;i<5;i++)cylinder(9.35,9.05,17.6+i*.7,.09,.09,.07,darkMetal,12);
 for(let i=0;i<7;i++)box(9.34,11.65,17.8+i*.4,.05,.055,.24,metalMat);
@@ -332,7 +423,7 @@ box(11,13,19,1.3,.12,.5,darkMetal);
 box(18,9.65,16.4,2.4,.35,.08,yellowMat);
 box(18,9.65,21.6,2.4,.35,.08,yellowMat);
 
-// LANTERNA E MOCHILA
+// MOCHILA E OBJETOS
 const items=[];
 const backpack=[null,null,null,null];
 let heldItem=null;
@@ -343,6 +434,7 @@ let selectedSlot=-1;
 
 const handGroup=new THREE.Group();
 camera.add(handGroup);
+
 const handMesh=new THREE.Mesh(
  new THREE.BoxGeometry(.13,.16,.24),
  mat(0x92745e)
@@ -354,19 +446,30 @@ function makeFlashlight(){
  const group=new THREE.Group();
  const casing=mat(0x20252b,.55,.7);
  const glass=mat(0x444b50,.4,.3);
- const handle=new THREE.Mesh(new THREE.CylinderGeometry(.065,.075,.42,12),casing);
+
+ const handle=new THREE.Mesh(
+  new THREE.CylinderGeometry(.065,.075,.42,12),casing
+ );
  handle.rotation.x=Math.PI/2;
  group.add(handle);
- const head=new THREE.Mesh(new THREE.CylinderGeometry(.11,.075,.13,16),glass);
+
+ const head=new THREE.Mesh(
+  new THREE.CylinderGeometry(.11,.075,.13,16),glass
+ );
  head.rotation.x=Math.PI/2;
  head.position.z=-.23;
  group.add(head);
- const rim=new THREE.Mesh(new THREE.TorusGeometry(.085,.018,6,16),metalMat);
+
+ const rim=new THREE.Mesh(
+  new THREE.TorusGeometry(.085,.018,6,16),metalMat
+ );
  rim.position.z=-.3;
  group.add(rim);
+
  group.scale.set(.85,.85,.85);
  return group;
 }
+
 const flashlight=makeFlashlight();
 flashlight.userData.name="Lanterna";
 flashlight.userData.type="flashlight";
@@ -376,150 +479,242 @@ flashlight.visible=false;
 camera.add(flashlight);
 backpack[0]=flashlight;
 
-// FEIXE DE LUZ REFORÇADO
+// LANTERNA REFORÇADA
+// O alvo fica na cena e acompanha a direção da câmera.
+const spotTarget=new THREE.Object3D();
+scene.add(spotTarget);
+
 const spot=new THREE.SpotLight(
  0xffe8bd,
  0,
- 65,
- Math.PI/5,
- 0.35,
- 1
+ 75,
+ .55,
+ .48,
+ 1.2
 );
 spot.position.set(0,0,0);
-spot.target.position.set(0,0,-1);
+spot.target=spotTarget;
 spot.castShadow=false;
 camera.add(spot);
-camera.add(spot.target);
 
-// Luz suave próxima à lanterna para melhorar a iluminação de objetos próximos.
-const nearLight=new THREE.PointLight(0xffe8bd,0,5,2);
-nearLight.position.set(.25,-.15,-.5);
+// Luz de proximidade para iluminar objetos perto do jogador.
+const nearLight=new THREE.PointLight(
+ 0xffe8bd,
+ 0,
+ 18,
+ 1.5
+);
+nearLight.position.set(.15,-.12,-.35);
+nearLight.castShadow=false;
 camera.add(nearLight);
+
+const lightDirection=new THREE.Vector3();
+
+function updateFlashlightDirection(){
+ camera.updateMatrixWorld(true);
+ camera.getWorldDirection(lightDirection);
+ spotTarget.position.copy(camera.position).addScaledVector(lightDirection,20);
+ spotTarget.updateMatrixWorld(true);
+}
 
 function renderBackpack(){
  const slots=document.getElementById("backpackSlots");
  slots.innerHTML="";
+
  backpack.forEach((item,index)=>{
   const div=document.createElement("div");
   div.className="backpackSlot"+(selectedSlot===index?" selected":"");
-  div.innerHTML=item?"<strong>🔦</strong><span>"+item.userData.name+"</span>":"<span>VAZIO</span>";
+  div.innerHTML=item
+   ?"<strong>🔦</strong><span>"+item.userData.name+"</span>"
+   :"<span>VAZIO</span>";
+
   div.addEventListener("click",()=>selectBackpackSlot(index));
   slots.appendChild(div);
  });
 }
+
 function updateBattery(){
  document.getElementById("batteryNumber").textContent=Math.ceil(battery)+"%";
  document.getElementById("batteryFill").style.width=battery+"%";
 }
+
 function message(text){
  const el=document.getElementById("message");
  el.textContent=text;
  clearTimeout(message.timer);
  message.timer=setTimeout(()=>el.textContent="",2200);
 }
+
 function updateInventoryText(){
  document.getElementById("inventoryText").textContent=
  "MOCHILA: I | OBJETO: "+(heldItem?heldItem.userData.name:"NENHUM");
 }
+
 function toggleBackpack(){
  backpackOpen=!backpackOpen;
- document.getElementById("backpackPanel").style.display=backpackOpen?"block":"none";
+ document.getElementById("backpackPanel").style.display=
+  backpackOpen?"block":"none";
+
  if(backpackOpen)renderBackpack();
 }
+
 function selectBackpackSlot(index){
  const item=backpack[index];
- if(!item){message("ESPAÇO VAZIO");return;}
+
+ if(!item){
+  message("ESPAÇO VAZIO");
+  return;
+ }
+
  if(heldItem){
   message("GUARDE OU SOLTE O OBJETO PRIMEIRO");
   return;
  }
+
  backpack[index]=null;
  heldItem=item;
  selectedSlot=index;
+
  item.visible=true;
  item.position.set(.38,-.3,-.65);
  item.rotation.set(0,0,0);
  item.scale.set(.85,.85,.85);
  camera.add(item);
+
  if(item.userData.isFlashlight){
   item.position.set(.38,-.3,-.68);
-  item.rotation.set(0,0,0);
  }
+
  backpackOpen=false;
  document.getElementById("backpackPanel").style.display="none";
+
  renderBackpack();
  updateInventoryText();
  message("OBJETO RETIRADO DA MOCHILA");
 }
-function storeHeldItem(){
- if(!heldItem){message("NÃO HÁ OBJETO NA MÃO");return;}
- const slot=backpack.findIndex(v=>v===null);
- if(slot<0){message("MOCHILA CHEIA");return;}
- if(heldItem.userData.isFlashlight)toggleFlashlight(false);
- camera.remove(heldItem);
- heldItem.visible=false;
- backpack[slot]=heldItem;
- heldItem=null;
- renderBackpack();
- updateInventoryText();
- message("OBJETO GUARDADO");
-}
-function dropHeldItem(){
- if(!heldItem){message("NÃO HÁ OBJETO NA MÃO");return;}
- if(heldItem.userData.isFlashlight)toggleFlashlight(false);
- camera.remove(heldItem);
- scene.add(heldItem);
- const dir=new THREE.Vector3(0,0,-1).applyQuaternion(camera.quaternion);
- heldItem.position.copy(camera.position).add(dir.multiplyScalar(1.4));
- heldItem.position.y=Math.max(.25,playerY+.4);
- heldItem.visible=true;
- items.push(heldItem);
- heldItem=null;
- updateInventoryText();
- message("OBJETO SOLTO");
-}
+
 function toggleFlashlight(force){
  if(!heldItem||!heldItem.userData.isFlashlight){
   message("RETIRE A LANTERNA DA MOCHILA PRIMEIRO");
   return;
  }
+
  if(force===false||flashlightOn){
   flashlightOn=false;
   spot.intensity=0;
   nearLight.intensity=0;
  }else{
-  if(battery<=0){message("BATERIA DESCARREGADA");return;}
+  if(battery<=0){
+   message("BATERIA DESCARREGADA");
+   return;
+  }
+
   flashlightOn=true;
-  spot.intensity=18;
-  nearLight.intensity=1.2;
+
+  // Intensidade reforçada para vencer a escuridão da sala.
+  spot.intensity=1800;
+  nearLight.intensity=80;
  }
+
  document.getElementById("lightButton").textContent=
- flashlightOn?"APAGAR [F]":"LANTERNA [F]";
+  flashlightOn?"APAGAR [F]":"LANTERNA [F]";
+
+ updateFlashlightDirection();
 }
+
+function storeHeldItem(){
+ if(!heldItem){
+  message("NÃO HÁ OBJETO NA MÃO");
+  return;
+ }
+
+ const slot=backpack.findIndex(v=>v===null);
+
+ if(slot<0){
+  message("MOCHILA CHEIA");
+  return;
+ }
+
+ if(heldItem.userData.isFlashlight)toggleFlashlight(false);
+
+ camera.remove(heldItem);
+ heldItem.visible=false;
+ backpack[slot]=heldItem;
+ heldItem=null;
+
+ renderBackpack();
+ updateInventoryText();
+ message("OBJETO GUARDADO");
+}
+
+function dropHeldItem(){
+ if(!heldItem){
+  message("NÃO HÁ OBJETO NA MÃO");
+  return;
+ }
+
+ if(heldItem.userData.isFlashlight)toggleFlashlight(false);
+
+ camera.remove(heldItem);
+ scene.add(heldItem);
+
+ const dir=new THREE.Vector3(0,0,-1).applyQuaternion(camera.quaternion);
+ heldItem.position.copy(camera.position).add(dir.multiplyScalar(1.4));
+ heldItem.position.y=Math.max(.25,playerY+.4);
+ heldItem.visible=true;
+
+ items.push(heldItem);
+ heldItem=null;
+
+ updateInventoryText();
+ message("OBJETO SOLTO");
+}
+
 function findNearestItem(){
  let best=null,bestDist=2.7;
+
  for(const item of items){
   if(!item.visible)continue;
   const d=item.position.distanceTo(camera.position);
-  if(d<bestDist){best=item;bestDist=d;}
+
+  if(d<bestDist){
+   best=item;
+   bestDist=d;
+  }
  }
+
  return best;
 }
+
 function pickItem(){
- if(heldItem){message("SUAS MÃOS JÁ ESTÃO OCUPADAS");return;}
+ if(heldItem){
+  message("SUAS MÃOS JÁ ESTÃO OCUPADAS");
+  return;
+ }
+
  const item=findNearestItem();
- if(!item){message("NÃO HÁ OBJETO PRÓXIMO");return;}
+
+ if(!item){
+  message("NÃO HÁ OBJETO PRÓXIMO");
+  return;
+ }
+
  const i=items.indexOf(item);
  if(i>=0)items.splice(i,1);
+
  scene.remove(item);
  camera.add(item);
+
  item.position.set(.38,-.3,-.65);
  item.rotation.set(0,0,0);
  item.visible=true;
+
  heldItem=item;
+
  updateInventoryText();
  message("OBJETO PEGADO");
 }
+
 document.getElementById("bagButton").onclick=toggleBackpack;
 document.getElementById("closeBag").onclick=toggleBackpack;
 document.getElementById("lightButton").onclick=()=>toggleFlashlight();
@@ -529,16 +724,21 @@ document.getElementById("useButton").onclick=pickItem;
 
 // JOGADOR
 let playerY=0;
+
 function getFloorHeight(x,z){
  if(x>=22.45&&x<=26.55&&z>=5&&z<=17){
   return THREE.MathUtils.clamp((17-z)/12,0,1)*4;
  }
+
  if(x>=27.45&&x<=31.55&&z>=5&&z<=17){
   return 4+THREE.MathUtils.clamp((z-5)/12,0,1)*4;
  }
+
  if(x>=25.3&&x<=28.7&&z>=3.3&&z<=4.8)return 4;
+
  if(playerY>=7.2&&x>=25&&x<=34&&z>=17&&z<=22.5)return 8;
  if(playerY>=7.2&&x>=10&&x<=25.8&&z>=16.4&&z<=21.6)return 8;
+
  return 0;
 }
 
@@ -551,107 +751,178 @@ function start(){
  started=true;
  document.getElementById("menu").style.display="none";
  document.getElementById("hud").style.display="block";
+
  camera.position.set(player.x,1.7,player.z);
- renderer.domElement.requestPointerLock?.();
+ camera.rotation.order="YXZ";
+
+ updateFlashlightDirection();
+
+ if(innerWidth>700){
+  renderer.domElement.requestPointerLock?.();
+ }
 }
+
 document.getElementById("play").addEventListener("click",start);
 
 const keyMap={
- KeyW:"w",ArrowUp:"w",KeyS:"s",ArrowDown:"s",
- KeyA:"a",ArrowLeft:"a",KeyD:"d",ArrowRight:"d"
+ KeyW:"w",ArrowUp:"w",
+ KeyS:"s",ArrowDown:"s",
+ KeyA:"a",ArrowLeft:"a",
+ KeyD:"d",ArrowRight:"d"
 };
+
 addEventListener("keydown",e=>{
- if(keyMap[e.code]){keys[keyMap[e.code]]=true;e.preventDefault();}
+ if(keyMap[e.code]){
+  keys[keyMap[e.code]]=true;
+  e.preventDefault();
+ }
+
  if(!started)return;
+
  if(e.code==="KeyI")toggleBackpack();
  if(e.code==="KeyF")toggleFlashlight();
  if(e.code==="KeyE")pickItem();
  if(e.code==="KeyG")storeHeldItem();
  if(e.code==="KeyQ")dropHeldItem();
+
  if(e.code==="Digit1")selectBackpackSlot(0);
  if(e.code==="Digit2")selectBackpackSlot(1);
  if(e.code==="Digit3")selectBackpackSlot(2);
  if(e.code==="Digit4")selectBackpackSlot(3);
 });
+
 addEventListener("keyup",e=>{
  if(keyMap[e.code])keys[keyMap[e.code]]=false;
 });
 
-const padMap={up:"w",down:"s",left:"a",right:"d"};
+// CONTROLES DE MOVIMENTO NO CELULAR
+const padMap={
+ up:"w",
+ down:"s",
+ left:"a",
+ right:"d"
+};
+
 document.querySelectorAll(".pad button").forEach(button=>{
  const key=padMap[button.id];
- button.addEventListener("pointerdown",e=>{e.preventDefault();keys[key]=true;});
+
+ button.addEventListener("pointerdown",e=>{
+  e.preventDefault();
+  keys[key]=true;
+ });
+
  ["pointerup","pointerleave","pointercancel"].forEach(event=>{
-  button.addEventListener(event,()=>keys[key]=false);
+  button.addEventListener(event,()=>{
+   keys[key]=false;
+  });
  });
 });
 
-// CÂMERA POR ARRASTO NO CELULAR
+// CÂMERA POR ARRASTO DIRETO NA TELA
 let touchId=null,lastX=0,lastY=0;
+
 renderer.domElement.addEventListener("pointerdown",e=>{
  if(!started||e.pointerType!=="touch")return;
- touchId=e.pointerId;lastX=e.clientX;lastY=e.clientY;
+
+ touchId=e.pointerId;
+ lastX=e.clientX;
+ lastY=e.clientY;
+
  renderer.domElement.setPointerCapture(e.pointerId);
 });
+
 renderer.domElement.addEventListener("pointermove",e=>{
  if(touchId!==e.pointerId)return;
+
  yaw-=(e.clientX-lastX)*.006;
  pitch-=(e.clientY-lastY)*.004;
  pitch=THREE.MathUtils.clamp(pitch,-1.2,1.2);
- lastX=e.clientX;lastY=e.clientY;
+
+ lastX=e.clientX;
+ lastY=e.clientY;
 });
-function stopTouch(e){if(touchId===e.pointerId)touchId=null;}
+
+function stopTouch(e){
+ if(touchId===e.pointerId)touchId=null;
+}
+
 renderer.domElement.addEventListener("pointerup",stopTouch);
 renderer.domElement.addEventListener("pointercancel",stopTouch);
 
 renderer.domElement.addEventListener("click",()=>{
- if(started&&innerWidth>700)renderer.domElement.requestPointerLock?.();
-});
-document.addEventListener("mousemove",e=>{
- if(document.pointerLockElement===renderer.domElement){
-  yaw-=e.movementX*.002;
-  pitch=THREE.MathUtils.clamp(pitch-e.movementY*.002,-1.2,1.2);
+ if(started&&innerWidth>700){
+  renderer.domElement.requestPointerLock?.();
  }
 });
 
-// LOOP
+document.addEventListener("mousemove",e=>{
+ if(document.pointerLockElement===renderer.domElement){
+  yaw-=e.movementX*.002;
+  pitch=THREE.MathUtils.clamp(
+   pitch-e.movementY*.002,
+   -1.2,
+   1.2
+  );
+ }
+});
+
+// LOOP PRINCIPAL
 const clock=new THREE.Clock();
+
 function animate(){
  requestAnimationFrame(animate);
+
  const dt=Math.min(clock.getDelta(),.04);
+
  if(started){
   const forward=new THREE.Vector3(-Math.sin(yaw),0,-Math.cos(yaw));
   const right=new THREE.Vector3(Math.cos(yaw),0,-Math.sin(yaw));
   const move=new THREE.Vector3();
+
   if(keys.w)move.add(forward);
   if(keys.s)move.sub(forward);
   if(keys.d)move.add(right);
   if(keys.a)move.sub(right);
+
   if(move.lengthSq()>0){
    move.normalize().multiplyScalar(5*dt);
    player.add(move);
   }
+
   player.x=THREE.MathUtils.clamp(player.x,-58.5,58.5);
   player.z=THREE.MathUtils.clamp(player.z,-48.5,48.5);
+
   const targetHeight=getFloorHeight(player.x,player.z);
+
   playerY+=(targetHeight-playerY)*Math.min(1,dt*12);
-  if(Math.abs(targetHeight-playerY)<.025)playerY=targetHeight;
+
+  if(Math.abs(targetHeight-playerY)<.025){
+   playerY=targetHeight;
+  }
+
   camera.position.set(player.x,playerY+1.7,player.z);
   camera.rotation.order="YXZ";
   camera.rotation.y=yaw;
   camera.rotation.x=pitch;
 
+  // Atualiza a direção do feixe conforme a câmera gira.
   if(flashlightOn){
+   updateFlashlightDirection();
+
    battery=Math.max(0,battery-dt*.12);
+
    if(battery===0){
     toggleFlashlight(false);
     message("A BATERIA DA LANTERNA ACABOU");
    }
+
    updateBattery();
   }
  }
+
  renderer.render(scene,camera);
 }
+
 animate();
 
 renderBackpack();
@@ -661,9 +932,11 @@ updateInventoryText();
 addEventListener("resize",()=>{
  camera.aspect=innerWidth/innerHeight;
  camera.updateProjectionMatrix();
+
  renderer.setSize(innerWidth,innerHeight);
  renderer.setPixelRatio(Math.min(devicePixelRatio,1.25));
 });
+
 })();
 </script>
 </body>
