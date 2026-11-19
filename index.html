@@ -883,7 +883,7 @@ addEventListener("keyup",e=>{
  if(keyMap[e.code])keys[keyMap[e.code]]=false;
 });
 
-// CONTROLES DE MOVIMENTO NO CELULAR
+// CONTROLES DE MOVIMENTO — PC E CELULAR
 const padMap={
  up:"w",
  down:"s",
@@ -891,19 +891,31 @@ const padMap={
  right:"d"
 };
 
+const activePointers=new Map();
+
 document.querySelectorAll(".pad button").forEach(button=>{
  const key=padMap[button.id];
 
  button.addEventListener("pointerdown",e=>{
   e.preventDefault();
+
+  button.setPointerCapture(e.pointerId);
+  activePointers.set(e.pointerId,key);
   keys[key]=true;
  });
 
- ["pointerup","pointerleave","pointercancel"].forEach(event=>{
-  button.addEventListener(event,()=>{
-   keys[key]=false;
-  });
- });
+ function release(e){
+  if(!activePointers.has(e.pointerId))return;
+
+  activePointers.delete(e.pointerId);
+
+  const stillPressed=[...activePointers.values()].includes(key);
+  keys[key]=stillPressed;
+ }
+
+ button.addEventListener("pointerup",release);
+ button.addEventListener("pointercancel",release);
+ button.addEventListener("lostpointercapture",release);
 });
 
 // CÂMERA POR ARRASTO DIRETO NA TELA
