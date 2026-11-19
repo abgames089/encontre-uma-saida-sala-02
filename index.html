@@ -7,7 +7,10 @@
 <title>ENCONTRE UMA SAÍDA! — SALA 02</title>
 <style>
 *{box-sizing:border-box}
-body{margin:0;overflow:hidden;background:#080a0d;font-family:Arial;color:white;touch-action:none}
+body{
+ margin:0;overflow:hidden;background:#080a0d;
+ font-family:Arial;color:white;touch-action:none
+}
 canvas{display:block}
 #menu{
  position:fixed;inset:0;z-index:5;
@@ -26,17 +29,28 @@ button{
 #hud{display:none;position:fixed;inset:0;pointer-events:none}
 #brand{position:absolute;top:15px;left:15px;font-size:13px;letter-spacing:2px}
 #controls{position:absolute;bottom:20px;left:15px;pointer-events:auto}
-.pad{display:grid;grid-template-columns:repeat(3,53px);grid-template-rows:repeat(2,53px);gap:5px}
-.pad button{padding:0;background:#252a30cc;border-color:#777;font-size:20px}
+.pad{
+ display:grid;
+ grid-template-columns:repeat(3,53px);
+ grid-template-rows:repeat(2,53px);gap:5px
+}
+.pad button{
+ padding:0;background:#252a30cc;
+ border-color:#777;font-size:20px
+}
 #up{grid-column:2}
 #left{grid-column:1;grid-row:2}
 #down{grid-column:2;grid-row:2}
 #right{grid-column:3;grid-row:2}
 #crosshair{
- position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
+ position:absolute;left:50%;top:50%;
+ transform:translate(-50%,-50%);
  width:7px;height:7px;border:1px solid #ddd;border-radius:50%;
 }
-#footer{position:absolute;bottom:8px;width:100%;text-align:center;color:#777;font-size:10px}
+#footer{
+ position:absolute;bottom:8px;width:100%;
+ text-align:center;color:#777;font-size:10px
+}
 </style>
 </head>
 <body>
@@ -44,7 +58,7 @@ button{
 <div id="menu">
  <h1>ENCONTRE UMA <span>SAÍDA!</span></h1>
  <p>AB GAMES APRESENTA</p>
- <h2>SALA 02 — V1.2</h2>
+ <h2>SALA 02 — V1.3</h2>
  <p>INSTALAÇÃO DE ENERGIA</p>
  <button id="play">ENTRAR NA SALA</button>
  <p>PC: WASD + MOUSE<br>CELULAR: BOTÕES + ARRASTAR NA TELA</p>
@@ -68,177 +82,289 @@ button{
 <script>
 (()=>{
 if(!window.THREE){
- document.getElementById("menu").innerHTML="<h2>Erro ao carregar o jogo</h2><p>Verifique sua conexão.</p>";
+ document.getElementById("menu").innerHTML=
+ "<h2>Erro ao carregar o jogo</h2><p>Verifique sua conexão.</p>";
  return;
 }
 
 const scene=new THREE.Scene();
 scene.background=new THREE.Color(0x090c11);
-scene.fog=new THREE.Fog(0x090c11,25,65);
+scene.fog=new THREE.Fog(0x090c11,45,105);
 
-const camera=new THREE.PerspectiveCamera(75,innerWidth/innerHeight,.1,120);
+const camera=new THREE.PerspectiveCamera(
+ 75,innerWidth/innerHeight,.1,150
+);
+
 const renderer=new THREE.WebGLRenderer({antialias:false});
 renderer.setSize(innerWidth,innerHeight);
 renderer.setPixelRatio(Math.min(devicePixelRatio,1.5));
 renderer.outputColorSpace=THREE.SRGBColorSpace;
 document.body.appendChild(renderer.domElement);
 
+// MATERIAIS
 function mat(color,roughness=1,metalness=0){
- return new THREE.MeshStandardMaterial({color,roughness,metalness});
+ return new THREE.MeshStandardMaterial({
+  color,roughness,metalness
+ });
 }
 
 const floorMat=mat(0x30343a);
 const wallMat=mat(0x242930);
-const metalMat=mat(0x626b73,.65,.65);
-const darkMat=mat(0x11161b);
-const yellowMat=mat(0xd3a52b);
-const generatorMat=mat(0x343d45,.7,.55);
-const panelMat=mat(0x11191e);
+const metalMat=mat(0x65717b,.65,.7);
+const darkMetal=mat(0x171d23,.8,.5);
+const blackMat=mat(0x090d11);
+const yellowMat=mat(0xd1a12a);
+const bodyMat=mat(0x39444b,.65,.55);
+const rubberMat=mat(0x16191c);
+const redMat=mat(0x8e151b);
 
+const screenMat=new THREE.MeshStandardMaterial({
+ color:0x17404a,
+ emissive:0x09242d,
+ emissiveIntensity:.8
+});
+
+const greenMat=new THREE.MeshStandardMaterial({
+ color:0x178b55,
+ emissive:0x07552b,
+ emissiveIntensity:.8
+});
+
+const orangeMat=new THREE.MeshStandardMaterial({
+ color:0xc17b21,
+ emissive:0x5c3105,
+ emissiveIntensity:.7
+});
+
+// FUNÇÕES 3D
 function box(x,y,z,w,h,d,material){
- const obj=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),material);
- obj.position.set(x,y,z);
- scene.add(obj);
- return obj;
-}
-
-function cylinder(x,y,z,r1,r2,h,material,segments=12){
  const obj=new THREE.Mesh(
-  new THREE.CylinderGeometry(r1,r2,h,segments),material
+  new THREE.BoxGeometry(w,h,d),material
  );
  obj.position.set(x,y,z);
  scene.add(obj);
  return obj;
 }
 
-// SALA
-box(0,-.25,0,40,.5,32,floorMat);
-
-// PAREDES
-box(0,8,-16,40,16,.5,wallMat);
-box(0,8,16,40,16,.5,wallMat);
-box(-20,8,0,.5,16,32,wallMat);
-box(20,8,0,.5,16,32,wallMat);
-
-// TETO
-box(0,16,0,40,.5,32,wallMat);
-
-// ILUMINAÇÃO BÁSICA
-scene.add(new THREE.HemisphereLight(0xb5c4d5,0x303039,.85));
-
-const ceilingLight=new THREE.PointLight(0xb5c9df,75,48);
-ceilingLight.position.set(0,13,0);
-scene.add(ceilingLight);
-
-const sideLight=new THREE.PointLight(0x65778d,25,35);
-sideLight.position.set(-12,8,-5);
-scene.add(sideLight);
-
-// GERADORES INDUSTRIAIS
-function createGenerator(x,z,number){
-
- // Base
- box(x,.18,z,5.2,.35,3.9,darkMat);
-
- // Corpo principal
- box(x,1.65,z,4.6,2.6,3.4,generatorMat);
-
- // Parte superior
- box(x,3.02,z,4.3,.22,3.2,metalMat);
-
- // Laterais
- box(x-2.32,1.7,z,.18,2.2,3.2,metalMat);
- box(x+2.32,1.7,z,.18,2.2,3.2,metalMat);
-
- // Painel frontal
- box(x,1.65,z+1.76,2.4,1.65,.13,panelMat);
-
- // Tela
- const screen=box(x,2.1,z+1.85,.95,.48,.06,mat(0x174653));
- screen.material.emissive=new THREE.Color(0x08232a);
- screen.material.emissiveIntensity=.6;
-
- // Indicadores
- for(let i=0;i<4;i++){
-  const light=box(
-   x-0.8+i*.53,1.3,z+1.86,
-   .16,.16,.07,
-   i===0?mat(0x1e9b61):mat(0xd0a12a)
-  );
-  light.material.emissive=light.material.color.clone();
-  light.material.emissiveIntensity=.35;
- }
-
- // Grades laterais
- for(let i=0;i<6;i++){
-  box(
-   x-1.25+i*.5,.85,z+1.86,
-   .09,.7,.08,metalMat
-  );
- }
-
- // Tubos no topo
- for(let i=0;i<3;i++){
-  const px=x-1.2+i*1.2;
-  cylinder(px,3.35,z,.16,.16,.55,metalMat);
-  cylinder(px,3.72,z,.13,.13,.2,yellowMat);
- }
-
- // Tubos de saída na lateral
- cylinder(x+2.55,2.1,z,.2,.2,1.1,metalMat);
- cylinder(x+3.1,2.1,z,.16,.16,.2,yellowMat);
-
- // Tampa circular frontal
- const cover=cylinder(x,1.65,z+1.92,.42,.42,.12,metalMat,20);
- cover.rotation.x=Math.PI/2;
-
- // Parafusos visuais
- for(let i=0;i<4;i++){
-  const sx=x+(i%2===0?-1.05:1.05);
-  const sy=i<2?2.35:.95;
-  box(sx,sy,z+1.87,.09,.09,.08,yellowMat);
- }
-
- // Identificação
- box(x,3.2,z+1.6,.65,.16,.08,yellowMat);
-
+function cylinder(x,y,z,r1,r2,h,material,segments=16){
+ const obj=new THREE.Mesh(
+  new THREE.CylinderGeometry(r1,r2,h,segments),
+  material
+ );
+ obj.position.set(x,y,z);
+ scene.add(obj);
+ return obj;
 }
 
-// POSIÇÃO DOS TRÊS GERADORES
-createGenerator(-11,-7,1);
-createGenerator(0,-7,2);
-createGenerator(11,-7,3);
-
-// TUBULAÇÕES BÁSICAS LIGADAS AOS GERADORES
-function pipe(x1,y1,z1,x2,y2,z2,r){
+function pipe(x1,y1,z1,x2,y2,z2,r,material=metalMat){
  const a=new THREE.Vector3(x1,y1,z1);
  const b=new THREE.Vector3(x2,y2,z2);
  const dir=new THREE.Vector3().subVectors(b,a);
 
  const obj=new THREE.Mesh(
-  new THREE.CylinderGeometry(r,r,dir.length(),10),
-  metalMat
+  new THREE.CylinderGeometry(r,r,dir.length(),12),
+  material
  );
-
  obj.position.copy(a).add(b).multiplyScalar(.5);
  obj.quaternion.setFromUnitVectors(
-  new THREE.Vector3(0,1,0),
-  dir.normalize()
+  new THREE.Vector3(0,1,0),dir.normalize()
  );
  scene.add(obj);
+ return obj;
 }
 
-// Tubos conectando as partes superiores
-pipe(-11,3.8,-7,0,3.8,-7,.13);
-pipe(0,3.8,-7,11,3.8,-7,.13);
+// ESTRUTURA DA SALA — 70 x 55
+box(0,-.25,0,70,.5,55,floorMat);
 
-// Tubos de subida
-for(const x of [-11,0,11]){
- pipe(x,3.8,-7,x,5.5,-7,.12);
+// PAREDES
+box(0,8,-27.5,70,16,.5,wallMat);
+box(0,8,27.5,70,16,.5,wallMat);
+box(-35,8,0,.5,16,55,wallMat);
+box(35,8,0,.5,16,55,wallMat);
+
+// TETO
+box(0,16,0,70,.5,55,wallMat);
+
+// FAIXAS INDUSTRIAIS NAS PAREDES
+for(let x=-30;x<=30;x+=10){
+ box(x,1,-27.2,3,.18,.08,yellowMat);
+ box(x,1,27.2,3,.18,.08,yellowMat);
 }
 
-// Jogador
-const player=new THREE.Vector3(0,0,10);
+// ILUMINAÇÃO
+scene.add(new THREE.HemisphereLight(
+ 0xb5c4d5,0x303039,.8
+));
+
+const ceilingLight=new THREE.PointLight(0xb5c9df,100,65);
+ceilingLight.position.set(0,13,0);
+scene.add(ceilingLight);
+
+const sideLight1=new THREE.PointLight(0x65778d,35,40);
+sideLight1.position.set(-20,9,-8);
+scene.add(sideLight1);
+
+const sideLight2=new THREE.PointLight(0x65778d,35,40);
+sideLight2.position.set(20,9,8);
+scene.add(sideLight2);
+
+// GERADOR INDUSTRIAL DETALHADO
+function createGenerator(x,z,id){
+
+ // Base de concreto e metal
+ box(x,.16,z,6.2,.32,4.8,darkMetal);
+ box(x,.36,z,5.8,.15,4.4,metalMat);
+
+ // Pés de apoio
+ for(const sx of [-2.35,2.35]){
+  for(const sz of [-1.65,1.65]){
+   box(x+sx,.55,z+sz,.42,.45,.42,blackMat);
+   box(x+sx,.33,z+sz,.65,.12,.65,metalMat);
+  }
+ }
+
+ // Corpo central
+ box(x,1.75,z,5.15,2.45,3.65,bodyMat);
+
+ // Camada superior
+ box(x,3.05,z,4.85,.2,3.4,metalMat);
+
+ // Painéis laterais
+ box(x-2.61,1.75,z,.12,2.1,3.4,darkMetal);
+ box(x+2.61,1.75,z,.12,2.1,3.4,darkMetal);
+
+ // MOTOR CILÍNDRICO NA FRENTE
+ cylinder(x,1.65,z+1.95,.82,.82,1.05,darkMetal,24);
+ cylinder(x,1.65,z+2.51,.68,.68,.12,metalMat,24);
+ cylinder(x,1.65,z+2.59,.4,.4,.08,blackMat,20);
+
+ // Anéis do motor
+ for(let i=0;i<4;i++){
+  cylinder(
+   x,1.65,z+2.08+i*.12,
+   .84,.84,.045,metalMat,24
+  );
+ }
+
+ // Parafusos do motor
+ for(let i=0;i<8;i++){
+  const a=i*Math.PI/4;
+  cylinder(
+   x+Math.cos(a)*.57,
+   1.65+Math.sin(a)*.57,
+   z+2.62,
+   .055,.055,.045,yellowMat,8
+  );
+ }
+
+ // Tampa superior
+ box(x,3.22,z,3.7,.15,2.5,metalMat);
+
+ // Grades de ventilação na lateral esquerda
+ for(let i=0;i<9;i++){
+  box(
+   x-2.69,
+   .95+i*.18,
+   z-.95,
+   .08,.075,1.7,metalMat
+  );
+ }
+
+ // Grades de ventilação na lateral direita
+ for(let i=0;i<9;i++){
+  box(
+   x+2.69,
+   .95+i*.18,
+   z-.95,
+   .08,.075,1.7,metalMat
+  );
+ }
+
+ // Painel frontal de controle
+ box(x,2.35,z+1.91,1.65,1.2,.16,darkMetal);
+ box(x,2.4,z+2.01,1.35,.72,.07,blackMat);
+ box(x,2.48,z+2.06,.82,.35,.04,screenMat);
+
+ // Luzes de estado
+ box(x-.48,1.97,z+2.07,.14,.14,.06,greenMat);
+ box(x-.2,1.97,z+2.07,.14,.14,.06,orangeMat);
+ box(x+.08,1.97,z+2.07,.14,.14,.06,redMat);
+
+ // Botões de comando
+ for(let i=0;i<3;i++){
+  cylinder(
+   x-.45+i*.45,1.65,z+2.05,
+   .09,.09,.07,
+   i===0?greenMat:(i===1?yellowMat:redMat),12
+  );
+ }
+
+ // Placa com número do equipamento
+ box(x,3.35,z+1.65,.85,.2,.08,yellowMat);
+
+ // Parafusos externos do corpo
+ for(const sx of [-2.42,2.42]){
+  for(const sy of [.8,2.7]){
+   cylinder(x+sx,sy,z+1.87,.065,.065,.08,yellowMat,8);
+  }
+ }
+
+ // Tubos superiores de conexão
+ for(let i=0;i<3;i++){
+  const px=x-1.5+i*1.5;
+  cylinder(px,3.48,z-.7,.16,.16,.6,metalMat);
+  cylinder(px,3.8,z-.7,.12,.12,.1,yellowMat);
+ }
+
+ // Grandes tubos laterais
+ pipe(x+2.65,2.5,z-.8,x+3.4,2.5,z-.8,.2);
+ pipe(x+3.4,2.5,z-.8,x+3.4,3.4,z-.8,.2);
+
+ // Pequenas saídas de ventilação
+ for(let i=0;i<3;i++){
+  const px=x-1+i;
+  box(px,3.4,z-1.5,.45,.12,.5,darkMetal);
+ }
+
+ // Apoios inferiores frontais
+ for(let i=-2;i<=2;i++){
+  box(x+i*.85,.57,z+2.03,.16,.25,.12,metalMat);
+ }
+}
+
+// POSIÇÃO DOS GERADORES
+createGenerator(-17,-9,1);
+createGenerator(0,-9,2);
+createGenerator(17,-9,3);
+
+// TUBULAÇÕES PRINCIPAIS
+pipe(-17,4,-9,17,4,-9,.18);
+pipe(-17,4,-9,-17,5.8,-9,.15);
+pipe(0,4,-9,0,5.8,-9,.15);
+pipe(17,4,-9,17,5.8,-9,.15);
+
+// Tubos ao fundo da instalação
+for(let x=-30;x<=30;x+=10){
+ pipe(x,10,-26.5,x,10,26.5,.12);
+ pipe(x,10,-26.5,x,10.7,-26.5,.08,yellowMat);
+}
+
+// Suportes dos tubos
+for(let x=-30;x<=30;x+=10){
+ box(x,9.5,-26,.35,1,.35,darkMetal);
+ box(x,9.5,26,.35,1,.35,darkMetal);
+}
+
+// VIGAS DO TETO
+for(let x=-30;x<=30;x+=10){
+ box(x,15.4,0,.3,.3,54,metalMat);
+}
+for(let z=-25;z<=25;z+=10){
+ box(0,15.4,z,69,.3,.3,metalMat);
+}
+
+// JOGADOR
+const player=new THREE.Vector3(0,0,19);
 let yaw=0,pitch=0;
 const keys={};
 let started=false;
@@ -249,7 +375,6 @@ function start(){
  document.getElementById("hud").style.display="block";
  camera.position.set(player.x,1.7,player.z);
 }
-
 document.getElementById("play").addEventListener("click",start);
 
 // TECLADO
@@ -287,13 +412,12 @@ document.querySelectorAll(".pad button").forEach(button=>{
  });
 });
 
-// CÂMERA POR ARRASTO NA TELA
+// CÂMERA PELO ARRASTO
 let touchId=null;
 let lastX=0,lastY=0;
 
 renderer.domElement.addEventListener("pointerdown",e=>{
  if(!started || e.pointerType!=="touch")return;
-
  touchId=e.pointerId;
  lastX=e.clientX;
  lastY=e.clientY;
@@ -308,7 +432,6 @@ renderer.domElement.addEventListener("pointermove",e=>{
 
  yaw-=dx*.006;
  pitch-=dy*.004;
-
  pitch=Math.max(-1.2,Math.min(1.2,pitch));
 
  lastX=e.clientX;
@@ -318,7 +441,6 @@ renderer.domElement.addEventListener("pointermove",e=>{
 function stopTouch(e){
  if(touchId===e.pointerId)touchId=null;
 }
-
 renderer.domElement.addEventListener("pointerup",stopTouch);
 renderer.domElement.addEventListener("pointercancel",stopTouch);
 
@@ -345,8 +467,12 @@ function animate(){
  const dt=Math.min(clock.getDelta(),.04);
 
  if(started){
-  const forward=new THREE.Vector3(-Math.sin(yaw),0,-Math.cos(yaw));
-  const right=new THREE.Vector3(Math.cos(yaw),0,-Math.sin(yaw));
+  const forward=new THREE.Vector3(
+   -Math.sin(yaw),0,-Math.cos(yaw)
+  );
+  const right=new THREE.Vector3(
+   Math.cos(yaw),0,-Math.sin(yaw)
+  );
   const move=new THREE.Vector3();
 
   if(keys.w)move.add(forward);
@@ -359,8 +485,9 @@ function animate(){
    player.add(move);
   }
 
-  player.x=THREE.MathUtils.clamp(player.x,-18.5,18.5);
-  player.z=THREE.MathUtils.clamp(player.z,-14.5,14.5);
+  // LIMITES DA SALA
+  player.x=THREE.MathUtils.clamp(player.x,-33.5,33.5);
+  player.z=THREE.MathUtils.clamp(player.z,-25.5,25.5);
 
   camera.position.set(player.x,1.7,player.z);
   camera.rotation.order="YXZ";
