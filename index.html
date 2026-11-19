@@ -7,53 +7,81 @@
 <title>ENCONTRE UMA SAÍDA! — SALA 02</title>
 <style>
 *{box-sizing:border-box}
-body{margin:0;overflow:hidden;background:#080a0d;font-family:Arial;color:white;touch-action:none}
+body{margin:0;overflow:hidden;background:#000;font-family:Arial;color:white;touch-action:none}
 canvas{display:block}
-#menu{
- position:fixed;inset:0;z-index:5;display:flex;align-items:center;
- justify-content:center;flex-direction:column;text-align:center;
- background:radial-gradient(#252a30,#080a0d 75%);
-}
+button{background:#252a30dd;color:white;border:1px solid #777;padding:12px;border-radius:4px;font-weight:bold;touch-action:none}
+#menu{position:fixed;inset:0;z-index:20;display:flex;align-items:center;justify-content:center;flex-direction:column;text-align:center;background:radial-gradient(#17191c,#000 75%)}
 h1{font-size:clamp(28px,6vw,52px)}
 h1 span{color:#d71920}
-#menu p{color:#aaa;letter-spacing:2px;font-size:12px}
-button{background:#a80f18;color:white;border:1px solid #ed4545;padding:13px 22px;border-radius:4px;font-weight:bold;touch-action:none}
+#menu p{color:#999;letter-spacing:2px;font-size:12px}
+#play{background:#a80f18;border-color:#ed4545;padding:14px 25px}
 #hud{display:none;position:fixed;inset:0;pointer-events:none}
-#brand{position:absolute;top:15px;left:15px;font-size:13px;letter-spacing:2px}
-#controls{position:absolute;bottom:20px;left:15px;pointer-events:auto}
+#brand{position:absolute;top:15px;left:15px;font-size:13px;letter-spacing:2px;text-shadow:0 2px 5px #000}
+#crosshair{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:7px;height:7px;border:1px solid #ddd;border-radius:50%}
+#controls{position:absolute;bottom:18px;left:15px;pointer-events:auto}
 .pad{display:grid;grid-template-columns:repeat(3,53px);grid-template-rows:repeat(2,53px);gap:5px}
-.pad button{padding:0;background:#252a30cc;border-color:#777;font-size:20px}
+.pad button{padding:0;background:#252a30cc;font-size:20px}
 #up{grid-column:2}
 #left{grid-column:1;grid-row:2}
 #down{grid-column:2;grid-row:2}
 #right{grid-column:3;grid-row:2}
-#crosshair{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:7px;height:7px;border:1px solid #ddd;border-radius:50%}
-#footer{position:absolute;bottom:8px;width:100%;text-align:center;color:#777;font-size:10px}
+#lookHint{position:absolute;right:15px;bottom:125px;color:#aaa;font-size:10px}
+#actions{position:absolute;right:14px;bottom:18px;display:flex;flex-direction:column;gap:6px;pointer-events:auto}
+#actions button{min-width:94px;padding:10px;background:#171a1dcc}
+#battery{position:absolute;top:15px;right:15px;background:#101318dd;padding:9px 12px;border:1px solid #555;font-size:12px}
+#batteryBar{width:100px;height:5px;background:#333;margin-top:5px}
+#batteryFill{height:100%;width:100%;background:#d5d5d5}
+#inventoryText{position:absolute;top:52px;left:15px;color:#ddd;font-size:12px;text-shadow:0 2px 4px black}
+#message{position:absolute;top:68%;left:50%;transform:translateX(-50%);font-size:13px;color:#ddd;text-align:center;text-shadow:0 2px 6px black}
+#backpackPanel{display:none;position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:min(340px,90vw);padding:18px;background:#101318f5;border:1px solid #777;pointer-events:auto;z-index:10}
+#backpackPanel h3{text-align:center;letter-spacing:2px;margin-top:0}
+#backpackSlots{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.backpackSlot{height:70px;background:#252a30;border:1px solid #666;display:flex;align-items:center;justify-content:center;flex-direction:column;font-size:11px;cursor:pointer}
+.backpackSlot.selected{border:2px solid #d71920}
+#closeBag{width:100%;margin-top:12px}
+#footer{position:absolute;bottom:5px;width:100%;text-align:center;color:#777;font-size:10px;pointer-events:none}
+@media(min-width:701px){#lookHint{display:none}}
 </style>
 </head>
 <body>
 
 <div id="menu">
- <h1>ENCONTRE UMA <span>SAÍDA!</span></h1>
- <p>AB GAMES APRESENTA</p>
- <h2>SALA 02 — V1.6</h2>
- <p>INSTALAÇÃO INDUSTRIAL DE ENERGIA</p>
- <button id="play">ENTRAR NA SALA</button>
- <p>PC: WASD + MOUSE<br>CELULAR: BOTÕES + ARRASTAR NA TELA</p>
+<h1>ENCONTRE UMA <span>SAÍDA!</span></h1>
+<p>AB GAMES APRESENTA</p>
+<h2>SALA 02 — SEM ENERGIA</h2>
+<p>INSTALAÇÃO INDUSTRIAL</p>
+<button id="play">ENTRAR NA SALA</button>
+<p>PC: WASD + MOUSE<br>CELULAR: BOTÕES + ARRASTAR NA TELA</p>
 </div>
 
 <div id="hud">
- <div id="brand">AB GAMES // SALA 02</div>
- <div id="crosshair"></div>
- <div id="controls">
-  <div class="pad">
-   <button id="up">▲</button>
-   <button id="left">◀</button>
-   <button id="down">▼</button>
-   <button id="right">▶</button>
-  </div>
- </div>
- <div id="footer">ENCONTRE UMA SAÍDA! — AB GAMES</div>
+<div id="brand">AB GAMES // SALA 02</div>
+<div id="crosshair"></div>
+<div id="battery">LANTERNA <span id="batteryNumber">100%</span><div id="batteryBar"><div id="batteryFill"></div></div></div>
+<div id="inventoryText">MOCHILA: I | OBJETO: NENHUM</div>
+<div id="controls">
+<div class="pad">
+<button id="up">▲</button>
+<button id="left">◀</button>
+<button id="down">▼</button>
+<button id="right">▶</button>
+</div>
+</div>
+<div id="lookHint">ARRASTE PARA OLHAR</div>
+<div id="actions">
+<button id="bagButton">MOCHILA [I]</button>
+<button id="lightButton">LANTERNA [F]</button>
+<button id="useButton">PEGAR [E]</button>
+<button id="storeButton">GUARDAR [G]</button>
+<button id="dropButton">SOLTAR [Q]</button>
+</div>
+<div id="backpackPanel">
+<h3>MOCHILA</h3>
+<div id="backpackSlots"></div>
+<button id="closeBag">FECHAR</button>
+</div>
+<div id="message"></div>
+<div id="footer">ENCONTRE UMA SAÍDA! — AB GAMES</div>
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/0.160.0/three.min.js"></script>
@@ -65,17 +93,16 @@ if(!window.THREE){
 }
 
 const scene=new THREE.Scene();
-scene.background=new THREE.Color(0x090c11);
-scene.fog=new THREE.Fog(0x090c11,170,290);
+scene.background=new THREE.Color(0x010203);
+scene.fog=new THREE.FogExp2(0x010203,.009);
 
 const camera=new THREE.PerspectiveCamera(75,innerWidth/innerHeight,.1,350);
 const renderer=new THREE.WebGLRenderer({antialias:false});
 renderer.setSize(innerWidth,innerHeight);
-renderer.setPixelRatio(Math.min(devicePixelRatio,1.5));
+renderer.setPixelRatio(Math.min(devicePixelRatio,1.25));
 renderer.outputColorSpace=THREE.SRGBColorSpace;
 document.body.appendChild(renderer.domElement);
 
-// MATERIAIS
 function mat(color,roughness=1,metalness=0){
  return new THREE.MeshStandardMaterial({color,roughness,metalness});
 }
@@ -87,20 +114,12 @@ const blackMat=mat(0x090d11);
 const yellowMat=mat(0xd1a12a);
 const bodyMat=mat(0x39444b,.65,.55);
 
-const screenMat=new THREE.MeshStandardMaterial({
- color:0x17404a,emissive:0x09242d,emissiveIntensity:.8
-});
-const greenMat=new THREE.MeshStandardMaterial({
- color:0x178b55,emissive:0x07552b,emissiveIntensity:.8
-});
-const orangeMat=new THREE.MeshStandardMaterial({
- color:0xc17b21,emissive:0x5c3105,emissiveIntensity:.7
-});
-const redLightMat=new THREE.MeshStandardMaterial({
- color:0x9d171d,emissive:0x65070b,emissiveIntensity:1
-});
+// Tudo desligado: materiais sem emissão de luz.
+const screenMat=mat(0x071014);
+const greenMat=mat(0x101c16);
+const orangeMat=mat(0x21170b);
+const redLightMat=mat(0x200709);
 
-// FUNÇÕES 3D
 function box(x,y,z,w,h,d,material){
  const obj=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),material);
  obj.position.set(x,y,z);
@@ -124,11 +143,7 @@ function pipe(x1,y1,z1,x2,y2,z2,r,material=metalMat){
  return obj;
 }
 
-// ==================================================
-// V1.6 — SALA GIGANTE: 120 x 100
-// ==================================================
-
-// Piso e paredes ampliados
+// SALA 120 x 100
 box(0,-.25,0,120,.5,100,floorMat);
 box(0,8,-50,120,16,.5,wallMat);
 box(0,8,50,120,16,.5,wallMat);
@@ -136,7 +151,6 @@ box(-60,8,0,.5,16,100,wallMat);
 box(60,8,0,.5,16,100,wallMat);
 box(0,16,0,120,.5,100,wallMat);
 
-// Faixas industriais nas extremidades
 for(let x=-55;x<=55;x+=10){
  box(x,1,-49.7,3,.18,.08,yellowMat);
  box(x,1,49.7,3,.18,.08,yellowMat);
@@ -146,140 +160,85 @@ for(let z=-45;z<=45;z+=10){
  box(59.7,1,z,.08,.18,3,yellowMat);
 }
 
-// ILUMINAÇÃO GERAL
-scene.add(new THREE.HemisphereLight(0xb5c4d5,0x303039,.85));
+// SEM ENERGIA: apenas uma iluminação ambiente quase imperceptível.
+scene.add(new THREE.HemisphereLight(0x202735,0x08090c,.035));
 
-const ceilingLight=new THREE.PointLight(0xb5c9df,130,120);
-ceilingLight.position.set(0,13,0);
-scene.add(ceilingLight);
-
-const sideLight1=new THREE.PointLight(0x65778d,45,75);
-sideLight1.position.set(-35,9,-20);
-scene.add(sideLight1);
-
-const sideLight2=new THREE.PointLight(0x65778d,45,75);
-sideLight2.position.set(35,9,20);
-scene.add(sideLight2);
-
-const sideLight3=new THREE.PointLight(0x65778d,35,70);
-sideLight3.position.set(-35,9,30);
-scene.add(sideLight3);
-
-const sideLight4=new THREE.PointLight(0x65778d,35,70);
-sideLight4.position.set(40,9,-30);
-scene.add(sideLight4);
-
-// ==================================================
-// GERADORES — REPOSICIONADOS E MAIS AFASTADOS
-// ==================================================
-function createGenerator(x,z,id){
+function createGenerator(x,z){
  box(x,.16,z,6.2,.32,4.8,darkMetal);
  box(x,.36,z,5.8,.15,4.4,metalMat);
-
  for(const sx of [-2.35,2.35]){
   for(const sz of [-1.65,1.65]){
    box(x+sx,.55,z+sz,.42,.45,.42,blackMat);
    box(x+sx,.33,z+sz,.65,.12,.65,metalMat);
   }
  }
-
  box(x,1.75,z,5.15,2.45,3.65,bodyMat);
  box(x,3.05,z,4.85,.2,3.4,metalMat);
  box(x-2.61,1.75,z,.12,2.1,3.4,darkMetal);
  box(x+2.61,1.75,z,.12,2.1,3.4,darkMetal);
-
  cylinder(x,1.65,z+1.95,.82,.82,1.05,darkMetal,24);
  cylinder(x,1.65,z+2.51,.68,.68,.12,metalMat,24);
  cylinder(x,1.65,z+2.59,.4,.4,.08,blackMat,20);
-
  for(let i=0;i<4;i++){
   cylinder(x,1.65,z+2.08+i*.12,.84,.84,.045,metalMat,24);
  }
  for(let i=0;i<8;i++){
   const a=i*Math.PI/4;
-  cylinder(x+Math.cos(a)*.57,1.65+Math.sin(a)*.57,z+2.62,.055,.055,.045,yellowMat,8);
+  cylinder(x+Math.cos(a)*.57,1.65+Math.sin(a)*.57,z+2.62,.055,.055,.045,darkMetal,8);
  }
-
  box(x,3.22,z,3.7,.15,2.5,metalMat);
-
  for(let i=0;i<9;i++){
   box(x-2.69,.95+i*.18,z-.95,.08,.075,1.7,metalMat);
   box(x+2.69,.95+i*.18,z-.95,.08,.075,1.7,metalMat);
  }
-
  box(x,2.35,z+1.91,1.65,1.2,.16,darkMetal);
  box(x,2.4,z+2.01,1.35,.72,.07,blackMat);
  box(x,2.48,z+2.06,.82,.35,.04,screenMat);
-
  box(x-.48,1.97,z+2.07,.14,.14,.06,greenMat);
  box(x-.2,1.97,z+2.07,.14,.14,.06,orangeMat);
  box(x+.08,1.97,z+2.07,.14,.14,.06,redLightMat);
-
  for(let i=0;i<3;i++){
-  cylinder(x-.45+i*.45,1.65,z+2.05,.09,.09,.07,
-   i===0?greenMat:(i===1?yellowMat:redLightMat),12);
+  cylinder(x-.45+i*.45,1.65,z+2.05,.09,.09,.07,darkMetal,12);
  }
-
  box(x,3.35,z+1.65,.85,.2,.08,yellowMat);
-
  for(const sx of [-2.42,2.42]){
   for(const sy of [.8,2.7]){
-   cylinder(x+sx,sy,z+1.87,.065,.065,.08,yellowMat,8);
+   cylinder(x+sx,sy,z+1.87,.065,.065,.08,darkMetal,8);
   }
  }
-
  for(let i=0;i<3;i++){
   const px=x-1.5+i*1.5;
   cylinder(px,3.48,z-.7,.16,.16,.6,metalMat);
-  cylinder(px,3.8,z-.7,.12,.12,.1,yellowMat);
+  cylinder(px,3.8,z-.7,.12,.12,.1,darkMetal);
  }
-
  pipe(x+2.65,2.5,z-.8,x+3.4,2.5,z-.8,.2);
  pipe(x+3.4,2.5,z-.8,x+3.4,3.4,z-.8,.2);
-
  for(let i=0;i<3;i++){
-  const px=x-1+i;
-  box(px,3.4,z-1.5,.45,.12,.5,darkMetal);
- }
- for(let i=-2;i<=2;i++){
-  box(x+i*.85,.57,z+2.03,.16,.25,.12,metalMat);
+  box(x-1+i,3.4,z-1.5,.45,.12,.5,darkMetal);
  }
 }
+createGenerator(-30,-18);
+createGenerator(0,-18);
+createGenerator(30,-18);
 
-// Geradores mais espaçados
-createGenerator(-30,-18,1);
-createGenerator(0,-18,2);
-createGenerator(30,-18,3);
-
-// TUBULAÇÕES PRINCIPAIS DOS GERADORES
 pipe(-30,4,-18,30,4,-18,.2);
 pipe(-30,4,-18,-30,5.8,-18,.15);
 pipe(0,4,-18,0,5.8,-18,.15);
 pipe(30,4,-18,30,5.8,-18,.15);
 
-// Tubulações suspensas por toda a instalação
 for(let x=-50;x<=50;x+=10){
  pipe(x,10,-48,x,10,48,.12);
- pipe(x,10,-48,x,10.7,-48,.08,yellowMat);
+ pipe(x,10,-48,x,10.7,-48,.08,darkMetal);
  box(x,9.5,-47.5,.35,1,.35,darkMetal);
  box(x,9.5,47.5,.35,1,.35,darkMetal);
 }
-
-// Linhas transversais de tubulação
 for(let z=-40;z<=40;z+=20){
  pipe(-55,11,z,55,11,z,.1);
  pipe(-55,11.6,z,55,11.6,z,.055,darkMetal);
 }
+for(let x=-55;x<=55;x+=10)box(x,15.4,0,.3,.3,98,metalMat);
+for(let z=-45;z<=45;z+=10)box(0,15.4,z,118,.3,.3,metalMat);
 
-// VIGAS DO TETO
-for(let x=-55;x<=55;x+=10){
- box(x,15.4,0,.3,.3,98,metalMat);
-}
-for(let z=-45;z<=45;z+=10){
- box(0,15.4,z,118,.3,.3,metalMat);
-}
-
-// PILARES INDUSTRIAIS
 for(let x of [-50,-40,-20,20,40,50]){
  for(let z of [-40,0,40]){
   box(x,7.8,z,.65,15.6,.65,darkMetal);
@@ -287,8 +246,6 @@ for(let x of [-50,-40,-20,20,40,50]){
   box(x,14.8,z,.95,.35,.95,metalMat);
  }
 }
-
-// Estruturas metálicas laterais
 for(let z=-40;z<=40;z+=20){
  box(-55,5,z,.5,10,.5,metalMat);
  box(55,5,z,.5,10,.5,metalMat);
@@ -296,19 +253,13 @@ for(let z=-40;z<=40;z+=20){
  pipe(55,1,z,55,12,z,.09,darkMetal);
 }
 
-// ==================================================
-// ESCADARIA GIGANTE
-// ==================================================
-const stairSteps=16;
-const stairRise=.25;
-const stairDepth=.75;
-
+// ESCADA ORIGINAL
+const stairSteps=16,stairRise=.25,stairDepth=.75;
 function createStairFlight(x,zStart,direction,yStart){
  const totalLength=stairSteps*stairDepth;
  const endZ=zStart+direction*totalLength;
  const endY=yStart+stairSteps*stairRise;
  const sideOffset=3.6/2+.12;
-
  for(let i=0;i<stairSteps;i++){
   const z=zStart+direction*(i*stairDepth+stairDepth/2);
   const y=yStart+(i+1)*stairRise;
@@ -316,46 +267,27 @@ function createStairFlight(x,zStart,direction,yStart){
   box(x,y+.006,z+direction*stairDepth*.28,3.42,.025,.07,darkMetal);
   box(x,y-.24,z,3.35,.12,.16,darkMetal);
  }
-
  for(const side of [-1,1]){
   const railX=x+side*sideOffset;
   pipe(railX,yStart-.1,zStart,railX,endY-.1,endZ,.16,darkMetal);
-
   for(let i=0;i<=stairSteps;i+=4){
    const t=i/stairSteps;
    const z=zStart+direction*t*totalLength;
    const y=yStart+t*stairSteps*stairRise;
    pipe(railX,y+.05,z,railX,y+1.05,z,.065,metalMat);
   }
-
   pipe(railX,yStart+1.05,zStart,railX,endY+1.05,endZ,.085,metalMat);
   pipe(railX,yStart+.55,zStart,railX,endY+.55,endZ,.045,darkMetal);
  }
-
- for(let i=0;i<4;i++){
-  const t=i/3;
-  const z=zStart+direction*t*totalLength;
-  const y=yStart+t*stairSteps*stairRise;
-  pipe(x-1.3,y-.35,z,x+1.3,y-.35,z,.09,darkMetal);
- }
 }
-
 createStairFlight(24.5,17,-1,0);
 createStairFlight(29.5,5,1,4);
-
-// PATAMAR INTERMEDIÁRIO
 box(27,4,4.65,9.5,.3,3.2,metalMat);
 box(27,3.78,4.65,8.8,.12,2.6,darkMetal);
-
-// PLATAFORMA DE CHEGADA
 box(29.5,8,19,9,.35,7,metalMat);
 box(29.5,7.78,19,8.5,.12,6.5,darkMetal);
+for(let x=26;x<=33;x+=2)box(x,6.9,19,.2,2,.2,darkMetal);
 
-for(let x=26;x<=33;x+=2){
- box(x,6.9,19,.2,2,.2,darkMetal);
-}
-
-// PROTEÇÃO DA PLATAFORMA
 for(const x of [25.2,33.8]){
  pipe(x,8.2,17,x,9.25,17,.07,metalMat);
  pipe(x,8.2,21,x,9.25,21,.07,metalMat);
@@ -367,124 +299,236 @@ for(let z=17;z<=21;z+=2){
  pipe(33.8,8.2,z,33.8,9.25,z,.06,metalMat);
 }
 
-// ==================================================
-// PASSARELA DO ANDAR SUPERIOR
-// ==================================================
-
-// Piso da passarela
 for(let x=10;x<25;x+=2){
  box(x+1,8,19,2,.3,5,metalMat);
  box(x+1,8.17,19,1.65,.035,4.55,darkMetal);
 }
-
-// Conexão entre passarela e plataforma
 box(25.2,8,19,1.2,.3,5,metalMat);
 box(25.2,8.17,19,1,.035,4.5,darkMetal);
 
-// Reforços sob a passarela
 for(let x=11;x<=25;x+=4){
  box(x,6.9,16.7,.22,2.1,.22,darkMetal);
  box(x,6.9,21.3,.22,2.1,.22,darkMetal);
  pipe(x,6.9,16.7,x,7.8,19,.09,metalMat);
  pipe(x,6.9,21.3,x,7.8,19,.09,metalMat);
 }
-
-// Corrimãos
 for(const z of [16.35,21.65]){
- for(let x=10;x<=29;x+=3){
-  pipe(x,8.15,z,x,9.35,z,.065,metalMat);
- }
+ for(let x=10;x<=29;x+=3)pipe(x,8.15,z,x,9.35,z,.065,metalMat);
  pipe(10,9.35,z,29.5,9.35,z,.085,metalMat);
  pipe(10,8.75,z,29.5,8.75,z,.045,darkMetal);
+ for(let x=10;x<=29;x+=3)box(x,8.72,z,.12,1.1,.12,darkMetal);
 }
-
-// Postes de proteção
-for(const z of [16.35,21.65]){
- for(let x=10;x<=29;x+=3){
-  box(x,8.72,z,.12,1.1,.12,darkMetal);
- }
-}
-
-// Faixas amarelas de segurança
 box(19.5,8.19,16.48,18,.035,.12,yellowMat);
 box(19.5,8.19,21.52,18,.035,.12,yellowMat);
 
-// Painel de manutenção
 box(9.75,10,19,.45,3.5,4.7,darkMetal);
 box(9.48,10,19,.08,2.8,4.2,metalMat);
 box(9.42,10.45,19,.08,1.25,1.9,blackMat);
 box(9.36,10.45,19,.035,.95,1.55,screenMat);
+for(let i=0;i<4;i++)box(9.35,9.45,17.85+i*.75,.06,.16,.16,darkMetal);
+for(let i=0;i<5;i++)cylinder(9.35,9.05,17.6+i*.7,.09,.09,.07,darkMetal,12);
+for(let i=0;i<7;i++)box(9.34,11.65,17.8+i*.4,.05,.055,.24,metalMat);
 
-// Indicadores luminosos
-for(let i=0;i<4;i++){
- box(9.35,9.45,17.85+i*.75,.06,.16,.16,
-  i===0?greenMat:(i===1?orangeMat:redLightMat));
-}
-
-// Botões
-for(let i=0;i<5;i++){
- cylinder(9.35,9.05,17.6+i*.7,.09,.09,.07,
-  i===0?greenMat:(i===1?yellowMat:darkMetal),12);
-}
-
-// Grade de ventilação
-for(let i=0;i<7;i++){
- box(9.34,11.65,17.8+i*.4,.05,.055,.24,metalMat);
-}
-
-// Luzes da passarela
-const catwalkLight1=new THREE.PointLight(0x9bb8d1,24,18);
-catwalkLight1.position.set(18,12,19);
-scene.add(catwalkLight1);
-
-const catwalkLight2=new THREE.PointLight(0x9bb8d1,20,16);
-catwalkLight2.position.set(10.5,12,19);
-scene.add(catwalkLight2);
-
-box(18,13,19,1.3,.12,.5,screenMat);
-box(11,13,19,1.3,.12,.5,screenMat);
-
+box(18,13,19,1.3,.12,.5,darkMetal);
+box(11,13,19,1.3,.12,.5,darkMetal);
 box(18,9.65,16.4,2.4,.35,.08,yellowMat);
 box(18,9.65,21.6,2.4,.35,.08,yellowMat);
 
-// ==================================================
-// ALTURA DO JOGADOR — CORRIGIDA
-// ==================================================
+// LANTERNA E MOCHILA
+const items=[];
+const backpack=[null,null,null,null];
+let heldItem=null;
+let flashlightOn=false;
+let battery=100;
+let backpackOpen=false;
+let selectedSlot=-1;
+
+const handGroup=new THREE.Group();
+camera.add(handGroup);
+const handMesh=new THREE.Mesh(
+ new THREE.BoxGeometry(.13,.16,.24),
+ mat(0x92745e)
+);
+handMesh.position.set(.38,-.32,-.55);
+handGroup.add(handMesh);
+
+function makeFlashlight(){
+ const group=new THREE.Group();
+ const casing=mat(0x20252b,.55,.7);
+ const glass=mat(0x444b50,.4,.3);
+ const handle=new THREE.Mesh(new THREE.CylinderGeometry(.065,.075,.42,12),casing);
+ handle.rotation.x=Math.PI/2;
+ group.add(handle);
+ const head=new THREE.Mesh(new THREE.CylinderGeometry(.11,.075,.13,16),glass);
+ head.rotation.x=Math.PI/2;
+ head.position.z=-.23;
+ group.add(head);
+ const rim=new THREE.Mesh(new THREE.TorusGeometry(.085,.018,6,16),metalMat);
+ rim.position.z=-.3;
+ group.add(rim);
+ group.scale.set(.85,.85,.85);
+ return group;
+}
+const flashlight=makeFlashlight();
+flashlight.userData.name="Lanterna";
+flashlight.userData.type="flashlight";
+flashlight.userData.pickable=true;
+flashlight.userData.isFlashlight=true;
+flashlight.visible=false;
+camera.add(flashlight);
+heldItem=null;
+backpack[0]=flashlight;
+
+// Luz presa à câmera: começa desligada.
+const spot=new THREE.SpotLight(0xffe8bd,0,24,Math.PI/7,.35,1.2);
+spot.position.set(0,0,0);
+spot.target.position.set(0,0,-1);
+camera.add(spot);
+camera.add(spot.target);
+
+function renderBackpack(){
+ const slots=document.getElementById("backpackSlots");
+ slots.innerHTML="";
+ backpack.forEach((item,index)=>{
+  const div=document.createElement("div");
+  div.className="backpackSlot"+(selectedSlot===index?" selected":"");
+  div.innerHTML=item?"<strong>🔦</strong><span>"+item.userData.name+"</span>":"<span>VAZIO</span>";
+  div.addEventListener("click",()=>selectBackpackSlot(index));
+  slots.appendChild(div);
+ });
+}
+function updateBattery(){
+ document.getElementById("batteryNumber").textContent=Math.ceil(battery)+"%";
+ document.getElementById("batteryFill").style.width=battery+"%";
+}
+function message(text){
+ const el=document.getElementById("message");
+ el.textContent=text;
+ clearTimeout(message.timer);
+ message.timer=setTimeout(()=>el.textContent="",2200);
+}
+function updateInventoryText(){
+ document.getElementById("inventoryText").textContent=
+ "MOCHILA: I | OBJETO: "+(heldItem?heldItem.userData.name:"NENHUM");
+}
+function toggleBackpack(){
+ backpackOpen=!backpackOpen;
+ document.getElementById("backpackPanel").style.display=backpackOpen?"block":"none";
+ if(backpackOpen)renderBackpack();
+}
+function selectBackpackSlot(index){
+ const item=backpack[index];
+ if(!item){message("ESPAÇO VAZIO");return;}
+ if(heldItem){
+  message("GUARDE OU SOLTE O OBJETO PRIMEIRO");
+  return;
+ }
+ backpack[index]=null;
+ heldItem=item;
+ selectedSlot=index;
+ item.visible=true;
+ item.position.set(.38,-.3,-.65);
+ item.rotation.set(0,0,0);
+ item.scale.set(.85,.85,.85);
+ camera.add(item);
+ if(item.userData.isFlashlight){
+  item.position.set(.38,-.3,-.68);
+  item.rotation.set(0,0,0);
+ }
+ backpackOpen=false;
+ document.getElementById("backpackPanel").style.display="none";
+ renderBackpack();
+ updateInventoryText();
+ message("OBJETO RETIRADO DA MOCHILA");
+}
+function storeHeldItem(){
+ if(!heldItem){message("NÃO HÁ OBJETO NA MÃO");return;}
+ const slot=backpack.findIndex(v=>v===null);
+ if(slot<0){message("MOCHILA CHEIA");return;}
+ if(heldItem.userData.isFlashlight)toggleFlashlight(false);
+ camera.remove(heldItem);
+ heldItem.visible=false;
+ backpack[slot]=heldItem;
+ heldItem=null;
+ renderBackpack();
+ updateInventoryText();
+ message("OBJETO GUARDADO");
+}
+function dropHeldItem(){
+ if(!heldItem){message("NÃO HÁ OBJETO NA MÃO");return;}
+ if(heldItem.userData.isFlashlight)toggleFlashlight(false);
+ camera.remove(heldItem);
+ scene.add(heldItem);
+ const dir=new THREE.Vector3(0,0,-1).applyQuaternion(camera.quaternion);
+ heldItem.position.copy(camera.position).add(dir.multiplyScalar(1.4));
+ heldItem.position.y=Math.max(.25,playerY+.4);
+ heldItem.visible=true;
+ items.push(heldItem);
+ heldItem=null;
+ updateInventoryText();
+ message("OBJETO SOLTO");
+}
+function toggleFlashlight(force){
+ if(!heldItem||!heldItem.userData.isFlashlight){
+  message("RETIRE A LANTERNA DA MOCHILA PRIMEIRO");
+  return;
+ }
+ if(force===false||flashlightOn){
+  flashlightOn=false;
+  spot.intensity=0;
+ }else{
+  if(battery<=0){message("BATERIA DESCARREGADA");return;}
+  flashlightOn=true;
+  spot.intensity=4.2;
+ }
+ document.getElementById("lightButton").textContent=flashlightOn?"APAGAR [F]":"LANTERNA [F]";
+}
+function findNearestItem(){
+ let best=null,bestDist=2.7;
+ for(const item of items){
+  if(!item.visible)continue;
+  const d=item.position.distanceTo(camera.position);
+  if(d<bestDist){best=item;bestDist=d;}
+ }
+ return best;
+}
+function pickItem(){
+ if(heldItem){message("SUAS MÃOS JÁ ESTÃO OCUPADAS");return;}
+ const item=findNearestItem();
+ if(!item){message("NÃO HÁ OBJETO PRÓXIMO");return;}
+ const i=items.indexOf(item);
+ if(i>=0)items.splice(i,1);
+ scene.remove(item);
+ camera.add(item);
+ item.position.set(.38,-.3,-.65);
+ item.rotation.set(0,0,0);
+ item.visible=true;
+ heldItem=item;
+ updateInventoryText();
+ message("OBJETO PEGADO");
+}
+document.getElementById("bagButton").onclick=toggleBackpack;
+document.getElementById("closeBag").onclick=toggleBackpack;
+document.getElementById("lightButton").onclick=()=>toggleFlashlight();
+document.getElementById("storeButton").onclick=storeHeldItem;
+document.getElementById("dropButton").onclick=dropHeldItem;
+document.getElementById("useButton").onclick=pickItem;
+
+// JOGADOR
 let playerY=0;
-
 function getFloorHeight(x,z){
-
- // Primeiro lance da escada: nível 0 até 4
- if(x>=22.45 && x<=26.55 && z>=5 && z<=17){
-  const t=(17-z)/12;
-  return THREE.MathUtils.clamp(t,0,1)*4;
+ if(x>=22.45&&x<=26.55&&z>=5&&z<=17){
+  return THREE.MathUtils.clamp((17-z)/12,0,1)*4;
  }
-
- // Segundo lance da escada: nível 4 até 8
- if(x>=27.45 && x<=31.55 && z>=5 && z<=17){
-  const t=(z-5)/12;
-  return 4+THREE.MathUtils.clamp(t,0,1)*4;
+ if(x>=27.45&&x<=31.55&&z>=5&&z<=17){
+  return 4+THREE.MathUtils.clamp((z-5)/12,0,1)*4;
  }
-
- // Patamar intermediário
- if(x>=25.3 && x<=28.7 && z>=3.3 && z<=4.8){
-  return 4;
- }
-
- // Plataforma superior: só permanece nela se já chegou pelo alto
- if(playerY>=7.2 && x>=25 && x<=34 && z>=17 && z<=22.5){
-  return 8;
- }
-
- // Passarela superior: impede subir do chão por baixo dela
- if(playerY>=7.2 && x>=10 && x<=25.8 && z>=16.4 && z<=21.6){
-  return 8;
- }
-
+ if(x>=25.3&&x<=28.7&&z>=3.3&&z<=4.8)return 4;
+ if(playerY>=7.2&&x>=25&&x<=34&&z>=17&&z<=22.5)return 8;
+ if(playerY>=7.2&&x>=10&&x<=25.8&&z>=16.4&&z<=21.6)return 8;
  return 0;
 }
 
-// JOGADOR
 const player=new THREE.Vector3(0,0,35);
 let yaw=0,pitch=0;
 const keys={};
@@ -495,136 +539,118 @@ function start(){
  document.getElementById("menu").style.display="none";
  document.getElementById("hud").style.display="block";
  camera.position.set(player.x,1.7,player.z);
+ renderer.domElement.requestPointerLock?.();
 }
 document.getElementById("play").addEventListener("click",start);
 
-// TECLADO
 const keyMap={
- KeyW:"w",ArrowUp:"w",
- KeyS:"s",ArrowDown:"s",
- KeyA:"a",ArrowLeft:"a",
- KeyD:"d",ArrowRight:"d"
+ KeyW:"w",ArrowUp:"w",KeyS:"s",ArrowDown:"s",
+ KeyA:"a",ArrowLeft:"a",KeyD:"d",ArrowRight:"d"
 };
 addEventListener("keydown",e=>{
- if(keyMap[e.code]){
-  keys[keyMap[e.code]]=true;
-  e.preventDefault();
- }
+ if(keyMap[e.code]){keys[keyMap[e.code]]=true;e.preventDefault();}
+ if(!started)return;
+ if(e.code==="KeyI")toggleBackpack();
+ if(e.code==="KeyF")toggleFlashlight();
+ if(e.code==="KeyE")pickItem();
+ if(e.code==="KeyG")storeHeldItem();
+ if(e.code==="KeyQ")dropHeldItem();
+ if(e.code==="Digit1")selectBackpackSlot(0);
+ if(e.code==="Digit2")selectBackpackSlot(1);
+ if(e.code==="Digit3")selectBackpackSlot(2);
+ if(e.code==="Digit4")selectBackpackSlot(3);
 });
 addEventListener("keyup",e=>{
  if(keyMap[e.code])keys[keyMap[e.code]]=false;
 });
 
-// CONTROLES CELULAR
 const padMap={up:"w",down:"s",left:"a",right:"d"};
 document.querySelectorAll(".pad button").forEach(button=>{
  const key=padMap[button.id];
- button.addEventListener("pointerdown",e=>{
-  e.preventDefault();
-  keys[key]=true;
- });
+ button.addEventListener("pointerdown",e=>{e.preventDefault();keys[key]=true;});
  ["pointerup","pointerleave","pointercancel"].forEach(event=>{
   button.addEventListener(event,()=>keys[key]=false);
  });
 });
 
-// CÂMERA POR ARRASTO
-let touchId=null;
-let lastX=0,lastY=0;
-
+// CÂMERA POR ARRASTO NO CELULAR
+let touchId=null,lastX=0,lastY=0;
 renderer.domElement.addEventListener("pointerdown",e=>{
- if(!started || e.pointerType!=="touch")return;
- touchId=e.pointerId;
- lastX=e.clientX;
- lastY=e.clientY;
+ if(!started||e.pointerType!=="touch")return;
+ touchId=e.pointerId;lastX=e.clientX;lastY=e.clientY;
  renderer.domElement.setPointerCapture(e.pointerId);
 });
-
 renderer.domElement.addEventListener("pointermove",e=>{
  if(touchId!==e.pointerId)return;
- const dx=e.clientX-lastX;
- const dy=e.clientY-lastY;
- yaw-=dx*.006;
- pitch-=dy*.004;
- pitch=Math.max(-1.2,Math.min(1.2,pitch));
- lastX=e.clientX;
- lastY=e.clientY;
+ yaw-=(e.clientX-lastX)*.006;
+ pitch-=(e.clientY-lastY)*.004;
+ pitch=THREE.MathUtils.clamp(pitch,-1.2,1.2);
+ lastX=e.clientX;lastY=e.clientY;
 });
-
-function stopTouch(e){
- if(touchId===e.pointerId)touchId=null;
-}
+function stopTouch(e){if(touchId===e.pointerId)touchId=null;}
 renderer.domElement.addEventListener("pointerup",stopTouch);
 renderer.domElement.addEventListener("pointercancel",stopTouch);
 
-// MOUSE PC
 renderer.domElement.addEventListener("click",()=>{
- if(started && innerWidth>700){
-  renderer.domElement.requestPointerLock?.();
- }
+ if(started&&innerWidth>700)renderer.domElement.requestPointerLock?.();
 });
-
 document.addEventListener("mousemove",e=>{
  if(document.pointerLockElement===renderer.domElement){
   yaw-=e.movementX*.002;
-  pitch-=e.movementY*.002;
-  pitch=Math.max(-1.2,Math.min(1.2,pitch));
+  pitch=THREE.MathUtils.clamp(pitch-e.movementY*.002,-1.2,1.2);
  }
 });
 
-// MOVIMENTO
+// LOOP
 const clock=new THREE.Clock();
-
 function animate(){
  requestAnimationFrame(animate);
  const dt=Math.min(clock.getDelta(),.04);
-
  if(started){
   const forward=new THREE.Vector3(-Math.sin(yaw),0,-Math.cos(yaw));
   const right=new THREE.Vector3(Math.cos(yaw),0,-Math.sin(yaw));
   const move=new THREE.Vector3();
-
   if(keys.w)move.add(forward);
   if(keys.s)move.sub(forward);
   if(keys.d)move.add(right);
   if(keys.a)move.sub(right);
-
   if(move.lengthSq()>0){
    move.normalize().multiplyScalar(5*dt);
    player.add(move);
   }
-
-  // Limites da nova sala
   player.x=THREE.MathUtils.clamp(player.x,-58.5,58.5);
   player.z=THREE.MathUtils.clamp(player.z,-48.5,48.5);
-
-  // Transição suave de altura para evitar teletransporte
   const targetHeight=getFloorHeight(player.x,player.z);
-  playerY+= (targetHeight-playerY)*Math.min(1,dt*12);
-
-  if(Math.abs(targetHeight-playerY)<.025){
-   playerY=targetHeight;
-  }
-
+  playerY+=(targetHeight-playerY)*Math.min(1,dt*12);
+  if(Math.abs(targetHeight-playerY)<.025)playerY=targetHeight;
   camera.position.set(player.x,playerY+1.7,player.z);
-
   camera.rotation.order="YXZ";
   camera.rotation.y=yaw;
   camera.rotation.x=pitch;
- }
 
+  if(flashlightOn){
+   battery=Math.max(0,battery-dt*.12);
+   if(battery===0){
+    toggleFlashlight(false);
+    message("A BATERIA DA LANTERNA ACABOU");
+   }
+   updateBattery();
+  }
+ }
  renderer.render(scene,camera);
 }
 animate();
 
-// REDIMENSIONAMENTO
+renderBackpack();
+updateBattery();
+updateInventoryText();
+
 addEventListener("resize",()=>{
  camera.aspect=innerWidth/innerHeight;
  camera.updateProjectionMatrix();
  renderer.setSize(innerWidth,innerHeight);
- renderer.setPixelRatio(Math.min(devicePixelRatio,1.5));
+ renderer.setPixelRatio(Math.min(devicePixelRatio,1.25));
 });
-
 })();
 </script>
 </body>
