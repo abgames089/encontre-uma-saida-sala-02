@@ -7,50 +7,28 @@
 <title>ENCONTRE UMA SAÍDA! — SALA 02</title>
 <style>
 *{box-sizing:border-box}
-body{
- margin:0;overflow:hidden;background:#080a0d;
- font-family:Arial;color:white;touch-action:none
-}
+body{margin:0;overflow:hidden;background:#080a0d;font-family:Arial;color:white;touch-action:none}
 canvas{display:block}
 #menu{
- position:fixed;inset:0;z-index:5;
- display:flex;align-items:center;justify-content:center;
- flex-direction:column;text-align:center;
+ position:fixed;inset:0;z-index:5;display:flex;align-items:center;
+ justify-content:center;flex-direction:column;text-align:center;
  background:radial-gradient(#252a30,#080a0d 75%);
 }
 h1{font-size:clamp(28px,6vw,52px)}
 h1 span{color:#d71920}
 #menu p{color:#aaa;letter-spacing:2px;font-size:12px}
-button{
- background:#a80f18;color:white;border:1px solid #ed4545;
- padding:13px 22px;border-radius:4px;font-weight:bold;
- touch-action:none;
-}
+button{background:#a80f18;color:white;border:1px solid #ed4545;padding:13px 22px;border-radius:4px;font-weight:bold;touch-action:none}
 #hud{display:none;position:fixed;inset:0;pointer-events:none}
 #brand{position:absolute;top:15px;left:15px;font-size:13px;letter-spacing:2px}
 #controls{position:absolute;bottom:20px;left:15px;pointer-events:auto}
-.pad{
- display:grid;
- grid-template-columns:repeat(3,53px);
- grid-template-rows:repeat(2,53px);gap:5px
-}
-.pad button{
- padding:0;background:#252a30cc;
- border-color:#777;font-size:20px
-}
+.pad{display:grid;grid-template-columns:repeat(3,53px);grid-template-rows:repeat(2,53px);gap:5px}
+.pad button{padding:0;background:#252a30cc;border-color:#777;font-size:20px}
 #up{grid-column:2}
 #left{grid-column:1;grid-row:2}
 #down{grid-column:2;grid-row:2}
 #right{grid-column:3;grid-row:2}
-#crosshair{
- position:absolute;left:50%;top:50%;
- transform:translate(-50%,-50%);
- width:7px;height:7px;border:1px solid #ddd;border-radius:50%;
-}
-#footer{
- position:absolute;bottom:8px;width:100%;
- text-align:center;color:#777;font-size:10px
-}
+#crosshair{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:7px;height:7px;border:1px solid #ddd;border-radius:50%}
+#footer{position:absolute;bottom:8px;width:100%;text-align:center;color:#777;font-size:10px}
 </style>
 </head>
 <body>
@@ -58,7 +36,7 @@ button{
 <div id="menu">
  <h1>ENCONTRE UMA <span>SAÍDA!</span></h1>
  <p>AB GAMES APRESENTA</p>
- <h2>SALA 02 — V1.4</h2>
+ <h2>SALA 02 — V1.5</h2>
  <p>INSTALAÇÃO DE ENERGIA</p>
  <button id="play">ENTRAR NA SALA</button>
  <p>PC: WASD + MOUSE<br>CELULAR: BOTÕES + ARRASTAR NA TELA</p>
@@ -82,8 +60,7 @@ button{
 <script>
 (()=>{
 if(!window.THREE){
- document.getElementById("menu").innerHTML=
- "<h2>Erro ao carregar o jogo</h2><p>Verifique sua conexão.</p>";
+ document.getElementById("menu").innerHTML="<h2>Erro ao carregar o jogo</h2><p>Verifique sua conexão.</p>";
  return;
 }
 
@@ -91,10 +68,7 @@ const scene=new THREE.Scene();
 scene.background=new THREE.Color(0x090c11);
 scene.fog=new THREE.Fog(0x090c11,45,105);
 
-const camera=new THREE.PerspectiveCamera(
- 75,innerWidth/innerHeight,.1,150
-);
-
+const camera=new THREE.PerspectiveCamera(75,innerWidth/innerHeight,.1,150);
 const renderer=new THREE.WebGLRenderer({antialias:false});
 renderer.setSize(innerWidth,innerHeight);
 renderer.setPixelRatio(Math.min(devicePixelRatio,1.5));
@@ -103,11 +77,8 @@ document.body.appendChild(renderer.domElement);
 
 // MATERIAIS
 function mat(color,roughness=1,metalness=0){
- return new THREE.MeshStandardMaterial({
-  color,roughness,metalness
- });
+ return new THREE.MeshStandardMaterial({color,roughness,metalness});
 }
-
 const floorMat=mat(0x30343a);
 const wallMat=mat(0x242930);
 const metalMat=mat(0x65717b,.65,.7);
@@ -115,74 +86,50 @@ const darkMetal=mat(0x171d23,.8,.5);
 const blackMat=mat(0x090d11);
 const yellowMat=mat(0xd1a12a);
 const bodyMat=mat(0x39444b,.65,.55);
-const rubberMat=mat(0x16191c);
-const redMat=mat(0x8e151b);
 
 const screenMat=new THREE.MeshStandardMaterial({
- color:0x17404a,
- emissive:0x09242d,
- emissiveIntensity:.8
+ color:0x17404a,emissive:0x09242d,emissiveIntensity:.8
 });
-
 const greenMat=new THREE.MeshStandardMaterial({
- color:0x178b55,
- emissive:0x07552b,
- emissiveIntensity:.8
+ color:0x178b55,emissive:0x07552b,emissiveIntensity:.8
 });
-
 const orangeMat=new THREE.MeshStandardMaterial({
- color:0xc17b21,
- emissive:0x5c3105,
- emissiveIntensity:.7
+ color:0xc17b21,emissive:0x5c3105,emissiveIntensity:.7
+});
+const redLightMat=new THREE.MeshStandardMaterial({
+ color:0x9d171d,emissive:0x65070b,emissiveIntensity:1
 });
 
 // FUNÇÕES 3D
 function box(x,y,z,w,h,d,material){
- const obj=new THREE.Mesh(
-  new THREE.BoxGeometry(w,h,d),material
- );
+ const obj=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),material);
  obj.position.set(x,y,z);
  scene.add(obj);
  return obj;
 }
-
 function cylinder(x,y,z,r1,r2,h,material,segments=16){
- const obj=new THREE.Mesh(
-  new THREE.CylinderGeometry(r1,r2,h,segments),
-  material
- );
+ const obj=new THREE.Mesh(new THREE.CylinderGeometry(r1,r2,h,segments),material);
  obj.position.set(x,y,z);
  scene.add(obj);
  return obj;
 }
-
 function pipe(x1,y1,z1,x2,y2,z2,r,material=metalMat){
  const a=new THREE.Vector3(x1,y1,z1);
  const b=new THREE.Vector3(x2,y2,z2);
  const dir=new THREE.Vector3().subVectors(b,a);
-
- const obj=new THREE.Mesh(
-  new THREE.CylinderGeometry(r,r,dir.length(),12),
-  material
- );
+ const obj=new THREE.Mesh(new THREE.CylinderGeometry(r,r,dir.length(),12),material);
  obj.position.copy(a).add(b).multiplyScalar(.5);
- obj.quaternion.setFromUnitVectors(
-  new THREE.Vector3(0,1,0),dir.normalize()
- );
+ obj.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0),dir.normalize());
  scene.add(obj);
  return obj;
 }
 
 // ESTRUTURA DA SALA — 70 x 55
 box(0,-.25,0,70,.5,55,floorMat);
-
-// PAREDES
 box(0,8,-27.5,70,16,.5,wallMat);
 box(0,8,27.5,70,16,.5,wallMat);
 box(-35,8,0,.5,16,55,wallMat);
 box(35,8,0,.5,16,55,wallMat);
-
-// TETO
 box(0,16,0,70,.5,55,wallMat);
 
 // FAIXAS INDUSTRIAIS
@@ -191,10 +138,8 @@ for(let x=-30;x<=30;x+=10){
  box(x,1,27.2,3,.18,.08,yellowMat);
 }
 
-// ILUMINAÇÃO
-scene.add(new THREE.HemisphereLight(
- 0xb5c4d5,0x303039,.8
-));
+// ILUMINAÇÃO GERAL
+scene.add(new THREE.HemisphereLight(0xb5c4d5,0x303039,.8));
 
 const ceilingLight=new THREE.PointLight(0xb5c9df,100,65);
 ceilingLight.position.set(0,13,0);
@@ -208,9 +153,8 @@ const sideLight2=new THREE.PointLight(0x65778d,35,40);
 sideLight2.position.set(20,9,8);
 scene.add(sideLight2);
 
-// GERADOR INDUSTRIAL
+// GERADORES
 function createGenerator(x,z,id){
-
  box(x,.16,z,6.2,.32,4.8,darkMetal);
  box(x,.36,z,5.8,.15,4.4,metalMat);
 
@@ -223,7 +167,6 @@ function createGenerator(x,z,id){
 
  box(x,1.75,z,5.15,2.45,3.65,bodyMat);
  box(x,3.05,z,4.85,.2,3.4,metalMat);
-
  box(x-2.61,1.75,z,.12,2.1,3.4,darkMetal);
  box(x+2.61,1.75,z,.12,2.1,3.4,darkMetal);
 
@@ -234,14 +177,9 @@ function createGenerator(x,z,id){
  for(let i=0;i<4;i++){
   cylinder(x,1.65,z+2.08+i*.12,.84,.84,.045,metalMat,24);
  }
-
  for(let i=0;i<8;i++){
   const a=i*Math.PI/4;
-  cylinder(
-   x+Math.cos(a)*.57,
-   1.65+Math.sin(a)*.57,
-   z+2.62,.055,.055,.045,yellowMat,8
-  );
+  cylinder(x+Math.cos(a)*.57,1.65+Math.sin(a)*.57,z+2.62,.055,.055,.045,yellowMat,8);
  }
 
  box(x,3.22,z,3.7,.15,2.5,metalMat);
@@ -257,14 +195,11 @@ function createGenerator(x,z,id){
 
  box(x-.48,1.97,z+2.07,.14,.14,.06,greenMat);
  box(x-.2,1.97,z+2.07,.14,.14,.06,orangeMat);
- box(x+.08,1.97,z+2.07,.14,.14,.06,redMat);
+ box(x+.08,1.97,z+2.07,.14,.14,.06,redLightMat);
 
  for(let i=0;i<3;i++){
-  cylinder(
-   x-.45+i*.45,1.65,z+2.05,
-   .09,.09,.07,
-   i===0?greenMat:(i===1?yellowMat:redMat),12
-  );
+  cylinder(x-.45+i*.45,1.65,z+2.05,.09,.09,.07,
+   i===0?greenMat:(i===1?yellowMat:redLightMat),12);
  }
 
  box(x,3.35,z+1.65,.85,.2,.08,yellowMat);
@@ -288,13 +223,11 @@ function createGenerator(x,z,id){
   const px=x-1+i;
   box(px,3.4,z-1.5,.45,.12,.5,darkMetal);
  }
-
  for(let i=-2;i<=2;i++){
   box(x+i*.85,.57,z+2.03,.16,.25,.12,metalMat);
  }
 }
 
-// POSIÇÃO DOS GERADORES
 createGenerator(-17,-9,1);
 createGenerator(0,-9,2);
 createGenerator(17,-9,3);
@@ -308,9 +241,6 @@ pipe(17,4,-9,17,5.8,-9,.15);
 for(let x=-30;x<=30;x+=10){
  pipe(x,10,-26.5,x,10,26.5,.12);
  pipe(x,10,-26.5,x,10.7,-26.5,.08,yellowMat);
-}
-
-for(let x=-30;x<=30;x+=10){
  box(x,9.5,-26,.35,1,.35,darkMetal);
  box(x,9.5,26,.35,1,.35,darkMetal);
 }
@@ -324,142 +254,166 @@ for(let z=-25;z<=25;z+=10){
 }
 
 // ==================================================
-// ESCADARIA INDUSTRIAL GIGANTE — V1.4
+// ESCADARIA GIGANTE
 // ==================================================
-
-const stairWidth=3.6;
 const stairSteps=16;
 const stairRise=.25;
 const stairDepth=.75;
 
 function createStairFlight(x,zStart,direction,yStart){
-
  const totalLength=stairSteps*stairDepth;
  const endZ=zStart+direction*totalLength;
  const endY=yStart+stairSteps*stairRise;
+ const sideOffset=3.6/2+.12;
 
- // Degraus
  for(let i=0;i<stairSteps;i++){
   const z=zStart+direction*(i*stairDepth+stairDepth/2);
   const y=yStart+(i+1)*stairRise;
-
-  box(x,y-.1,z,stairWidth,.2,stairDepth,metalMat);
-
-  // Faixa antiderrapante
-  box(
-   x,y+.006,z+direction*stairDepth*.28,
-   stairWidth-.18,.025,.07,darkMetal
-  );
-
-  // Reforço embaixo do degrau
-  box(
-   x,y-.24,z,
-   stairWidth-.25,.12,.16,darkMetal
-  );
+  box(x,y-.1,z,3.6,.2,stairDepth,metalMat);
+  box(x,y+.006,z+direction*stairDepth*.28,3.42,.025,.07,darkMetal);
+  box(x,y-.24,z,3.35,.12,.16,darkMetal);
  }
 
- // Estrutura inclinada lateral
- const sideOffset=stairWidth/2+.12;
-
- pipe(
-  x-sideOffset,yStart-.1,zStart,
-  x-sideOffset,endY-.1,endZ,
-  .16,darkMetal
- );
-
- pipe(
-  x+sideOffset,yStart-.1,zStart,
-  x+sideOffset,endY-.1,endZ,
-  .16,darkMetal
- );
-
- // Corrimãos e postes
  for(const side of [-1,1]){
   const railX=x+side*sideOffset;
+
+  pipe(railX,yStart-.1,zStart,railX,endY-.1,endZ,.16,darkMetal);
 
   for(let i=0;i<=stairSteps;i+=4){
    const t=i/stairSteps;
    const z=zStart+direction*t*totalLength;
    const y=yStart+t*stairSteps*stairRise;
-
-   pipe(
-    railX,y+.05,z,
-    railX,y+1.05,z,
-    .065,metalMat
-   );
+   pipe(railX,y+.05,z,railX,y+1.05,z,.065,metalMat);
   }
 
-  pipe(
-   railX,yStart+1.05,zStart,
-   railX,endY+1.05,endZ,
-   .085,metalMat
-  );
-
-  // Barra intermediária de proteção
-  pipe(
-   railX,yStart+.55,zStart,
-   railX,endY+.55,endZ,
-   .045,darkMetal
-  );
+  pipe(railX,yStart+1.05,zStart,railX,endY+1.05,endZ,.085,metalMat);
+  pipe(railX,yStart+.55,zStart,railX,endY+.55,endZ,.045,darkMetal);
  }
 
- // Travessas inferiores de sustentação
  for(let i=0;i<4;i++){
   const t=i/3;
   const z=zStart+direction*t*totalLength;
   const y=yStart+t*stairSteps*stairRise;
-
-  pipe(
-   x-1.3,y-.35,z,
-   x+1.3,y-.35,z,
-   .09,darkMetal
-  );
+  pipe(x-1.3,y-.35,z,x+1.3,y-.35,z,.09,darkMetal);
  }
 }
 
-// Primeiro lance: sobe até o patamar
 createStairFlight(24.5,17,-1,0);
-
-// Segundo lance: sobe até o andar superior
 createStairFlight(29.5,5,1,4);
 
-// PATAMAR INTERMEDIÁRIO
+// PATAMAR
 box(27,4,4.65,9.5,.3,3.2,metalMat);
 box(27,3.78,4.65,8.8,.12,2.6,darkMetal);
 
-// Plataforma superior
+// PLATAFORMA DE CHEGADA
 box(29.5,8,19,9,.35,7,metalMat);
 box(29.5,7.78,19,8.5,.12,6.5,darkMetal);
 
-// Estrutura inferior da plataforma
 for(let x=26;x<=33;x+=2){
  box(x,6.9,19,.2,2,.2,darkMetal);
 }
 
-// Corrimão da plataforma superior
+// PROTEÇÃO DA PLATAFORMA
 for(const x of [25.2,33.8]){
  pipe(x,8.2,17,x,9.25,17,.07,metalMat);
  pipe(x,8.2,21,x,9.25,21,.07,metalMat);
  pipe(x,9.25,17,x,9.25,21,.07,metalMat);
  pipe(x,8.75,17,x,8.75,21,.045,darkMetal);
 }
-
 for(let z=17;z<=21;z+=2){
  pipe(25.2,8.2,z,25.2,9.25,z,.06,metalMat);
  pipe(33.8,8.2,z,33.8,9.25,z,.06,metalMat);
 }
 
-// VIGAS DE APOIO DA PLATAFORMA
-for(let x=26;x<=33;x+=2){
- box(x,7.1,16.9,.25,.25,.5,darkMetal);
- box(x,7.1,21.1,.25,.25,.5,darkMetal);
+// ==================================================
+// V1.5 — PASSARELA DO ANDAR SUPERIOR
+// ==================================================
+
+// Piso da passarela, ligando a plataforma ao painel
+for(let x=10;x<25;x+=2){
+ box(x+1,8,19,2,.3,5,metalMat);
+ box(x+1,8.17,19,1.65,.035,4.55,darkMetal);
 }
 
-// ==================================================
-// SISTEMA DE ALTURA DO JOGADOR
-// ==================================================
+// Reforços sob a passarela
+for(let x=11;x<=25;x+=4){
+ box(x,6.9,16.7,.22,2.1,.22,darkMetal);
+ box(x,6.9,21.3,.22,2.1,.22,darkMetal);
+ pipe(x,6.9,16.7,x,7.8,19,.09,metalMat);
+ pipe(x,6.9,21.3,x,7.8,19,.09,metalMat);
+}
 
+// Corrimãos dos dois lados
+for(const z of [16.35,21.65]){
+ for(let x=10;x<=29;x+=3){
+  pipe(x,8.15,z,x,9.35,z,.065,metalMat);
+ }
+ pipe(10,9.35,z,29.5,9.35,z,.085,metalMat);
+ pipe(10,8.75,z,29.5,8.75,z,.045,darkMetal);
+}
+
+// Postes extras de proteção
+for(const z of [16.35,21.65]){
+ for(let x=10;x<=29;x+=3){
+  box(x,8.72,z,.12,1.1,.12,darkMetal);
+ }
+}
+
+// Faixas amarelas de segurança nas bordas
+box(19.5,8.19,16.48,18,.035,.12,yellowMat);
+box(19.5,8.19,21.52,18,.035,.12,yellowMat);
+
+// Painel de manutenção no final da passarela
+box(9.75,10,19,.45,3.5,4.7,darkMetal);
+box(9.48,10,19,.08,2.8,4.2,metalMat);
+
+// Tela principal voltada para a passarela
+box(9.42,10.45,19,.08,1.25,1.9,blackMat);
+box(9.36,10.45,19,.035,.95,1.55,screenMat);
+
+// Indicadores luminosos
+for(let i=0;i<4;i++){
+ box(9.35,9.45,17.85+i*.75,.06,.16,.16,
+  i===0?greenMat:(i===1?orangeMat:redLightMat));
+}
+
+// Botões do painel
+for(let i=0;i<5;i++){
+ cylinder(9.35,9.05,17.6+i*.7,.09,.09,.07,
+  i===0?greenMat:(i===1?yellowMat:darkMetal),12);
+}
+
+// Grade de ventilação do painel
+for(let i=0;i<7;i++){
+ box(9.34,11.65,17.8+i*.4,.05,.055,.24,metalMat);
+}
+
+// Luzes industriais sobre a passarela
+const catwalkLight1=new THREE.PointLight(0x9bb8d1,24,18);
+catwalkLight1.position.set(18,12,19);
+scene.add(catwalkLight1);
+
+const catwalkLight2=new THREE.PointLight(0x9bb8d1,20,16);
+catwalkLight2.position.set(10.5,12,19);
+scene.add(catwalkLight2);
+
+// Lâmpadas visuais
+box(18,13,19,1.3,.12,.5,screenMat);
+box(11,13,19,1.3,.12,.5,screenMat);
+
+// Placas de identificação industrial
+box(18,9.65,16.4,2.4,.35,.08,yellowMat);
+box(18,9.65,21.6,2.4,.35,.08,yellowMat);
+
+// ==================================================
+// ALTURA DO JOGADOR
+// ==================================================
 function getFloorHeight(x,z){
+
+ // Passarela superior
+ if(x>=10 && x<=25 && z>=16.4 && z<=21.6){
+  return 8;
+ }
 
  // Patamar intermediário
  if(x>=22.1 && x<=32 && z>=3.5 && z<=5.1){
@@ -498,7 +452,6 @@ function start(){
  document.getElementById("hud").style.display="block";
  camera.position.set(player.x,1.7,player.z);
 }
-
 document.getElementById("play").addEventListener("click",start);
 
 // TECLADO
@@ -508,35 +461,30 @@ const keyMap={
  KeyA:"a",ArrowLeft:"a",
  KeyD:"d",ArrowRight:"d"
 };
-
 addEventListener("keydown",e=>{
  if(keyMap[e.code]){
   keys[keyMap[e.code]]=true;
   e.preventDefault();
  }
 });
-
 addEventListener("keyup",e=>{
  if(keyMap[e.code])keys[keyMap[e.code]]=false;
 });
 
 // CONTROLES CELULAR
 const padMap={up:"w",down:"s",left:"a",right:"d"};
-
 document.querySelectorAll(".pad button").forEach(button=>{
  const key=padMap[button.id];
-
  button.addEventListener("pointerdown",e=>{
   e.preventDefault();
   keys[key]=true;
  });
-
  ["pointerup","pointerleave","pointercancel"].forEach(event=>{
   button.addEventListener(event,()=>keys[key]=false);
  });
 });
 
-// CÂMERA PELO ARRASTO
+// CÂMERA POR ARRASTO
 let touchId=null;
 let lastX=0,lastY=0;
 
@@ -550,14 +498,11 @@ renderer.domElement.addEventListener("pointerdown",e=>{
 
 renderer.domElement.addEventListener("pointermove",e=>{
  if(touchId!==e.pointerId)return;
-
  const dx=e.clientX-lastX;
  const dy=e.clientY-lastY;
-
  yaw-=dx*.006;
  pitch-=dy*.004;
  pitch=Math.max(-1.2,Math.min(1.2,pitch));
-
  lastX=e.clientX;
  lastY=e.clientY;
 });
@@ -591,12 +536,8 @@ function animate(){
  const dt=Math.min(clock.getDelta(),.04);
 
  if(started){
-  const forward=new THREE.Vector3(
-   -Math.sin(yaw),0,-Math.cos(yaw)
-  );
-  const right=new THREE.Vector3(
-   Math.cos(yaw),0,-Math.sin(yaw)
-  );
+  const forward=new THREE.Vector3(-Math.sin(yaw),0,-Math.cos(yaw));
+  const right=new THREE.Vector3(Math.cos(yaw),0,-Math.sin(yaw));
   const move=new THREE.Vector3();
 
   if(keys.w)move.add(forward);
@@ -609,18 +550,11 @@ function animate(){
    player.add(move);
   }
 
-  // LIMITES DA SALA
   player.x=THREE.MathUtils.clamp(player.x,-33.5,33.5);
   player.z=THREE.MathUtils.clamp(player.z,-25.5,25.5);
 
-  // ALTURA AUTOMÁTICA NAS ESCADAS E PLATAFORMAS
   const floorHeight=getFloorHeight(player.x,player.z);
-
-  camera.position.set(
-   player.x,
-   floorHeight+1.7,
-   player.z
-  );
+  camera.position.set(player.x,floorHeight+1.7,player.z);
 
   camera.rotation.order="YXZ";
   camera.rotation.y=yaw;
@@ -629,7 +563,6 @@ function animate(){
 
  renderer.render(scene,camera);
 }
-
 animate();
 
 addEventListener("resize",()=>{
