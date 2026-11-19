@@ -494,47 +494,45 @@ camera.add(flashlight);
 backpack[0]=flashlight;
 
 // =================================================
-// SISTEMA NOVO DE FLASH — LUZES NA CENA
+// SISTEMA DE LANTERNA — LUZ CONCENTRADA E DINÂMICA
 // =================================================
 
-// Alvo da luz principal
 const spotTarget=new THREE.Object3D();
 scene.add(spotTarget);
 
-// Luz principal: holofote branco forte
 const spot=new THREE.SpotLight(
  0xffffff,
  0,
- 100,
- Math.PI/4,
- .35,
- 1
+ 16,
+ Math.PI/7,
+ .55,
+ 2
 );
+
 spot.castShadow=false;
-spot.visible=true;
+spot.target=spotTarget;
 scene.add(spot);
 
-// Luz auxiliar para iluminar objetos próximos
 const nearLight=new THREE.PointLight(
  0xffffff,
  0,
- 35,
- 1
+ 7,
+ 2
 );
+
 nearLight.castShadow=false;
 scene.add(nearLight);
 
-// Clarão amplo
 const flashLight=new THREE.PointLight(
  0xfff4df,
  0,
- 22,
- 1
+ 5,
+ 2
 );
+
 flashLight.castShadow=false;
 scene.add(flashLight);
 
-// Feixe visual que sai da lanterna
 const beamMaterial=new THREE.MeshBasicMaterial({
  color:0xffffff,
  transparent:true,
@@ -543,14 +541,14 @@ const beamMaterial=new THREE.MeshBasicMaterial({
  depthWrite:false
 });
 
-const beamGeometry=new THREE.ConeGeometry(3.5,35,20,1,true);
+const beamGeometry=new THREE.ConeGeometry(1.35,12,16,1,true);
 const visibleBeam=new THREE.Mesh(beamGeometry,beamMaterial);
+
 visibleBeam.rotation.x=-Math.PI/2;
-visibleBeam.position.set(.38,-.3,-18);
+visibleBeam.position.set(.38,-.3,-6.5);
 visibleBeam.renderOrder=2;
 camera.add(visibleBeam);
 
-// Brilho da lente
 const lensGlow=new THREE.Mesh(
  new THREE.SphereGeometry(.12,12,12),
  new THREE.MeshBasicMaterial({
@@ -559,6 +557,7 @@ const lensGlow=new THREE.Mesh(
   opacity:0
  })
 );
+
 lensGlow.position.set(.38,-.3,-.95);
 camera.add(lensGlow);
 
@@ -572,14 +571,15 @@ function updateFlashlightDirection(){
  camera.getWorldPosition(lightPosition);
 
  spot.position.copy(lightPosition);
+
  spotTarget.position.copy(lightPosition)
-  .addScaledVector(lightDirection,35);
+  .addScaledVector(lightDirection,14);
 
  nearLight.position.copy(lightPosition)
   .addScaledVector(lightDirection,.7);
 
  flashLight.position.copy(lightPosition)
-  .addScaledVector(lightDirection,2);
+  .addScaledVector(lightDirection,1.5);
 
  spotTarget.updateMatrixWorld(true);
  spot.updateMatrixWorld(true);
@@ -587,15 +587,22 @@ function updateFlashlightDirection(){
  flashLight.updateMatrixWorld(true);
 }
 
+function updateFlashlightPower(){
+ const level=Math.max(0,Math.min(1,battery/100));
+ const fade=Math.pow(level,1.5);
+
+ spot.intensity=flashlightOn?42*fade:0;
+ nearLight.intensity=flashlightOn?7*fade:0;
+ flashLight.intensity=flashlightOn?2.2*fade:0;
+
+ beamMaterial.opacity=flashlightOn?.035*fade:0;
+ lensGlow.material.opacity=flashlightOn?fade:0;
+}
+
 function setFlashlightPower(on){
  flashlightOn=on;
 
- spot.intensity=on?4500:0;
- nearLight.intensity=on?500:0;
- flashLight.intensity=on?180:0;
-
- beamMaterial.opacity=on?.075:0;
- lensGlow.material.opacity=on?1:0;
+ updateFlashlightPower();
 
  document.getElementById("lightButton").textContent=
   on?"APAGAR [F]":"LANTERNA [F]";
@@ -986,11 +993,12 @@ function animate(){
   camera.rotation.y=yaw;
   camera.rotation.x=pitch;
 
-  // A luz acompanha a câmera no mundo 3D.
   if(flashlightOn){
    updateFlashlightDirection();
 
    battery=Math.max(0,battery-dt*.12);
+
+   updateFlashlightPower();
 
    if(battery===0){
     setFlashlightPower(false);
