@@ -12,7 +12,8 @@ canvas{display:block}
 button{
  background:#252a30dd;color:white;border:1px solid #777;
  padding:12px;border-radius:4px;font-weight:bold;touch-action:none;
- cursor:pointer;transition:background .15s,border-color .15s
+ cursor:pointer;transition:background .15s,border-color .15s;
+ user-select:none;-webkit-user-select:none;
 }
 button:active{background:#a80f18;border-color:#ff5555}
 #menu{
@@ -24,15 +25,21 @@ h1{font-size:clamp(28px,6vw,52px)}
 h1 span{color:#d71920}
 #menu p{color:#999;letter-spacing:2px;font-size:12px}
 #play{background:#a80f18;border-color:#ed4545;padding:14px 25px}
-#hud{display:none;position:fixed;inset:0;pointer-events:none}
+#hud{
+ display:none;position:fixed;inset:0;
+ pointer-events:none;z-index:5
+}
 #brand{position:absolute;top:15px;left:15px;font-size:13px;letter-spacing:2px;text-shadow:0 2px 5px #000}
 #crosshair{
  position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
  width:7px;height:7px;border:1px solid #ddd;border-radius:50%
 }
-#controls{position:absolute;bottom:18px;left:15px;pointer-events:auto}
+#controls{position:absolute;bottom:18px;left:15px;pointer-events:auto;z-index:8}
 .pad{display:grid;grid-template-columns:repeat(3,53px);grid-template-rows:repeat(2,53px);gap:5px}
-.pad button{padding:0;background:#252a30cc;font-size:20px}
+.pad button{
+ padding:0;background:#252a30dd;font-size:20px;
+ position:relative;z-index:9;min-width:0;
+}
 #up{grid-column:2}
 #left{grid-column:1;grid-row:2}
 #down{grid-column:2;grid-row:2}
@@ -40,7 +47,7 @@ h1 span{color:#d71920}
 #lookHint{position:absolute;right:15px;bottom:125px;color:#aaa;font-size:10px}
 #actions{
  position:absolute;right:14px;bottom:18px;display:flex;
- flex-direction:column;gap:7px;pointer-events:auto
+ flex-direction:column;gap:7px;pointer-events:auto;z-index:8
 }
 #actions button{
  min-width:112px;padding:11px 12px;background:#171a1ddd;
@@ -162,6 +169,11 @@ renderer.toneMapping=THREE.NoToneMapping;
 renderer.toneMappingExposure=1;
 document.body.appendChild(renderer.domElement);
 
+// CAMADA DO JOGO ATRÁS DOS CONTROLES
+renderer.domElement.style.position="fixed";
+renderer.domElement.style.inset="0";
+renderer.domElement.style.zIndex="0";
+
 function mat(color,roughness=1,metalness=0){
  return new THREE.MeshStandardMaterial({color,roughness,metalness});
 }
@@ -220,7 +232,6 @@ for(let z=-45;z<=45;z+=10){
  box(59.7,1,z,.08,.18,3,yellowMat);
 }
 
-// Ambiente sem iluminação fixa
 scene.add(new THREE.HemisphereLight(0x202735,0x08090c,.035));
 
 function createGenerator(x,z){
@@ -493,57 +504,30 @@ flashlight.visible=false;
 camera.add(flashlight);
 backpack[0]=flashlight;
 
-// =================================================
-// SISTEMA DE LANTERNA — LUZ CONCENTRADA E DINÂMICA
-// =================================================
-
+// SISTEMA DE LANTERNA
 const spotTarget=new THREE.Object3D();
 scene.add(spotTarget);
 
-const spot=new THREE.SpotLight(
- 0xffffff,
- 0,
- 16,
- Math.PI/7,
- .55,
- 2
-);
-
+const spot=new THREE.SpotLight(0xffffff,0,16,Math.PI/7,.55,2);
 spot.castShadow=false;
 spot.target=spotTarget;
 scene.add(spot);
 
-const nearLight=new THREE.PointLight(
- 0xffffff,
- 0,
- 7,
- 2
-);
-
+const nearLight=new THREE.PointLight(0xffffff,0,7,2);
 nearLight.castShadow=false;
 scene.add(nearLight);
 
-const flashLight=new THREE.PointLight(
- 0xfff4df,
- 0,
- 5,
- 2
-);
-
+const flashLight=new THREE.PointLight(0xfff4df,0,5,2);
 flashLight.castShadow=false;
 scene.add(flashLight);
 
 const beamMaterial=new THREE.MeshBasicMaterial({
- color:0xffffff,
- transparent:true,
- opacity:0,
- side:THREE.DoubleSide,
- depthWrite:false
+ color:0xffffff,transparent:true,opacity:0,
+ side:THREE.DoubleSide,depthWrite:false
 });
 
 const beamGeometry=new THREE.ConeGeometry(1.35,12,16,1,true);
 const visibleBeam=new THREE.Mesh(beamGeometry,beamMaterial);
-
 visibleBeam.rotation.x=-Math.PI/2;
 visibleBeam.position.set(.38,-.3,-6.5);
 visibleBeam.renderOrder=2;
@@ -551,13 +535,8 @@ camera.add(visibleBeam);
 
 const lensGlow=new THREE.Mesh(
  new THREE.SphereGeometry(.12,12,12),
- new THREE.MeshBasicMaterial({
-  color:0xffffff,
-  transparent:true,
-  opacity:0
- })
+ new THREE.MeshBasicMaterial({color:0xffffff,transparent:true,opacity:0})
 );
-
 lensGlow.position.set(.38,-.3,-.95);
 camera.add(lensGlow);
 
@@ -566,20 +545,14 @@ const lightPosition=new THREE.Vector3();
 
 function updateFlashlightDirection(){
  camera.updateMatrixWorld(true);
-
  camera.getWorldDirection(lightDirection);
  camera.getWorldPosition(lightPosition);
 
  spot.position.copy(lightPosition);
+ spotTarget.position.copy(lightPosition).addScaledVector(lightDirection,14);
 
- spotTarget.position.copy(lightPosition)
-  .addScaledVector(lightDirection,14);
-
- nearLight.position.copy(lightPosition)
-  .addScaledVector(lightDirection,.7);
-
- flashLight.position.copy(lightPosition)
-  .addScaledVector(lightDirection,1.5);
+ nearLight.position.copy(lightPosition).addScaledVector(lightDirection,.7);
+ flashLight.position.copy(lightPosition).addScaledVector(lightDirection,1.5);
 
  spotTarget.updateMatrixWorld(true);
  spot.updateMatrixWorld(true);
@@ -601,7 +574,6 @@ function updateFlashlightPower(){
 
 function setFlashlightPower(on){
  flashlightOn=on;
-
  updateFlashlightPower();
 
  document.getElementById("lightButton").textContent=
@@ -609,8 +581,6 @@ function setFlashlightPower(on){
 
  updateFlashlightDirection();
 }
-
-// =================================================
 
 function renderBackpack(){
  const slots=document.getElementById("backpackSlots");
@@ -701,7 +671,6 @@ function toggleFlashlight(){
    message("BATERIA DESCARREGADA");
    return;
   }
-
   setFlashlightPower(true);
  }
 }
@@ -713,7 +682,6 @@ function storeHeldItem(){
  }
 
  const slot=backpack.findIndex(v=>v===null);
-
  if(slot<0){
   message("MOCHILA CHEIA");
   return;
@@ -883,7 +851,7 @@ addEventListener("keyup",e=>{
  if(keyMap[e.code])keys[keyMap[e.code]]=false;
 });
 
-// CONTROLES DE MOVIMENTO — PC E CELULAR
+// CONTROLES MOBILE REFORÇADOS
 const padMap={
  up:"w",
  down:"s",
@@ -893,29 +861,52 @@ const padMap={
 
 const activePointers=new Map();
 
+function updatePadKey(key){
+ keys[key]=[...activePointers.values()].includes(key);
+}
+
 document.querySelectorAll(".pad button").forEach(button=>{
  const key=padMap[button.id];
+ if(!key)return;
 
  button.addEventListener("pointerdown",e=>{
   e.preventDefault();
+  e.stopPropagation();
 
-  button.setPointerCapture(e.pointerId);
   activePointers.set(e.pointerId,key);
   keys[key]=true;
+
+  try{
+   button.setPointerCapture(e.pointerId);
+  }catch(error){}
  });
 
  function release(e){
   if(!activePointers.has(e.pointerId))return;
 
   activePointers.delete(e.pointerId);
-
-  const stillPressed=[...activePointers.values()].includes(key);
-  keys[key]=stillPressed;
+  updatePadKey(key);
  }
 
  button.addEventListener("pointerup",release);
  button.addEventListener("pointercancel",release);
  button.addEventListener("lostpointercapture",release);
+
+ // Fallback para navegadores móveis
+ button.addEventListener("contextmenu",e=>e.preventDefault());
+});
+
+function clearMovement(){
+ activePointers.clear();
+ keys.w=false;
+ keys.a=false;
+ keys.s=false;
+ keys.d=false;
+}
+
+window.addEventListener("blur",clearMovement);
+document.addEventListener("visibilitychange",()=>{
+ if(document.hidden)clearMovement();
 });
 
 // CÂMERA POR ARRASTO DIRETO NA TELA
@@ -928,7 +919,9 @@ renderer.domElement.addEventListener("pointerdown",e=>{
  lastX=e.clientX;
  lastY=e.clientY;
 
- renderer.domElement.setPointerCapture(e.pointerId);
+ try{
+  renderer.domElement.setPointerCapture(e.pointerId);
+ }catch(error){}
 });
 
 renderer.domElement.addEventListener("pointermove",e=>{
@@ -993,7 +986,6 @@ function animate(){
   player.z=THREE.MathUtils.clamp(player.z,-48.5,48.5);
 
   const targetHeight=getFloorHeight(player.x,player.z);
-
   playerY+=(targetHeight-playerY)*Math.min(1,dt*12);
 
   if(Math.abs(targetHeight-playerY)<.025){
@@ -1009,7 +1001,6 @@ function animate(){
    updateFlashlightDirection();
 
    battery=Math.max(0,battery-dt*.12);
-
    updateFlashlightPower();
 
    if(battery===0){
