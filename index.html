@@ -158,6 +158,8 @@ const renderer=new THREE.WebGLRenderer({antialias:false});
 renderer.setSize(innerWidth,innerHeight);
 renderer.setPixelRatio(Math.min(devicePixelRatio,1.25));
 renderer.outputColorSpace=THREE.SRGBColorSpace;
+renderer.toneMapping=THREE.NoToneMapping;
+renderer.toneMappingExposure=1;
 document.body.appendChild(renderer.domElement);
 
 function mat(color,roughness=1,metalness=0){
@@ -445,7 +447,12 @@ handGroup.add(handMesh);
 function makeFlashlight(){
  const group=new THREE.Group();
  const casing=mat(0x20252b,.55,.7);
- const glass=mat(0x444b50,.4,.3);
+ const glass=new THREE.MeshStandardMaterial({
+  color:0xffffff,
+  emissive:0xffffff,
+  emissiveIntensity:1.5,
+  roughness:.25
+ });
 
  const handle=new THREE.Mesh(
   new THREE.CylinderGeometry(.065,.075,.42,12),casing
@@ -454,11 +461,18 @@ function makeFlashlight(){
  group.add(handle);
 
  const head=new THREE.Mesh(
-  new THREE.CylinderGeometry(.11,.075,.13,16),glass
+  new THREE.CylinderGeometry(.11,.075,.13,16),casing
  );
  head.rotation.x=Math.PI/2;
  head.position.z=-.23;
  group.add(head);
+
+ const lens=new THREE.Mesh(
+  new THREE.CircleGeometry(.075,20),
+  glass
+ );
+ lens.position.z=-.3;
+ group.add(lens);
 
  const rim=new THREE.Mesh(
   new THREE.TorusGeometry(.085,.018,6,16),metalMat
@@ -479,43 +493,117 @@ flashlight.visible=false;
 camera.add(flashlight);
 backpack[0]=flashlight;
 
-// LANTERNA REFORÇADA
-// O alvo fica na cena e acompanha a direção da câmera.
+// =================================================
+// SISTEMA NOVO DE FLASH — LUZES NA CENA
+// =================================================
+
+// Alvo da luz principal
 const spotTarget=new THREE.Object3D();
 scene.add(spotTarget);
 
+// Luz principal: holofote branco forte
 const spot=new THREE.SpotLight(
- 0xffe8bd,
+ 0xffffff,
  0,
- 75,
- .55,
- .48,
- 1.2
+ 100,
+ Math.PI/4,
+ .35,
+ 1
 );
-spot.position.set(0,0,0);
-spot.target=spotTarget;
 spot.castShadow=false;
-camera.add(spot);
+spot.visible=true;
+scene.add(spot);
 
-// Luz de proximidade para iluminar objetos perto do jogador.
+// Luz auxiliar para iluminar objetos próximos
 const nearLight=new THREE.PointLight(
- 0xffe8bd,
+ 0xffffff,
  0,
- 18,
- 1.5
+ 35,
+ 1
 );
-nearLight.position.set(.15,-.12,-.35);
 nearLight.castShadow=false;
-camera.add(nearLight);
+scene.add(nearLight);
+
+// Clarão amplo
+const flashLight=new THREE.PointLight(
+ 0xfff4df,
+ 0,
+ 22,
+ 1
+);
+flashLight.castShadow=false;
+scene.add(flashLight);
+
+// Feixe visual que sai da lanterna
+const beamMaterial=new THREE.MeshBasicMaterial({
+ color:0xffffff,
+ transparent:true,
+ opacity:0,
+ side:THREE.DoubleSide,
+ depthWrite:false
+});
+
+const beamGeometry=new THREE.ConeGeometry(3.5,35,20,1,true);
+const visibleBeam=new THREE.Mesh(beamGeometry,beamMaterial);
+visibleBeam.rotation.x=-Math.PI/2;
+visibleBeam.position.set(.38,-.3,-18);
+visibleBeam.renderOrder=2;
+camera.add(visibleBeam);
+
+// Brilho da lente
+const lensGlow=new THREE.Mesh(
+ new THREE.SphereGeometry(.12,12,12),
+ new THREE.MeshBasicMaterial({
+  color:0xffffff,
+  transparent:true,
+  opacity:0
+ })
+);
+lensGlow.position.set(.38,-.3,-.95);
+camera.add(lensGlow);
 
 const lightDirection=new THREE.Vector3();
+const lightPosition=new THREE.Vector3();
 
 function updateFlashlightDirection(){
  camera.updateMatrixWorld(true);
+
  camera.getWorldDirection(lightDirection);
- spotTarget.position.copy(camera.position).addScaledVector(lightDirection,20);
+ camera.getWorldPosition(lightPosition);
+
+ spot.position.copy(lightPosition);
+ spotTarget.position.copy(lightPosition)
+  .addScaledVector(lightDirection,35);
+
+ nearLight.position.copy(lightPosition)
+  .addScaledVector(lightDirection,.7);
+
+ flashLight.position.copy(lightPosition)
+  .addScaledVector(lightDirection,2);
+
  spotTarget.updateMatrixWorld(true);
+ spot.updateMatrixWorld(true);
+ nearLight.updateMatrixWorld(true);
+ flashLight.updateMatrixWorld(true);
 }
+
+function setFlashlightPower(on){
+ flashlightOn=on;
+
+ spot.intensity=on?4500:0;
+ nearLight.intensity=on?500:0;
+ flashLight.intensity=on?180:0;
+
+ beamMaterial.opacity=on?.075:0;
+ lensGlow.material.opacity=on?1:0;
+
+ document.getElementById("lightButton").textContent=
+  on?"APAGAR [F]":"LANTERNA [F]";
+
+ updateFlashlightDirection();
+}
+
+// =================================================
 
 function renderBackpack(){
  const slots=document.getElementById("backpackSlots");
@@ -593,33 +681,22 @@ function selectBackpackSlot(index){
  message("OBJETO RETIRADO DA MOCHILA");
 }
 
-function toggleFlashlight(force){
+function toggleFlashlight(){
  if(!heldItem||!heldItem.userData.isFlashlight){
   message("RETIRE A LANTERNA DA MOCHILA PRIMEIRO");
   return;
  }
 
- if(force===false||flashlightOn){
-  flashlightOn=false;
-  spot.intensity=0;
-  nearLight.intensity=0;
+ if(flashlightOn){
+  setFlashlightPower(false);
  }else{
   if(battery<=0){
    message("BATERIA DESCARREGADA");
    return;
   }
 
-  flashlightOn=true;
-
-  // Intensidade reforçada para vencer a escuridão da sala.
-  spot.intensity=1800;
-  nearLight.intensity=80;
+  setFlashlightPower(true);
  }
-
- document.getElementById("lightButton").textContent=
-  flashlightOn?"APAGAR [F]":"LANTERNA [F]";
-
- updateFlashlightDirection();
 }
 
 function storeHeldItem(){
@@ -635,7 +712,9 @@ function storeHeldItem(){
   return;
  }
 
- if(heldItem.userData.isFlashlight)toggleFlashlight(false);
+ if(heldItem.userData.isFlashlight&&flashlightOn){
+  setFlashlightPower(false);
+ }
 
  camera.remove(heldItem);
  heldItem.visible=false;
@@ -653,7 +732,9 @@ function dropHeldItem(){
   return;
  }
 
- if(heldItem.userData.isFlashlight)toggleFlashlight(false);
+ if(heldItem.userData.isFlashlight&&flashlightOn){
+  setFlashlightPower(false);
+ }
 
  camera.remove(heldItem);
  scene.add(heldItem);
@@ -717,7 +798,7 @@ function pickItem(){
 
 document.getElementById("bagButton").onclick=toggleBackpack;
 document.getElementById("closeBag").onclick=toggleBackpack;
-document.getElementById("lightButton").onclick=()=>toggleFlashlight();
+document.getElementById("lightButton").onclick=toggleFlashlight;
 document.getElementById("storeButton").onclick=storeHeldItem;
 document.getElementById("dropButton").onclick=dropHeldItem;
 document.getElementById("useButton").onclick=pickItem;
@@ -905,14 +986,14 @@ function animate(){
   camera.rotation.y=yaw;
   camera.rotation.x=pitch;
 
-  // Atualiza a direção do feixe conforme a câmera gira.
+  // A luz acompanha a câmera no mundo 3D.
   if(flashlightOn){
    updateFlashlightDirection();
 
    battery=Math.max(0,battery-dt*.12);
 
    if(battery===0){
-    toggleFlashlight(false);
+    setFlashlightPower(false);
     message("A BATERIA DA LANTERNA ACABOU");
    }
 
