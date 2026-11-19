@@ -113,8 +113,6 @@ const darkMetal=mat(0x171d23,.8,.5);
 const blackMat=mat(0x090d11);
 const yellowMat=mat(0xd1a12a);
 const bodyMat=mat(0x39444b,.65,.55);
-
-// Tudo desligado: materiais sem emissão de luz.
 const screenMat=mat(0x071014);
 const greenMat=mat(0x101c16);
 const orangeMat=mat(0x21170b);
@@ -160,7 +158,7 @@ for(let z=-45;z<=45;z+=10){
  box(59.7,1,z,.08,.18,3,yellowMat);
 }
 
-// SEM ENERGIA: apenas uma iluminação ambiente quase imperceptível.
+// Ambiente quase imperceptível: sem iluminação fixa.
 scene.add(new THREE.HemisphereLight(0x202735,0x08090c,.035));
 
 function createGenerator(x,z){
@@ -376,15 +374,27 @@ flashlight.userData.pickable=true;
 flashlight.userData.isFlashlight=true;
 flashlight.visible=false;
 camera.add(flashlight);
-heldItem=null;
 backpack[0]=flashlight;
 
-// Luz presa à câmera: começa desligada.
-const spot=new THREE.SpotLight(0xffe8bd,0,24,Math.PI/7,.35,1.2);
+// FEIXE DE LUZ REFORÇADO
+const spot=new THREE.SpotLight(
+ 0xffe8bd,
+ 0,
+ 65,
+ Math.PI/5,
+ 0.35,
+ 1
+);
 spot.position.set(0,0,0);
 spot.target.position.set(0,0,-1);
+spot.castShadow=false;
 camera.add(spot);
 camera.add(spot.target);
+
+// Luz suave próxima à lanterna para melhorar a iluminação de objetos próximos.
+const nearLight=new THREE.PointLight(0xffe8bd,0,5,2);
+nearLight.position.set(.25,-.15,-.5);
+camera.add(nearLight);
 
 function renderBackpack(){
  const slots=document.getElementById("backpackSlots");
@@ -476,12 +486,15 @@ function toggleFlashlight(force){
  if(force===false||flashlightOn){
   flashlightOn=false;
   spot.intensity=0;
+  nearLight.intensity=0;
  }else{
   if(battery<=0){message("BATERIA DESCARREGADA");return;}
   flashlightOn=true;
-  spot.intensity=4.2;
+  spot.intensity=18;
+  nearLight.intensity=1.2;
  }
- document.getElementById("lightButton").textContent=flashlightOn?"APAGAR [F]":"LANTERNA [F]";
+ document.getElementById("lightButton").textContent=
+ flashlightOn?"APAGAR [F]":"LANTERNA [F]";
 }
 function findNearestItem(){
  let best=null,bestDist=2.7;
