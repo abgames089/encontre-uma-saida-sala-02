@@ -36,8 +36,8 @@ button{background:#a80f18;color:white;border:1px solid #ed4545;padding:13px 22px
 <div id="menu">
  <h1>ENCONTRE UMA <span>SAÍDA!</span></h1>
  <p>AB GAMES APRESENTA</p>
- <h2>SALA 02 — V1.5</h2>
- <p>INSTALAÇÃO DE ENERGIA</p>
+ <h2>SALA 02 — V1.6</h2>
+ <p>INSTALAÇÃO INDUSTRIAL DE ENERGIA</p>
  <button id="play">ENTRAR NA SALA</button>
  <p>PC: WASD + MOUSE<br>CELULAR: BOTÕES + ARRASTAR NA TELA</p>
 </div>
@@ -66,9 +66,9 @@ if(!window.THREE){
 
 const scene=new THREE.Scene();
 scene.background=new THREE.Color(0x090c11);
-scene.fog=new THREE.Fog(0x090c11,45,105);
+scene.fog=new THREE.Fog(0x090c11,170,290);
 
-const camera=new THREE.PerspectiveCamera(75,innerWidth/innerHeight,.1,150);
+const camera=new THREE.PerspectiveCamera(75,innerWidth/innerHeight,.1,350);
 const renderer=new THREE.WebGLRenderer({antialias:false});
 renderer.setSize(innerWidth,innerHeight);
 renderer.setPixelRatio(Math.min(devicePixelRatio,1.5));
@@ -124,36 +124,54 @@ function pipe(x1,y1,z1,x2,y2,z2,r,material=metalMat){
  return obj;
 }
 
-// ESTRUTURA DA SALA — 70 x 55
-box(0,-.25,0,70,.5,55,floorMat);
-box(0,8,-27.5,70,16,.5,wallMat);
-box(0,8,27.5,70,16,.5,wallMat);
-box(-35,8,0,.5,16,55,wallMat);
-box(35,8,0,.5,16,55,wallMat);
-box(0,16,0,70,.5,55,wallMat);
+// ==================================================
+// V1.6 — SALA GIGANTE: 120 x 100
+// ==================================================
 
-// FAIXAS INDUSTRIAIS
-for(let x=-30;x<=30;x+=10){
- box(x,1,-27.2,3,.18,.08,yellowMat);
- box(x,1,27.2,3,.18,.08,yellowMat);
+// Piso e paredes ampliados
+box(0,-.25,0,120,.5,100,floorMat);
+box(0,8,-50,120,16,.5,wallMat);
+box(0,8,50,120,16,.5,wallMat);
+box(-60,8,0,.5,16,100,wallMat);
+box(60,8,0,.5,16,100,wallMat);
+box(0,16,0,120,.5,100,wallMat);
+
+// Faixas industriais nas extremidades
+for(let x=-55;x<=55;x+=10){
+ box(x,1,-49.7,3,.18,.08,yellowMat);
+ box(x,1,49.7,3,.18,.08,yellowMat);
+}
+for(let z=-45;z<=45;z+=10){
+ box(-59.7,1,z,.08,.18,3,yellowMat);
+ box(59.7,1,z,.08,.18,3,yellowMat);
 }
 
 // ILUMINAÇÃO GERAL
-scene.add(new THREE.HemisphereLight(0xb5c4d5,0x303039,.8));
+scene.add(new THREE.HemisphereLight(0xb5c4d5,0x303039,.85));
 
-const ceilingLight=new THREE.PointLight(0xb5c9df,100,65);
+const ceilingLight=new THREE.PointLight(0xb5c9df,130,120);
 ceilingLight.position.set(0,13,0);
 scene.add(ceilingLight);
 
-const sideLight1=new THREE.PointLight(0x65778d,35,40);
-sideLight1.position.set(-20,9,-8);
+const sideLight1=new THREE.PointLight(0x65778d,45,75);
+sideLight1.position.set(-35,9,-20);
 scene.add(sideLight1);
 
-const sideLight2=new THREE.PointLight(0x65778d,35,40);
-sideLight2.position.set(20,9,8);
+const sideLight2=new THREE.PointLight(0x65778d,45,75);
+sideLight2.position.set(35,9,20);
 scene.add(sideLight2);
 
-// GERADORES
+const sideLight3=new THREE.PointLight(0x65778d,35,70);
+sideLight3.position.set(-35,9,30);
+scene.add(sideLight3);
+
+const sideLight4=new THREE.PointLight(0x65778d,35,70);
+sideLight4.position.set(40,9,-30);
+scene.add(sideLight4);
+
+// ==================================================
+// GERADORES — REPOSICIONADOS E MAIS AFASTADOS
+// ==================================================
 function createGenerator(x,z,id){
  box(x,.16,z,6.2,.32,4.8,darkMetal);
  box(x,.36,z,5.8,.15,4.4,metalMat);
@@ -228,29 +246,54 @@ function createGenerator(x,z,id){
  }
 }
 
-createGenerator(-17,-9,1);
-createGenerator(0,-9,2);
-createGenerator(17,-9,3);
+// Geradores mais espaçados
+createGenerator(-30,-18,1);
+createGenerator(0,-18,2);
+createGenerator(30,-18,3);
 
-// TUBULAÇÕES PRINCIPAIS
-pipe(-17,4,-9,17,4,-9,.18);
-pipe(-17,4,-9,-17,5.8,-9,.15);
-pipe(0,4,-9,0,5.8,-9,.15);
-pipe(17,4,-9,17,5.8,-9,.15);
+// TUBULAÇÕES PRINCIPAIS DOS GERADORES
+pipe(-30,4,-18,30,4,-18,.2);
+pipe(-30,4,-18,-30,5.8,-18,.15);
+pipe(0,4,-18,0,5.8,-18,.15);
+pipe(30,4,-18,30,5.8,-18,.15);
 
-for(let x=-30;x<=30;x+=10){
- pipe(x,10,-26.5,x,10,26.5,.12);
- pipe(x,10,-26.5,x,10.7,-26.5,.08,yellowMat);
- box(x,9.5,-26,.35,1,.35,darkMetal);
- box(x,9.5,26,.35,1,.35,darkMetal);
+// Tubulações suspensas por toda a instalação
+for(let x=-50;x<=50;x+=10){
+ pipe(x,10,-48,x,10,48,.12);
+ pipe(x,10,-48,x,10.7,-48,.08,yellowMat);
+ box(x,9.5,-47.5,.35,1,.35,darkMetal);
+ box(x,9.5,47.5,.35,1,.35,darkMetal);
+}
+
+// Linhas transversais de tubulação
+for(let z=-40;z<=40;z+=20){
+ pipe(-55,11,z,55,11,z,.1);
+ pipe(-55,11.6,z,55,11.6,z,.055,darkMetal);
 }
 
 // VIGAS DO TETO
-for(let x=-30;x<=30;x+=10){
- box(x,15.4,0,.3,.3,54,metalMat);
+for(let x=-55;x<=55;x+=10){
+ box(x,15.4,0,.3,.3,98,metalMat);
 }
-for(let z=-25;z<=25;z+=10){
- box(0,15.4,z,69,.3,.3,metalMat);
+for(let z=-45;z<=45;z+=10){
+ box(0,15.4,z,118,.3,.3,metalMat);
+}
+
+// PILARES INDUSTRIAIS
+for(let x of [-50,-40,-20,20,40,50]){
+ for(let z of [-40,0,40]){
+  box(x,7.8,z,.65,15.6,.65,darkMetal);
+  box(x,1,z,.95,.35,.95,metalMat);
+  box(x,14.8,z,.95,.35,.95,metalMat);
+ }
+}
+
+// Estruturas metálicas laterais
+for(let z=-40;z<=40;z+=20){
+ box(-55,5,z,.5,10,.5,metalMat);
+ box(55,5,z,.5,10,.5,metalMat);
+ pipe(-55,1,z,-55,12,z,.09,darkMetal);
+ pipe(55,1,z,55,12,z,.09,darkMetal);
 }
 
 // ==================================================
@@ -276,7 +319,6 @@ function createStairFlight(x,zStart,direction,yStart){
 
  for(const side of [-1,1]){
   const railX=x+side*sideOffset;
-
   pipe(railX,yStart-.1,zStart,railX,endY-.1,endZ,.16,darkMetal);
 
   for(let i=0;i<=stairSteps;i+=4){
@@ -301,7 +343,7 @@ function createStairFlight(x,zStart,direction,yStart){
 createStairFlight(24.5,17,-1,0);
 createStairFlight(29.5,5,1,4);
 
-// PATAMAR
+// PATAMAR INTERMEDIÁRIO
 box(27,4,4.65,9.5,.3,3.2,metalMat);
 box(27,3.78,4.65,8.8,.12,2.6,darkMetal);
 
@@ -326,14 +368,18 @@ for(let z=17;z<=21;z+=2){
 }
 
 // ==================================================
-// V1.5 — PASSARELA DO ANDAR SUPERIOR
+// PASSARELA DO ANDAR SUPERIOR
 // ==================================================
 
-// Piso da passarela, ligando a plataforma ao painel
+// Piso da passarela
 for(let x=10;x<25;x+=2){
  box(x+1,8,19,2,.3,5,metalMat);
  box(x+1,8.17,19,1.65,.035,4.55,darkMetal);
 }
+
+// Conexão entre passarela e plataforma
+box(25.2,8,19,1.2,.3,5,metalMat);
+box(25.2,8.17,19,1,.035,4.5,darkMetal);
 
 // Reforços sob a passarela
 for(let x=11;x<=25;x+=4){
@@ -343,7 +389,7 @@ for(let x=11;x<=25;x+=4){
  pipe(x,6.9,21.3,x,7.8,19,.09,metalMat);
 }
 
-// Corrimãos dos dois lados
+// Corrimãos
 for(const z of [16.35,21.65]){
  for(let x=10;x<=29;x+=3){
   pipe(x,8.15,z,x,9.35,z,.065,metalMat);
@@ -352,22 +398,20 @@ for(const z of [16.35,21.65]){
  pipe(10,8.75,z,29.5,8.75,z,.045,darkMetal);
 }
 
-// Postes extras de proteção
+// Postes de proteção
 for(const z of [16.35,21.65]){
  for(let x=10;x<=29;x+=3){
   box(x,8.72,z,.12,1.1,.12,darkMetal);
  }
 }
 
-// Faixas amarelas de segurança nas bordas
+// Faixas amarelas de segurança
 box(19.5,8.19,16.48,18,.035,.12,yellowMat);
 box(19.5,8.19,21.52,18,.035,.12,yellowMat);
 
-// Painel de manutenção no final da passarela
+// Painel de manutenção
 box(9.75,10,19,.45,3.5,4.7,darkMetal);
 box(9.48,10,19,.08,2.8,4.2,metalMat);
-
-// Tela principal voltada para a passarela
 box(9.42,10.45,19,.08,1.25,1.9,blackMat);
 box(9.36,10.45,19,.035,.95,1.55,screenMat);
 
@@ -377,18 +421,18 @@ for(let i=0;i<4;i++){
   i===0?greenMat:(i===1?orangeMat:redLightMat));
 }
 
-// Botões do painel
+// Botões
 for(let i=0;i<5;i++){
  cylinder(9.35,9.05,17.6+i*.7,.09,.09,.07,
   i===0?greenMat:(i===1?yellowMat:darkMetal),12);
 }
 
-// Grade de ventilação do painel
+// Grade de ventilação
 for(let i=0;i<7;i++){
  box(9.34,11.65,17.8+i*.4,.05,.055,.24,metalMat);
 }
 
-// Luzes industriais sobre a passarela
+// Luzes da passarela
 const catwalkLight1=new THREE.PointLight(0x9bb8d1,24,18);
 catwalkLight1.position.set(18,12,19);
 scene.add(catwalkLight1);
@@ -397,43 +441,43 @@ const catwalkLight2=new THREE.PointLight(0x9bb8d1,20,16);
 catwalkLight2.position.set(10.5,12,19);
 scene.add(catwalkLight2);
 
-// Lâmpadas visuais
 box(18,13,19,1.3,.12,.5,screenMat);
 box(11,13,19,1.3,.12,.5,screenMat);
 
-// Placas de identificação industrial
 box(18,9.65,16.4,2.4,.35,.08,yellowMat);
 box(18,9.65,21.6,2.4,.35,.08,yellowMat);
 
 // ==================================================
-// ALTURA DO JOGADOR
+// ALTURA DO JOGADOR — CORRIGIDA
 // ==================================================
+let playerY=0;
+
 function getFloorHeight(x,z){
 
- // Passarela superior
- if(x>=10 && x<=25 && z>=16.4 && z<=21.6){
-  return 8;
- }
-
- // Patamar intermediário
- if(x>=22.1 && x<=32 && z>=3.5 && z<=5.1){
-  return 4;
- }
-
- // Primeiro lance
+ // Primeiro lance da escada: nível 0 até 4
  if(x>=22.45 && x<=26.55 && z>=5 && z<=17){
   const t=(17-z)/12;
   return THREE.MathUtils.clamp(t,0,1)*4;
  }
 
- // Segundo lance
+ // Segundo lance da escada: nível 4 até 8
  if(x>=27.45 && x<=31.55 && z>=5 && z<=17){
   const t=(z-5)/12;
   return 4+THREE.MathUtils.clamp(t,0,1)*4;
  }
 
- // Plataforma superior
- if(x>=25 && x<=34 && z>=17 && z<=22.5){
+ // Patamar intermediário
+ if(x>=25.3 && x<=28.7 && z>=3.3 && z<=4.8){
+  return 4;
+ }
+
+ // Plataforma superior: só permanece nela se já chegou pelo alto
+ if(playerY>=7.2 && x>=25 && x<=34 && z>=17 && z<=22.5){
+  return 8;
+ }
+
+ // Passarela superior: impede subir do chão por baixo dela
+ if(playerY>=7.2 && x>=10 && x<=25.8 && z>=16.4 && z<=21.6){
   return 8;
  }
 
@@ -441,7 +485,7 @@ function getFloorHeight(x,z){
 }
 
 // JOGADOR
-const player=new THREE.Vector3(0,0,19);
+const player=new THREE.Vector3(0,0,35);
 let yaw=0,pitch=0;
 const keys={};
 let started=false;
@@ -550,11 +594,19 @@ function animate(){
    player.add(move);
   }
 
-  player.x=THREE.MathUtils.clamp(player.x,-33.5,33.5);
-  player.z=THREE.MathUtils.clamp(player.z,-25.5,25.5);
+  // Limites da nova sala
+  player.x=THREE.MathUtils.clamp(player.x,-58.5,58.5);
+  player.z=THREE.MathUtils.clamp(player.z,-48.5,48.5);
 
-  const floorHeight=getFloorHeight(player.x,player.z);
-  camera.position.set(player.x,floorHeight+1.7,player.z);
+  // Transição suave de altura para evitar teletransporte
+  const targetHeight=getFloorHeight(player.x,player.z);
+  playerY+= (targetHeight-playerY)*Math.min(1,dt*12);
+
+  if(Math.abs(targetHeight-playerY)<.025){
+   playerY=targetHeight;
+  }
+
+  camera.position.set(player.x,playerY+1.7,player.z);
 
   camera.rotation.order="YXZ";
   camera.rotation.y=yaw;
@@ -565,6 +617,7 @@ function animate(){
 }
 animate();
 
+// REDIMENSIONAMENTO
 addEventListener("resize",()=>{
  camera.aspect=innerWidth/innerHeight;
  camera.updateProjectionMatrix();
