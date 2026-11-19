@@ -44,7 +44,7 @@ button{
 <div id="menu">
  <h1>ENCONTRE UMA <span>SAÍDA!</span></h1>
  <p>AB GAMES APRESENTA</p>
- <h2>SALA 02 — V1.1</h2>
+ <h2>SALA 02 — V1.2</h2>
  <p>INSTALAÇÃO DE ENERGIA</p>
  <button id="play">ENTRAR NA SALA</button>
  <p>PC: WASD + MOUSE<br>CELULAR: BOTÕES + ARRASTAR NA TELA</p>
@@ -83,31 +83,45 @@ renderer.setPixelRatio(Math.min(devicePixelRatio,1.5));
 renderer.outputColorSpace=THREE.SRGBColorSpace;
 document.body.appendChild(renderer.domElement);
 
-const material=new THREE.MeshStandardMaterial({
- color:0x30343a,roughness:.95
-});
-const wallMaterial=new THREE.MeshStandardMaterial({
- color:0x242930,roughness:1
-});
+function mat(color,roughness=1,metalness=0){
+ return new THREE.MeshStandardMaterial({color,roughness,metalness});
+}
 
-function box(x,y,z,w,h,d,mat){
- const obj=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),mat);
+const floorMat=mat(0x30343a);
+const wallMat=mat(0x242930);
+const metalMat=mat(0x626b73,.65,.65);
+const darkMat=mat(0x11161b);
+const yellowMat=mat(0xd3a52b);
+const generatorMat=mat(0x343d45,.7,.55);
+const panelMat=mat(0x11191e);
+
+function box(x,y,z,w,h,d,material){
+ const obj=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),material);
  obj.position.set(x,y,z);
  scene.add(obj);
  return obj;
 }
 
-// SALA VAZIA
-box(0,-.25,0,40,.5,32,material);
+function cylinder(x,y,z,r1,r2,h,material,segments=12){
+ const obj=new THREE.Mesh(
+  new THREE.CylinderGeometry(r1,r2,h,segments),material
+ );
+ obj.position.set(x,y,z);
+ scene.add(obj);
+ return obj;
+}
+
+// SALA
+box(0,-.25,0,40,.5,32,floorMat);
 
 // PAREDES
-box(0,8,-16,40,16,.5,wallMaterial);
-box(0,8,16,40,16,.5,wallMaterial);
-box(-20,8,0,.5,16,32,wallMaterial);
-box(20,8,0,.5,16,32,wallMaterial);
+box(0,8,-16,40,16,.5,wallMat);
+box(0,8,16,40,16,.5,wallMat);
+box(-20,8,0,.5,16,32,wallMat);
+box(20,8,0,.5,16,32,wallMat);
 
 // TETO
-box(0,16,0,40,.5,32,wallMaterial);
+box(0,16,0,40,.5,32,wallMat);
 
 // ILUMINAÇÃO BÁSICA
 scene.add(new THREE.HemisphereLight(0xb5c4d5,0x303039,.85));
@@ -120,7 +134,110 @@ const sideLight=new THREE.PointLight(0x65778d,25,35);
 sideLight.position.set(-12,8,-5);
 scene.add(sideLight);
 
-// JOGADOR
+// GERADORES INDUSTRIAIS
+function createGenerator(x,z,number){
+
+ // Base
+ box(x,.18,z,5.2,.35,3.9,darkMat);
+
+ // Corpo principal
+ box(x,1.65,z,4.6,2.6,3.4,generatorMat);
+
+ // Parte superior
+ box(x,3.02,z,4.3,.22,3.2,metalMat);
+
+ // Laterais
+ box(x-2.32,1.7,z,.18,2.2,3.2,metalMat);
+ box(x+2.32,1.7,z,.18,2.2,3.2,metalMat);
+
+ // Painel frontal
+ box(x,1.65,z+1.76,2.4,1.65,.13,panelMat);
+
+ // Tela
+ const screen=box(x,2.1,z+1.85,.95,.48,.06,mat(0x174653));
+ screen.material.emissive=new THREE.Color(0x08232a);
+ screen.material.emissiveIntensity=.6;
+
+ // Indicadores
+ for(let i=0;i<4;i++){
+  const light=box(
+   x-0.8+i*.53,1.3,z+1.86,
+   .16,.16,.07,
+   i===0?mat(0x1e9b61):mat(0xd0a12a)
+  );
+  light.material.emissive=light.material.color.clone();
+  light.material.emissiveIntensity=.35;
+ }
+
+ // Grades laterais
+ for(let i=0;i<6;i++){
+  box(
+   x-1.25+i*.5,.85,z+1.86,
+   .09,.7,.08,metalMat
+  );
+ }
+
+ // Tubos no topo
+ for(let i=0;i<3;i++){
+  const px=x-1.2+i*1.2;
+  cylinder(px,3.35,z,.16,.16,.55,metalMat);
+  cylinder(px,3.72,z,.13,.13,.2,yellowMat);
+ }
+
+ // Tubos de saída na lateral
+ cylinder(x+2.55,2.1,z,.2,.2,1.1,metalMat);
+ cylinder(x+3.1,2.1,z,.16,.16,.2,yellowMat);
+
+ // Tampa circular frontal
+ const cover=cylinder(x,1.65,z+1.92,.42,.42,.12,metalMat,20);
+ cover.rotation.x=Math.PI/2;
+
+ // Parafusos visuais
+ for(let i=0;i<4;i++){
+  const sx=x+(i%2===0?-1.05:1.05);
+  const sy=i<2?2.35:.95;
+  box(sx,sy,z+1.87,.09,.09,.08,yellowMat);
+ }
+
+ // Identificação
+ box(x,3.2,z+1.6,.65,.16,.08,yellowMat);
+
+}
+
+// POSIÇÃO DOS TRÊS GERADORES
+createGenerator(-11,-7,1);
+createGenerator(0,-7,2);
+createGenerator(11,-7,3);
+
+// TUBULAÇÕES BÁSICAS LIGADAS AOS GERADORES
+function pipe(x1,y1,z1,x2,y2,z2,r){
+ const a=new THREE.Vector3(x1,y1,z1);
+ const b=new THREE.Vector3(x2,y2,z2);
+ const dir=new THREE.Vector3().subVectors(b,a);
+
+ const obj=new THREE.Mesh(
+  new THREE.CylinderGeometry(r,r,dir.length(),10),
+  metalMat
+ );
+
+ obj.position.copy(a).add(b).multiplyScalar(.5);
+ obj.quaternion.setFromUnitVectors(
+  new THREE.Vector3(0,1,0),
+  dir.normalize()
+ );
+ scene.add(obj);
+}
+
+// Tubos conectando as partes superiores
+pipe(-11,3.8,-7,0,3.8,-7,.13);
+pipe(0,3.8,-7,11,3.8,-7,.13);
+
+// Tubos de subida
+for(const x of [-11,0,11]){
+ pipe(x,3.8,-7,x,5.5,-7,.12);
+}
+
+// Jogador
 const player=new THREE.Vector3(0,0,10);
 let yaw=0,pitch=0;
 const keys={};
@@ -132,6 +249,7 @@ function start(){
  document.getElementById("hud").style.display="block";
  camera.position.set(player.x,1.7,player.z);
 }
+
 document.getElementById("play").addEventListener("click",start);
 
 // TECLADO
@@ -153,7 +271,7 @@ addEventListener("keyup",e=>{
  if(keyMap[e.code])keys[keyMap[e.code]]=false;
 });
 
-// CONTROLES DO CELULAR
+// CONTROLES CELULAR
 const padMap={up:"w",down:"s",left:"a",right:"d"};
 
 document.querySelectorAll(".pad button").forEach(button=>{
@@ -169,7 +287,7 @@ document.querySelectorAll(".pad button").forEach(button=>{
  });
 });
 
-// CÂMERA: ARRASTAR DIRETAMENTE NA TELA
+// CÂMERA POR ARRASTO NA TELA
 let touchId=null;
 let lastX=0,lastY=0;
 
@@ -179,7 +297,6 @@ renderer.domElement.addEventListener("pointerdown",e=>{
  touchId=e.pointerId;
  lastX=e.clientX;
  lastY=e.clientY;
-
  renderer.domElement.setPointerCapture(e.pointerId);
 });
 
@@ -205,7 +322,7 @@ function stopTouch(e){
 renderer.domElement.addEventListener("pointerup",stopTouch);
 renderer.domElement.addEventListener("pointercancel",stopTouch);
 
-// MOUSE NO PC
+// MOUSE PC
 renderer.domElement.addEventListener("click",()=>{
  if(started && innerWidth>700){
   renderer.domElement.requestPointerLock?.();
@@ -242,7 +359,6 @@ function animate(){
    player.add(move);
   }
 
-  // LIMITES DA SALA
   player.x=THREE.MathUtils.clamp(player.x,-18.5,18.5);
   player.z=THREE.MathUtils.clamp(player.z,-14.5,14.5);
 
@@ -263,6 +379,7 @@ addEventListener("resize",()=>{
  renderer.setSize(innerWidth,innerHeight);
  renderer.setPixelRatio(Math.min(devicePixelRatio,1.5));
 });
+
 })();
 </script>
 </body>
