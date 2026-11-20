@@ -235,6 +235,58 @@ for(let z=-45;z<=45;z+=10){
 
 scene.add(new THREE.HemisphereLight(0x202735,0x08090c,.035));
 
+// LUZES DE EMERGÊNCIA — BRILHO FRACO
+const emergencyLights=[];
+
+function createEmergencyLight(x,y,z,color=0xff2222){
+ const bulbMat=new THREE.MeshStandardMaterial({
+  color:color,
+  emissive:color,
+  emissiveIntensity:.35,
+  roughness:.5
+ });
+
+ const bulb=new THREE.Mesh(
+  new THREE.BoxGeometry(.22,.12,.12),
+  bulbMat
+ );
+
+ bulb.position.set(x,y,z);
+ scene.add(bulb);
+
+ const glow=new THREE.PointLight(color,.28,5,2);
+ glow.position.set(x,y,z);
+ scene.add(glow);
+
+ emergencyLights.push({
+  bulb:bulb,
+  glow:glow,
+  base:.28,
+  phase:Math.random()*Math.PI*2
+ });
+}
+
+function createWarningLight(x,y,z){
+ const bulbMat=new THREE.MeshStandardMaterial({
+  color:0xffaa22,
+  emissive:0xff8800,
+  emissiveIntensity:.3,
+  roughness:.5
+ });
+
+ const bulb=new THREE.Mesh(
+  new THREE.BoxGeometry(.16,.12,.12),
+  bulbMat
+ );
+
+ bulb.position.set(x,y,z);
+ scene.add(bulb);
+
+ const glow=new THREE.PointLight(0xffaa33,.18,4,2);
+ glow.position.set(x,y,z);
+ scene.add(glow);
+}
+
 function createGenerator(x,z){
  box(x,.16,z,6.2,.32,4.8,darkMetal);
  box(x,.36,z,5.8,.15,4.4,metalMat);
@@ -307,6 +359,11 @@ function createGenerator(x,z){
 createGenerator(-30,-18);
 createGenerator(0,-18);
 createGenerator(30,-18);
+
+// LUZES VERMELHAS DOS GERADORES
+createEmergencyLight(-30,4.1,-15.5,0xff2020);
+createEmergencyLight(0,4.1,-15.5,0xff2020);
+createEmergencyLight(30,4.1,-15.5,0xff2020);
 
 pipe(-30,4,-18,30,4,-18,.2);
 pipe(-30,4,-18,-30,5.8,-18,.15);
@@ -436,6 +493,15 @@ box(18,13,19,1.3,.12,.5,darkMetal);
 box(11,13,19,1.3,.12,.5,darkMetal);
 box(18,9.65,16.4,2.4,.35,.08,yellowMat);
 box(18,9.65,21.6,2.4,.35,.08,yellowMat);
+
+// LUZES DE EMERGÊNCIA DA PLATAFORMA SUPERIOR
+createEmergencyLight(10,11.8,19,0xff2020);
+createEmergencyLight(29,11.8,19,0xff2020);
+
+// INDICADORES AMARELOS DOS PAINÉIS
+createWarningLight(9.2,11.1,17.5);
+createWarningLight(9.2,11.1,20.5);
+createWarningLight(29,9,16.5);
 
 // MOCHILA E OBJETOS
 const items=[];
@@ -883,7 +949,6 @@ document.querySelectorAll(".pad button").forEach(button=>{
  const key=padMap[button.id];
  if(!key)return;
 
- // Pointer Events: celulares modernos e computadores com toque
  button.addEventListener("pointerdown",e=>{
   if(!started)return;
 
@@ -909,7 +974,6 @@ document.querySelectorAll(".pad button").forEach(button=>{
  button.addEventListener("pointercancel",releasePointer);
  button.addEventListener("lostpointercapture",releasePointer);
 
- // Fallback Touch Events para navegadores móveis
  button.addEventListener("touchstart",e=>{
   if(!started)return;
 
@@ -1044,6 +1108,16 @@ function animate(){
 
    updateBattery();
   }
+ }
+
+ // PISCADAS SUAVES DAS LUZES DE EMERGÊNCIA
+ const time=clock.elapsedTime;
+
+ for(const lamp of emergencyLights){
+  const pulse=.65+Math.sin(time*2.2+lamp.phase)*.25;
+
+  lamp.glow.intensity=lamp.base*pulse;
+  lamp.bulb.material.emissiveIntensity=.35*pulse;
  }
 
  renderer.render(scene,camera);
