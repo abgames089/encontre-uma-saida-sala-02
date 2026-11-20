@@ -235,7 +235,7 @@ for(let z=-45;z<=45;z+=10){
 
 scene.add(new THREE.HemisphereLight(0x202735,0x08090c,.035));
 
-// LUZES DE EMERGÊNCIA — BRILHO FRACO
+// LUZES DE EMERGÊNCIA
 const emergencyLights=[];
 
 function createEmergencyLight(x,y,z,color=0xff2222){
@@ -360,7 +360,6 @@ createGenerator(-30,-18);
 createGenerator(0,-18);
 createGenerator(30,-18);
 
-// LUZES VERMELHAS DOS GERADORES
 createEmergencyLight(-30,4.1,-15.5,0xff2020);
 createEmergencyLight(0,4.1,-15.5,0xff2020);
 createEmergencyLight(30,4.1,-15.5,0xff2020);
@@ -494,11 +493,9 @@ box(11,13,19,1.3,.12,.5,darkMetal);
 box(18,9.65,16.4,2.4,.35,.08,yellowMat);
 box(18,9.65,21.6,2.4,.35,.08,yellowMat);
 
-// LUZES DE EMERGÊNCIA DA PLATAFORMA SUPERIOR
 createEmergencyLight(10,11.8,19,0xff2020);
 createEmergencyLight(29,11.8,19,0xff2020);
 
-// INDICADORES AMARELOS DOS PAINÉIS
 createWarningLight(9.2,11.1,17.5);
 createWarningLight(9.2,11.1,20.5);
 createWarningLight(29,9,16.5);
@@ -870,6 +867,11 @@ let yaw=0,pitch=0;
 const keys={w:false,a:false,s:false,d:false};
 let started=false;
 
+// DETECTA CELULAR
+function isMobile(){
+ return window.matchMedia("(max-width: 700px)").matches;
+}
+
 function start(){
  started=true;
  document.getElementById("menu").style.display="none";
@@ -919,7 +921,7 @@ addEventListener("keyup",e=>{
  if(keyMap[e.code])keys[keyMap[e.code]]=false;
 });
 
-// CONTROLES MOBILE — SISTEMA DE TOQUE E POINTER
+// CONTROLES MOBILE
 const padMap={
  up:"w",
  down:"s",
@@ -1076,7 +1078,8 @@ function animate(){
   if(keys.a)move.sub(right);
 
   if(move.lengthSq()>0){
-   move.normalize().multiplyScalar(5*dt);
+   const speed=isMobile()?2.5:3.1;
+   move.normalize().multiplyScalar(speed*dt);
    player.add(move);
   }
 
@@ -1110,7 +1113,7 @@ function animate(){
   }
  }
 
- // PISCADAS SUAVES DAS LUZES DE EMERGÊNCIA
+ // PISCADAS DAS LUZES DE EMERGÊNCIA
  const time=clock.elapsedTime;
 
  for(const lamp of emergencyLights){
