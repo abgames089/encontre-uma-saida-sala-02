@@ -9,87 +9,39 @@
 *{box-sizing:border-box}
 html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#000;font-family:Arial;color:white;touch-action:none}
 canvas{display:block;position:fixed;inset:0;z-index:0}
-button{
- background:#252a30dd;color:white;border:1px solid #777;
- padding:12px;border-radius:4px;font-weight:bold;touch-action:none;
- cursor:pointer;transition:background .15s,border-color .15s;
- user-select:none;-webkit-user-select:none;-webkit-tap-highlight-color:transparent;
-}
+button{background:#252a30dd;color:white;border:1px solid #777;padding:12px;border-radius:4px;font-weight:bold;touch-action:none;cursor:pointer;transition:background .15s,border-color .15s;user-select:none;-webkit-user-select:none;-webkit-tap-highlight-color:transparent}
 button:active{background:#a80f18;border-color:#ff5555}
-#menu{
- position:fixed;inset:0;z-index:20;display:flex;align-items:center;
- justify-content:center;flex-direction:column;text-align:center;
- background:radial-gradient(#17191c,#000 75%)
-}
+#menu{position:fixed;inset:0;z-index:20;display:flex;align-items:center;justify-content:center;flex-direction:column;text-align:center;background:radial-gradient(#17191c,#000 75%)}
 h1{font-size:clamp(28px,6vw,52px)}
 h1 span{color:#d71920}
 #menu p{color:#999;letter-spacing:2px;font-size:12px}
 #play{background:#a80f18;border-color:#ed4545;padding:14px 25px}
-#hud{
- display:none;position:fixed;inset:0;
- pointer-events:none;z-index:5
-}
+#hud{display:none;position:fixed;inset:0;pointer-events:none;z-index:5}
 #brand{position:absolute;top:15px;left:15px;font-size:13px;letter-spacing:2px;text-shadow:0 2px 5px #000}
-#crosshair{
- position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
- width:7px;height:7px;border:1px solid #ddd;border-radius:50%
-}
+#crosshair{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:7px;height:7px;border:1px solid #ddd;border-radius:50%}
 #controls{position:absolute;bottom:18px;left:15px;pointer-events:auto;z-index:8;touch-action:none}
 .pad{display:grid;grid-template-columns:repeat(3,53px);grid-template-rows:repeat(2,53px);gap:5px;touch-action:none}
-.pad button{
- padding:0;background:#252a30dd;font-size:20px;
- position:relative;z-index:9;min-width:0;
- pointer-events:auto;touch-action:none;
-}
+.pad button{padding:0;background:#252a30dd;font-size:20px;position:relative;z-index:9;min-width:0;pointer-events:auto;touch-action:none}
 #up{grid-column:2}
 #left{grid-column:1;grid-row:2}
 #down{grid-column:2;grid-row:2}
 #right{grid-column:3;grid-row:2}
 #lookHint{position:absolute;right:15px;bottom:125px;color:#aaa;font-size:10px}
-#actions{
- position:absolute;right:14px;bottom:18px;display:flex;
- flex-direction:column;gap:7px;pointer-events:auto;z-index:8
-}
-#actions button{
- min-width:112px;padding:11px 12px;background:#171a1ddd;
- border:1px solid #777;border-left:3px solid #a80f18;
- text-align:left;font-size:11px;letter-spacing:.5px
-}
+#actions{position:absolute;right:14px;bottom:18px;display:flex;flex-direction:column;gap:7px;pointer-events:auto;z-index:8}
+#actions button{min-width:112px;padding:11px 12px;background:#171a1ddd;border:1px solid #777;border-left:3px solid #a80f18;text-align:left;font-size:11px;letter-spacing:.5px}
 #actions button:active{background:#a80f18;border-color:#ff5555}
-#battery{
- position:absolute;top:15px;right:15px;background:#101318dd;
- padding:9px 12px;border:1px solid #555;font-size:12px
-}
+#battery{position:absolute;top:15px;right:15px;background:#101318dd;padding:9px 12px;border:1px solid #555;font-size:12px}
 #batteryBar{width:100px;height:5px;background:#333;margin-top:5px}
 #batteryFill{height:100%;width:100%;background:#d5d5d5}
-#inventoryText{
- position:absolute;top:52px;left:15px;color:#ddd;font-size:12px;
- text-shadow:0 2px 4px black
-}
-#message{
- position:absolute;top:68%;left:50%;transform:translateX(-50%);
- font-size:13px;color:#ddd;text-align:center;text-shadow:0 2px 6px black;
- width:90%;pointer-events:none
-}
-#backpackPanel{
- display:none;position:absolute;left:50%;top:50%;
- transform:translate(-50%,-50%);width:min(340px,90vw);
- padding:18px;background:#101318f5;border:1px solid #777;
- pointer-events:auto;z-index:10
-}
+#inventoryText{position:absolute;top:52px;left:15px;color:#ddd;font-size:12px;text-shadow:0 2px 4px black}
+#message{position:absolute;top:68%;left:50%;transform:translateX(-50%);font-size:13px;color:#ddd;text-align:center;text-shadow:0 2px 6px black;width:90%;pointer-events:none}
+#backpackPanel{display:none;position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:min(340px,90vw);padding:18px;background:#101318f5;border:1px solid #777;pointer-events:auto;z-index:10}
 #backpackPanel h3{text-align:center;letter-spacing:2px;margin-top:0}
 #backpackSlots{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
-.backpackSlot{
- height:70px;background:#252a30;border:1px solid #666;
- display:flex;align-items:center;justify-content:center;
- flex-direction:column;font-size:11px;cursor:pointer
-}
+.backpackSlot{height:70px;background:#252a30;border:1px solid #666;display:flex;align-items:center;justify-content:center;flex-direction:column;font-size:11px;cursor:pointer}
 .backpackSlot.selected{border:2px solid #d71920}
 #closeBag{width:100%;margin-top:12px;background:#a80f18;border-color:#ed4545}
-#footer{
- position:absolute;bottom:5px;width:100%;text-align:center;
- color:#777;font-size:10px;pointer-events:none
-}
+#footer{position:absolute;bottom:5px;width:100%;text-align:center;color:#777;font-size:10px;pointer-events:none}
 @media(min-width:701px){#lookHint{display:none}}
 @media(max-width:700px){
  #actions{right:10px;bottom:15px;gap:6px}
@@ -119,7 +71,6 @@ h1 span{color:#d71920}
   <div id="batteryBar"><div id="batteryFill"></div></div>
  </div>
  <div id="inventoryText">MOCHILA: I | OBJETO: NENHUM</div>
-
  <div id="controls">
   <div class="pad">
    <button id="up" type="button">▲</button>
@@ -128,9 +79,7 @@ h1 span{color:#d71920}
    <button id="right" type="button">▶</button>
   </div>
  </div>
-
  <div id="lookHint">ARRASTE PARA OLHAR</div>
-
  <div id="actions">
   <button id="bagButton">MOCHILA [I]</button>
   <button id="lightButton">LANTERNA [F]</button>
@@ -138,13 +87,11 @@ h1 span{color:#d71920}
   <button id="storeButton">GUARDAR [G]</button>
   <button id="dropButton">SOLTAR [Q]</button>
  </div>
-
  <div id="backpackPanel">
   <h3>MOCHILA</h3>
   <div id="backpackSlots"></div>
   <button id="closeBag">FECHAR</button>
  </div>
-
  <div id="message"></div>
  <div id="footer">ENCONTRE UMA SAÍDA! — AB GAMES</div>
 </div>
@@ -240,17 +187,9 @@ const emergencyLights=[];
 
 function createEmergencyLight(x,y,z,color=0xff2222){
  const bulbMat=new THREE.MeshStandardMaterial({
-  color:color,
-  emissive:color,
-  emissiveIntensity:.35,
-  roughness:.5
+  color:color,emissive:color,emissiveIntensity:.35,roughness:.5
  });
-
- const bulb=new THREE.Mesh(
-  new THREE.BoxGeometry(.22,.12,.12),
-  bulbMat
- );
-
+ const bulb=new THREE.Mesh(new THREE.BoxGeometry(.22,.12,.12),bulbMat);
  bulb.position.set(x,y,z);
  scene.add(bulb);
 
@@ -259,26 +198,15 @@ function createEmergencyLight(x,y,z,color=0xff2222){
  scene.add(glow);
 
  emergencyLights.push({
-  bulb:bulb,
-  glow:glow,
-  base:.28,
-  phase:Math.random()*Math.PI*2
+  bulb:bulb,glow:glow,base:.28,phase:Math.random()*Math.PI*2
  });
 }
 
 function createWarningLight(x,y,z){
  const bulbMat=new THREE.MeshStandardMaterial({
-  color:0xffaa22,
-  emissive:0xff8800,
-  emissiveIntensity:.3,
-  roughness:.5
+  color:0xffaa22,emissive:0xff8800,emissiveIntensity:.3,roughness:.5
  });
-
- const bulb=new THREE.Mesh(
-  new THREE.BoxGeometry(.16,.12,.12),
-  bulbMat
- );
-
+ const bulb=new THREE.Mesh(new THREE.BoxGeometry(.16,.12,.12),bulbMat);
  bulb.position.set(x,y,z);
  scene.add(bulb);
 
@@ -356,18 +284,43 @@ function createGenerator(x,z){
  }
 }
 
+// PRIMEIRA FILEIRA — 3 GERADORES
 createGenerator(-30,-18);
 createGenerator(0,-18);
 createGenerator(30,-18);
 
+// SEGUNDA FILEIRA — 5 GERADORES NOVOS
+createGenerator(-45,25);
+createGenerator(-30,25);
+createGenerator(-15,25);
+createGenerator(0,25);
+createGenerator(45,25);
+
+// LUZES DA PRIMEIRA FILEIRA
 createEmergencyLight(-30,4.1,-15.5,0xff2020);
 createEmergencyLight(0,4.1,-15.5,0xff2020);
 createEmergencyLight(30,4.1,-15.5,0xff2020);
 
+// LUZES DA SEGUNDA FILEIRA
+createEmergencyLight(-45,4.1,27.5,0xff2020);
+createEmergencyLight(-30,4.1,27.5,0xff2020);
+createEmergencyLight(-15,4.1,27.5,0xff2020);
+createEmergencyLight(0,4.1,27.5,0xff2020);
+createEmergencyLight(45,4.1,27.5,0xff2020);
+
+// TUBULAÇÃO DA PRIMEIRA FILEIRA
 pipe(-30,4,-18,30,4,-18,.2);
 pipe(-30,4,-18,-30,5.8,-18,.15);
 pipe(0,4,-18,0,5.8,-18,.15);
 pipe(30,4,-18,30,5.8,-18,.15);
+
+// TUBULAÇÃO DA SEGUNDA FILEIRA
+pipe(-45,4,25,0,4,25,.2);
+pipe(0,4,25,45,4,25,.2);
+
+for(const x of [-45,-30,-15,0,45]){
+ pipe(x,4,25,x,5.8,25,.15);
+}
 
 for(let x=-50;x<=50;x+=10){
  pipe(x,10,-48,x,10,48,.12);
@@ -523,10 +476,7 @@ function makeFlashlight(){
  const group=new THREE.Group();
  const casing=mat(0x20252b,.55,.7);
  const glass=new THREE.MeshStandardMaterial({
-  color:0xffffff,
-  emissive:0xffffff,
-  emissiveIntensity:1.5,
-  roughness:.25
+  color:0xffffff,emissive:0xffffff,emissiveIntensity:1.5,roughness:.25
  });
 
  const handle=new THREE.Mesh(
@@ -543,8 +493,7 @@ function makeFlashlight(){
  group.add(head);
 
  const lens=new THREE.Mesh(
-  new THREE.CircleGeometry(.075,20),
-  glass
+  new THREE.CircleGeometry(.075,20),glass
  );
  lens.position.z=-.3;
  group.add(lens);
@@ -867,7 +816,6 @@ let yaw=0,pitch=0;
 const keys={w:false,a:false,s:false,d:false};
 let started=false;
 
-// DETECTA CELULAR
 function isMobile(){
  return window.matchMedia("(max-width: 700px)").matches;
 }
@@ -922,13 +870,7 @@ addEventListener("keyup",e=>{
 });
 
 // CONTROLES MOBILE
-const padMap={
- up:"w",
- down:"s",
- left:"a",
- right:"d"
-};
-
+const padMap={up:"w",down:"s",left:"a",right:"d"};
 const activePointers=new Map();
 const activeTouches=new Map();
 
@@ -953,21 +895,17 @@ document.querySelectorAll(".pad button").forEach(button=>{
 
  button.addEventListener("pointerdown",e=>{
   if(!started)return;
-
   e.preventDefault();
   e.stopPropagation();
 
   activePointers.set(e.pointerId,key);
   updatePadKey(key);
 
-  try{
-   button.setPointerCapture(e.pointerId);
-  }catch(error){}
+  try{button.setPointerCapture(e.pointerId)}catch(error){}
  });
 
  function releasePointer(e){
   if(!activePointers.has(e.pointerId))return;
-
   activePointers.delete(e.pointerId);
   updatePadKey(key);
  }
@@ -978,24 +916,20 @@ document.querySelectorAll(".pad button").forEach(button=>{
 
  button.addEventListener("touchstart",e=>{
   if(!started)return;
-
   e.preventDefault();
   e.stopPropagation();
 
   for(const touch of e.changedTouches){
    activeTouches.set(touch.identifier,key);
   }
-
   updatePadKey(key);
  },{passive:false});
 
  function releaseTouch(e){
   e.preventDefault();
-
   for(const touch of e.changedTouches){
    activeTouches.delete(touch.identifier);
   }
-
   updatePadKey(key);
  }
 
@@ -1019,9 +953,7 @@ renderer.domElement.addEventListener("pointerdown",e=>{
  lastX=e.clientX;
  lastY=e.clientY;
 
- try{
-  renderer.domElement.setPointerCapture(e.pointerId);
- }catch(error){}
+ try{renderer.domElement.setPointerCapture(e.pointerId)}catch(error){}
 });
 
 renderer.domElement.addEventListener("pointermove",e=>{
@@ -1051,11 +983,7 @@ renderer.domElement.addEventListener("click",()=>{
 document.addEventListener("mousemove",e=>{
  if(document.pointerLockElement===renderer.domElement){
   yaw-=e.movementX*.002;
-  pitch=THREE.MathUtils.clamp(
-   pitch-e.movementY*.002,
-   -1.2,
-   1.2
-  );
+  pitch=THREE.MathUtils.clamp(pitch-e.movementY*.002,-1.2,1.2);
  }
 });
 
@@ -1118,7 +1046,6 @@ function animate(){
 
  for(const lamp of emergencyLights){
   const pulse=.65+Math.sin(time*2.2+lamp.phase)*.25;
-
   lamp.glow.intensity=lamp.base*pulse;
   lamp.bulb.material.emissiveIntensity=.35*pulse;
  }
@@ -1127,7 +1054,6 @@ function animate(){
 }
 
 animate();
-
 renderBackpack();
 updateBattery();
 updateInventoryText();
@@ -1135,7 +1061,6 @@ updateInventoryText();
 addEventListener("resize",()=>{
  camera.aspect=innerWidth/innerHeight;
  camera.updateProjectionMatrix();
-
  renderer.setSize(innerWidth,innerHeight);
  renderer.setPixelRatio(Math.min(devicePixelRatio,1.25));
 });
