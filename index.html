@@ -7,13 +7,13 @@
 <title>ENCONTRE UMA SAÍDA! — SALA 02</title>
 <style>
 *{box-sizing:border-box}
-body{margin:0;overflow:hidden;background:#000;font-family:Arial;color:white;touch-action:none}
-canvas{display:block}
+html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#000;font-family:Arial;color:white;touch-action:none}
+canvas{display:block;position:fixed;inset:0;z-index:0}
 button{
  background:#252a30dd;color:white;border:1px solid #777;
  padding:12px;border-radius:4px;font-weight:bold;touch-action:none;
  cursor:pointer;transition:background .15s,border-color .15s;
- user-select:none;-webkit-user-select:none;
+ user-select:none;-webkit-user-select:none;-webkit-tap-highlight-color:transparent;
 }
 button:active{background:#a80f18;border-color:#ff5555}
 #menu{
@@ -34,11 +34,12 @@ h1 span{color:#d71920}
  position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
  width:7px;height:7px;border:1px solid #ddd;border-radius:50%
 }
-#controls{position:absolute;bottom:18px;left:15px;pointer-events:auto;z-index:8}
-.pad{display:grid;grid-template-columns:repeat(3,53px);grid-template-rows:repeat(2,53px);gap:5px}
+#controls{position:absolute;bottom:18px;left:15px;pointer-events:auto;z-index:8;touch-action:none}
+.pad{display:grid;grid-template-columns:repeat(3,53px);grid-template-rows:repeat(2,53px);gap:5px;touch-action:none}
 .pad button{
  padding:0;background:#252a30dd;font-size:20px;
  position:relative;z-index:9;min-width:0;
+ pointer-events:auto;touch-action:none;
 }
 #up{grid-column:2}
 #left{grid-column:1;grid-row:2}
@@ -121,10 +122,10 @@ h1 span{color:#d71920}
 
  <div id="controls">
   <div class="pad">
-   <button id="up">▲</button>
-   <button id="left">◀</button>
-   <button id="down">▼</button>
-   <button id="right">▶</button>
+   <button id="up" type="button">▲</button>
+   <button id="left" type="button">◀</button>
+   <button id="down" type="button">▼</button>
+   <button id="right" type="button">▶</button>
   </div>
  </div>
 
@@ -169,10 +170,10 @@ renderer.toneMapping=THREE.NoToneMapping;
 renderer.toneMappingExposure=1;
 document.body.appendChild(renderer.domElement);
 
-// CAMADA DO JOGO ATRÁS DOS CONTROLES
 renderer.domElement.style.position="fixed";
 renderer.domElement.style.inset="0";
 renderer.domElement.style.zIndex="0";
+renderer.domElement.style.touchAction="none";
 
 function mat(color,roughness=1,metalness=0){
  return new THREE.MeshStandardMaterial({color,roughness,metalness});
@@ -800,7 +801,7 @@ function getFloorHeight(x,z){
 
 const player=new THREE.Vector3(0,0,35);
 let yaw=0,pitch=0;
-const keys={};
+const keys={w:false,a:false,s:false,d:false};
 let started=false;
 
 function start(){
@@ -820,6 +821,7 @@ function start(){
 
 document.getElementById("play").addEventListener("click",start);
 
+// TECLADO PC
 const keyMap={
  KeyW:"w",ArrowUp:"w",
  KeyS:"s",ArrowDown:"s",
@@ -851,7 +853,7 @@ addEventListener("keyup",e=>{
  if(keyMap[e.code])keys[keyMap[e.code]]=false;
 });
 
-// CONTROLES MOBILE REFORÇADOS
+// CONTROLES MOBILE — SISTEMA DE TOQUE E POINTER
 const padMap={
  up:"w",
  down:"s",
@@ -860,49 +862,81 @@ const padMap={
 };
 
 const activePointers=new Map();
+const activeTouches=new Map();
 
 function updatePadKey(key){
- keys[key]=[...activePointers.values()].includes(key);
+ const pointerHeld=[...activePointers.values()].includes(key);
+ const touchHeld=[...activeTouches.values()].includes(key);
+ keys[key]=pointerHeld||touchHeld;
+}
+
+function clearMovement(){
+ activePointers.clear();
+ activeTouches.clear();
+ keys.w=false;
+ keys.a=false;
+ keys.s=false;
+ keys.d=false;
 }
 
 document.querySelectorAll(".pad button").forEach(button=>{
  const key=padMap[button.id];
  if(!key)return;
 
+ // Pointer Events: celulares modernos e computadores com toque
  button.addEventListener("pointerdown",e=>{
+  if(!started)return;
+
   e.preventDefault();
   e.stopPropagation();
 
   activePointers.set(e.pointerId,key);
-  keys[key]=true;
+  updatePadKey(key);
 
   try{
    button.setPointerCapture(e.pointerId);
   }catch(error){}
  });
 
- function release(e){
+ function releasePointer(e){
   if(!activePointers.has(e.pointerId))return;
 
   activePointers.delete(e.pointerId);
   updatePadKey(key);
  }
 
- button.addEventListener("pointerup",release);
- button.addEventListener("pointercancel",release);
- button.addEventListener("lostpointercapture",release);
+ button.addEventListener("pointerup",releasePointer);
+ button.addEventListener("pointercancel",releasePointer);
+ button.addEventListener("lostpointercapture",releasePointer);
 
- // Fallback para navegadores móveis
+ // Fallback Touch Events para navegadores móveis
+ button.addEventListener("touchstart",e=>{
+  if(!started)return;
+
+  e.preventDefault();
+  e.stopPropagation();
+
+  for(const touch of e.changedTouches){
+   activeTouches.set(touch.identifier,key);
+  }
+
+  updatePadKey(key);
+ },{passive:false});
+
+ function releaseTouch(e){
+  e.preventDefault();
+
+  for(const touch of e.changedTouches){
+   activeTouches.delete(touch.identifier);
+  }
+
+  updatePadKey(key);
+ }
+
+ button.addEventListener("touchend",releaseTouch,{passive:false});
+ button.addEventListener("touchcancel",releaseTouch,{passive:false});
  button.addEventListener("contextmenu",e=>e.preventDefault());
 });
-
-function clearMovement(){
- activePointers.clear();
- keys.w=false;
- keys.a=false;
- keys.s=false;
- keys.d=false;
-}
 
 window.addEventListener("blur",clearMovement);
 document.addEventListener("visibilitychange",()=>{
