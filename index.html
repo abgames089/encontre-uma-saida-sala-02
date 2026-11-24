@@ -59,7 +59,6 @@ button{background:#a80f18;color:white;border:1px solid #ed4545;padding:12px 17px
 </style>
 </head>
 <body>
-
 <div id="menu">
  <h1>ENCONTRE UMA <span>SAÍDA!</span></h1>
  <p>AB GAMES APRESENTA</p>
@@ -68,7 +67,6 @@ button{background:#a80f18;color:white;border:1px solid #ed4545;padding:12px 17px
  <button id="play">ENTRAR NA SALA</button>
  <p>PC: WASD + MOUSE<br>CELULAR: BOTÕES + ARRASTAR NA TELA</p>
 </div>
-
 <div id="hud">
  <div id="brand">AB GAMES // SALA 02</div>
  <div id="crosshair"></div>
@@ -82,10 +80,8 @@ button{background:#a80f18;color:white;border:1px solid #ed4545;padding:12px 17px
  </div>
  <div id="footer">ENCONTRE UMA SAÍDA! — AB GAMES</div>
 </div>
-
 <div id="doorPrompt">PORTA BLOQUEADA — pressione E</div>
 <button id="interact">INTERAGIR</button>
-
 <div id="inventoryHud">MOCHILA: <span id="slotCount">1/4</span></div>
 <div id="batteryHud">
  <div style="display:flex;justify-content:space-between">
@@ -93,9 +89,7 @@ button{background:#a80f18;color:white;border:1px solid #ed4545;padding:12px 17px
  </div>
  <div id="batteryBar"><div id="batteryFill"></div></div>
 </div>
-
 <button id="backpackButton">🎒 MOCHILA (I)</button>
-
 <div id="actionButtons">
  <button id="mobilePick">PEGAR (E)</button>
  <button id="mobileStore">GUARDAR (G)</button>
@@ -104,9 +98,7 @@ button{background:#a80f18;color:white;border:1px solid #ed4545;padding:12px 17px
  <button id="mobileUse">USAR (T)</button>
  <button id="mobileInspect">EXAMINAR (R)</button>
 </div>
-
 <div id="itemMessage"></div>
-
 <div id="backpackPanel">
  <div id="backpackBox">
   <h2>🎒 MOCHILA</h2>
@@ -116,7 +108,6 @@ button{background:#a80f18;color:white;border:1px solid #ed4545;padding:12px 17px
   <button id="backpackClose">FECHAR</button>
  </div>
 </div>
-
 <div id="inspectPanel">
  <div id="inspectBox">
   <h3 id="inspectTitle">EXAMINAR OBJETO</h3>
@@ -124,7 +115,6 @@ button{background:#a80f18;color:white;border:1px solid #ed4545;padding:12px 17px
   <button id="inspectClose">FECHAR</button>
  </div>
 </div>
-
 <div id="passwordModal">
  <div id="passwordBox">
   <h2>CONTROLE DE ACESSO</h2>
@@ -141,7 +131,6 @@ button{background:#a80f18;color:white;border:1px solid #ed4545;padding:12px 17px
   <button id="closePassword">FECHAR</button>
  </div>
 </div>
-
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/0.160.0/three.min.js"></script>
 <script>
 (()=>{
@@ -149,18 +138,15 @@ if(!window.THREE){
  document.getElementById("menu").innerHTML="<h2>Erro ao carregar o jogo</h2><p>Verifique sua conexão.</p>";
  return;
 }
-
 const scene=new THREE.Scene();
 scene.background=new THREE.Color(0x000000);
 scene.fog=new THREE.Fog(0x000000,22,75);
-
 const camera=new THREE.PerspectiveCamera(75,innerWidth/innerHeight,.1,150);
 const renderer=new THREE.WebGLRenderer({antialias:false});
 renderer.setSize(innerWidth,innerHeight);
 renderer.setPixelRatio(Math.min(devicePixelRatio,1.5));
 renderer.outputColorSpace=THREE.SRGBColorSpace;
 document.body.appendChild(renderer.domElement);
-
 function mat(color,roughness=1,metalness=0){
  return new THREE.MeshStandardMaterial({color,roughness,metalness});
 }
@@ -172,7 +158,6 @@ const blackMat=mat(0x090d11);
 const yellowMat=mat(0xd1a12a);
 const bodyMat=mat(0x39444b,.65,.55);
 const redMat=mat(0x8e151b);
-
 const screenMat=new THREE.MeshStandardMaterial({
  color:0x17404a,emissive:0x000000,emissiveIntensity:0
 });
@@ -182,7 +167,6 @@ const greenMat=new THREE.MeshStandardMaterial({
 const orangeMat=new THREE.MeshStandardMaterial({
  color:0xc17b21,emissive:0x000000,emissiveIntensity:0
 });
-
 function box(x,y,z,w,h,d,material){
  const obj=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),material);
  obj.position.set(x,y,z);scene.add(obj);return obj;
@@ -199,10 +183,8 @@ function pipe(x1,y1,z1,x2,y2,z2,r,material=metalMat){
  obj.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0),dir.normalize());
  scene.add(obj);return obj;
 }
-
 // SALA INDUSTRIAL
 box(0,-.25,0,70,.5,55,floorMat);
-
 // PAREDES
 box(-18.75,8,-27.5,32.5,16,.5,wallMat);
 box(18.75,8,-27.5,32.5,16,.5,wallMat);
@@ -210,16 +192,13 @@ box(0,11.75,-27.5,5,8.5,.5,wallMat);
 box(0,8,27.5,70,16,.5,wallMat);
 box(-35,8,0,.5,16,55,wallMat);
 box(35,8,0,.5,16,55,wallMat);
-
 // PORTA
 const doorPivot=new THREE.Group();
 doorPivot.position.set(-2.4,0,-27.15);
 scene.add(doorPivot);
-
 const doorLeaf=new THREE.Mesh(new THREE.BoxGeometry(4.8,7.3,.28),darkMetal);
 doorLeaf.position.set(2.4,3.65,0);
 doorPivot.add(doorLeaf);
-
 for(const y of [1,3.65,6.3]){
  const bar=new THREE.Mesh(new THREE.BoxGeometry(4.35,.16,.34),metalMat);
  bar.position.set(2.4,y,.02);
@@ -233,11 +212,9 @@ for(const x of [.55,4.25]){
 const doorSign=new THREE.Mesh(new THREE.BoxGeometry(1.45,.55,.08),yellowMat);
 doorSign.position.set(2.4,6.55,.2);
 doorPivot.add(doorSign);
-
 box(-2.55,3.75,-27.12,.18,7.7,.35,metalMat);
 box(2.55,3.75,-27.12,.18,7.7,.35,metalMat);
 box(0,7.55,-27.12,5.25,.18,.35,metalMat);
-
 // PAINEL DA SENHA
 box(3.55,1.65,-27.05,.95,1.45,.22,darkMetal);
 box(3.55,2.02,-26.91,.68,.32,.06,screenMat);
@@ -247,129 +224,160 @@ for(let row=0;row<3;row++){
  }
 }
 box(3.55,.78,-26.91,.4,.13,.07,redMat);
-
 let doorOpened=false;
 let doorAngle=0;
-
 // TETO
 box(0,16,0,70,.5,55,wallMat);
-
 // MARCAÇÕES INDUSTRIAIS
 for(let x=-30;x<=30;x+=10){
  box(x,1,-27.2,3,.18,.08,yellowMat);
  box(x,1,27.2,3,.18,.08,yellowMat);
 }
-
 // ILUMINAÇÃO AMBIENTE: ZERO
 scene.add(new THREE.HemisphereLight(0x000000,0x000000,0));
-
 const ceilingLight=new THREE.PointLight(0x000000,0,65);
 ceilingLight.position.set(0,13,0);
 scene.add(ceilingLight);
-
 const sideLight1=new THREE.PointLight(0x000000,0,40);
 sideLight1.position.set(-20,9,-8);
 scene.add(sideLight1);
-
 const sideLight2=new THREE.PointLight(0x000000,0,40);
 sideLight2.position.set(20,9,8);
 scene.add(sideLight2);
-
 // GERADOR INDUSTRIAL
 function createGenerator(x,z,id){
  box(x,.16,z,6.2,.32,4.8,darkMetal);
  box(x,.36,z,5.8,.15,4.4,metalMat);
-
  for(const sx of [-2.35,2.35]){
   for(const sz of [-1.65,1.65]){
    box(x+sx,.55,z+sz,.42,.45,.42,blackMat);
    box(x+sx,.33,z+sz,.65,.12,.65,metalMat);
   }
  }
-
  box(x,1.75,z,5.15,2.45,3.65,bodyMat);
  box(x,3.05,z,4.85,.2,3.4,metalMat);
  box(x-2.61,1.75,z,.12,2.1,3.4,darkMetal);
  box(x+2.61,1.75,z,.12,2.1,3.4,darkMetal);
-
  cylinder(x,1.65,z+1.95,.82,.82,1.05,darkMetal,24);
  cylinder(x,1.65,z+2.51,.68,.68,.12,metalMat,24);
  cylinder(x,1.65,z+2.59,.4,.4,.08,blackMat,20);
-
  for(let i=0;i<4;i++){
   cylinder(x,1.65,z+2.08+i*.12,.84,.84,.045,metalMat,24);
  }
-
  for(let i=0;i<8;i++){
   const a=i*Math.PI/4;
   cylinder(x+Math.cos(a)*.57,1.65+Math.sin(a)*.57,z+2.62,.055,.055,.045,yellowMat,8);
  }
-
  box(x,3.22,z,3.7,.15,2.5,metalMat);
  box(x,2.35,z+1.91,1.65,1.2,.16,darkMetal);
  box(x,2.4,z+2.01,1.35,.72,.07,blackMat);
  box(x,2.48,z+2.06,.82,.35,.04,screenMat);
-
  box(x-.48,1.97,z+2.07,.14,.14,.06,greenMat);
  box(x-.2,1.97,z+2.07,.14,.14,.06,orangeMat);
  box(x+.08,1.97,z+2.07,.14,.14,.06,redMat);
-
  for(let i=0;i<3;i++){
   cylinder(x-.45+i*.45,1.65,z+2.05,.09,.09,.07,i===0?greenMat:(i===1?yellowMat:redMat),12);
  }
-
  box(x,3.35,z+1.65,.85,.2,.08,yellowMat);
-
  for(const sx of [-2.42,2.42]){
   for(const sy of [.8,2.7]){
    cylinder(x+sx,sy,z+1.87,.065,.065,.08,yellowMat,8);
   }
  }
-
  for(let i=0;i<3;i++){
   const px=x-1.5+i*1.5;
   cylinder(px,3.48,z-.7,.16,.16,.6,metalMat);
   cylinder(px,3.8,z-.7,.12,.12,.1,yellowMat);
  }
-
  pipe(x+2.65,2.5,z-.8,x+3.4,2.5,z-.8,.2);
  pipe(x+3.4,2.5,z-.8,x+3.4,3.4,z-.8,.2);
-
  for(let i=0;i<3;i++){
   box(x-1+i,3.4,z-1.5,.45,.12,.5,darkMetal);
  }
-
  for(let i=-2;i<=2;i++){
   box(x+i*.85,.57,z+2.03,.16,.25,.12,metalMat);
  }
 }
-
 // NOVE GERADORES — TRÊS FILEIRAS
 createGenerator(-17,-9,1);
 createGenerator(0,-9,2);
 createGenerator(17,-9,3);
-
 createGenerator(-17,10,4);
 createGenerator(0,10,5);
 createGenerator(17,10,6);
-
 createGenerator(-17,-20,7);
 createGenerator(0,-20,8);
 createGenerator(17,-20,9);
-
-// TUBULAÇÕES
-pipe(-17,4,-9,17,4,-9,.18);
-pipe(-17,4,-9,-17,5.8,-9,.15);
-pipe(0,4,-9,0,5.8,-9,.15);
-pipe(17,4,-9,17,5.8,-9,.15);
-
+// CABOS INDUSTRIAIS E PAINÉIS ELÉTRICOS
+// Cabos suspensos para não atrapalhar a movimentação do jogador.
+const cableMat=mat(0x080b0e,.8,.35);
+const cableRed=mat(0x641016,.7,.2);
+const cableYellow=mat(0x80601c,.7,.2);
+const panelMat=mat(0x10161c,.7,.65);
+const panelFrameMat=mat(0x56616b,.6,.75);
+function industrialCable(x1,y1,z1,x2,y2,z2,r=.18,material=cableMat){
+ pipe(x1,y1,z1,x2,y2,z2,r,material);
+}
+// Cabos principais conectando os geradores de cada fileira.
+for(const z of [-20,-9,10]){
+ industrialCable(-17,5.15,z,0,5.15,z,.24,cableMat);
+ industrialCable(0,5.15,z,17,5.15,z,.24,cableMat);
+}
+// Ramais verticais entre as fileiras de geradores.
+for(const x of [-17,0,17]){
+ industrialCable(x,5.15,-20,x,5.15,-9,.20,cableMat);
+ industrialCable(x,5.15,-9,x,5.15,10,.20,cableMat);
+}
+ // Cabos menores, em cores diferentes, acompanhando os cabos principais.
+for(const z of [-20,-9,10]){
+ industrialCable(-17,5.42,z+.38,0,5.42,z+.38,.065,cableRed);
+ industrialCable(0,5.42,z+.38,17,5.42,z+.38,.065,cableYellow);
+}
+// Suportes dos cabos no teto.
+for(const x of [-17,0,17]){
+ for(const z of [-20,-9,10]){
+  box(x,5.55,z,.55,.18,.55,panelFrameMat);
+  pipe(x,5.55,z,x,6.1,z,.07,panelFrameMat);
+ }
+}
+// Painéis elétricos escuros nas paredes laterais.
+function createElectricalPanel(x,z,side,id){
+ const faceX=x+side*.24;
+ // Caixa e moldura.
+ box(x,3.2,z,.42,2.75,2.15,panelFrameMat);
+ box(faceX,3.2,z,.12,2.48,1.88,panelMat);
+ // Tela apagada e etiqueta de identificação.
+ box(faceX+side*.075,3.83,z,.035,.43,.82,blackMat);
+ box(faceX+side*.08,4.55,z,.04,.16,.72,darkMetal);
+ // Fileiras de botões e disjuntores.
+ for(let i=0;i<4;i++){
+  box(faceX+side*.09,3.25-i*.34,z-.57,.05,.16,.16,i%2===0?redMat:darkMetal);
+  box(faceX+side*.09,3.25-i*.34,z-.19,.05,.16,.16,yellowMat);
+  box(faceX+side*.09,3.25-i*.34,z+.19,.05,.16,.16,metalMat);
+  box(faceX+side*.09,3.25-i*.34,z+.57,.05,.16,.16,darkMetal);
+ }
+ // Grades de ventilação.
+ for(let i=0;i<5;i++){
+  box(faceX+side*.085,2.15,z-.55+i*.27,.045,.055,1.25,panelFrameMat);
+ }
+ // Conduítes que sobem até a instalação superior.
+ industrialCable(x,4.65,z,x,7.2,z,.09,panelFrameMat);
+ industrialCable(x+side*.12,4.65,z+.72,x+side*.12,6.7,z+.72,.055,cableRed);
+}
+// Três painéis de cada lado da central.
+createElectricalPanel(-34,-18,1,1);
+createElectricalPanel(-34,0,1,2);
+createElectricalPanel(-34,18,1,3);
+createElectricalPanel(34,-18,-1,4);
+createElectricalPanel(34,0,-1,5);
+createElectricalPanel(34,18,-1,6);
+// Tubulações superiores existentes.
 for(let x=-30;x<=30;x+=10){
  pipe(x,10,-26.5,x,10,26.5,.12);
  pipe(x,10,-26.5,x,10.7,-26.5,.08,yellowMat);
  box(x,9.5,-26,.35,1,.35,darkMetal);
  box(x,9.5,26,.35,1,.35,darkMetal);
 }
-
 // VIGAS
 for(let x=-30;x<=30;x+=10){
  box(x,15.4,0,.3,.3,54,metalMat);
@@ -377,33 +385,27 @@ for(let x=-30;x<=30;x+=10){
 for(let z=-25;z<=25;z+=10){
  box(0,15.4,z,69,.3,.3,metalMat);
 }
-
 // JOGADOR
 const player=new THREE.Vector3(0,0,19);
 let yaw=0,pitch=0;
 const keys={};
 let started=false;
-
 const ACCESS_CODE="2402";
 let enteredCode="";
 let passwordOpen=false;
-
 const passwordModal=document.getElementById("passwordModal");
 const passwordDisplay=document.getElementById("passwordDisplay");
 const passwordStatus=document.getElementById("passwordStatus");
 const doorPrompt=document.getElementById("doorPrompt");
 const interactButton=document.getElementById("interact");
-
 // MOCHILA
 const inventory=[null,null,null,null];
-
 inventory[0]={
  type:"flashlight",
  name:"Lanterna",
  icon:"🔦",
  description:"Uma lanterna portátil. A bateria está carregada."
 };
-
 let selectedSlot=0;
 let heldItem=null;
 let backpackOpen=false;
@@ -413,14 +415,12 @@ let battery=100;
 let flashlightObject=null;
 let itemObjects=[];
 let messageTimer=null;
-
 const inventorySlots=document.getElementById("inventorySlots");
 const backpackPanel=document.getElementById("backpackPanel");
 const batteryText=document.getElementById("batteryText");
 const batteryFill=document.getElementById("batteryFill");
 const itemMessage=document.getElementById("itemMessage");
 const inspectPanel=document.getElementById("inspectPanel");
-
 function showItemMessage(message){
  itemMessage.textContent=message;
  itemMessage.style.display="block";
@@ -429,18 +429,15 @@ function showItemMessage(message){
   itemMessage.style.display="none";
  },2200);
 }
-
 function updateBatteryUI(){
  batteryText.textContent=Math.ceil(battery)+"%";
  batteryFill.style.width=battery+"%";
  batteryFill.style.background=battery>35?"#69d69a":battery>15?"#e4b64d":"#e34b50";
 }
-
 function updateInventoryUI(){
  inventorySlots.innerHTML="";
  const count=inventory.filter(Boolean).length+(heldItem?1:0);
  document.getElementById("slotCount").textContent=count+"/4";
-
  inventory.forEach((item,index)=>{
   const slot=document.createElement("button");
   slot.className="inventorySlot"+(selectedSlot===index?" selected":"");
@@ -452,11 +449,9 @@ function updateInventoryUI(){
   inventorySlots.appendChild(slot);
  });
 }
-
 // MODELO DA LANTERNA
 function createFlashlightModel(){
  const group=new THREE.Group();
-
  const body=new THREE.Mesh(
   new THREE.CylinderGeometry(.075,.095,.48,12),
   new THREE.MeshStandardMaterial({color:0x20252b,metalness:.65,roughness:.45})
@@ -464,7 +459,6 @@ function createFlashlightModel(){
  body.rotation.x=Math.PI/2;
  body.position.z=-.18;
  group.add(body);
-
  const head=new THREE.Mesh(
   new THREE.CylinderGeometry(.115,.09,.13,12),
   new THREE.MeshStandardMaterial({color:0x65717b,metalness:.7,roughness:.35})
@@ -472,14 +466,12 @@ function createFlashlightModel(){
  head.rotation.x=Math.PI/2;
  head.position.z=-.45;
  group.add(head);
-
  const lens=new THREE.Mesh(
   new THREE.CircleGeometry(.085,16),
   new THREE.MeshBasicMaterial({color:0xd9e8c9})
  );
  lens.position.z=-.52;
  group.add(lens);
-
  const grip=new THREE.Mesh(
   new THREE.CylinderGeometry(.082,.082,.2,12),
   new THREE.MeshStandardMaterial({color:0x111519})
@@ -487,15 +479,12 @@ function createFlashlightModel(){
  grip.rotation.x=Math.PI/2;
  grip.position.z=-.02;
  group.add(grip);
-
  return group;
 }
-
 flashlightObject=createFlashlightModel();
 flashlightObject.position.set(.32,-.27,-.65);
 flashlightObject.visible=false;
 camera.add(flashlightObject);
-
 // LANTERNA NA CÂMERA
 const flashlightBeam=new THREE.SpotLight(
  0xfff1d2,4.2,24,Math.PI/7,.38,1.2
@@ -506,16 +495,13 @@ flashlightBeam.visible=false;
 camera.add(flashlightBeam);
 camera.add(flashlightBeam.target);
 scene.add(camera);
-
 // OBJETO SEGURADO
 const heldBatteryVisual=new THREE.Group();
-
 const heldBatteryBody=new THREE.Mesh(
  new THREE.BoxGeometry(.18,.27,.12),
  new THREE.MeshStandardMaterial({color:0x263d32,metalness:.45})
 );
 heldBatteryVisual.add(heldBatteryBody);
-
 const heldBatteryStripe=new THREE.Mesh(
  new THREE.BoxGeometry(.19,.055,.125),
  new THREE.MeshStandardMaterial({color:0x54c77b})
@@ -525,12 +511,10 @@ heldBatteryVisual.add(heldBatteryStripe);
 heldBatteryVisual.position.set(.32,-.28,-.62);
 heldBatteryVisual.visible=false;
 camera.add(heldBatteryVisual);
-
 function syncHeldVisual(){
  flashlightObject.visible=!!(heldItem&&heldItem.type==="flashlight");
  heldBatteryVisual.visible=!!(heldItem&&heldItem.type==="battery");
 }
-
 function toggleFlashlight(){
  if(!heldItem||heldItem.type!=="flashlight"){
   showItemMessage("PEGUE A LANTERNA DA MOCHILA PRIMEIRO.");
@@ -546,42 +530,35 @@ function toggleFlashlight(){
  flashlightBeam.visible=flashlightOn;
  showItemMessage(flashlightOn?"LANTERNA LIGADA":"LANTERNA DESLIGADA");
 }
-
 function storeHeldItem(){
  if(!heldItem){
   showItemMessage("VOCÊ NÃO ESTÁ SEGURANDO NENHUM OBJETO.");
   return;
  }
-
  const empty=inventory.findIndex(item=>item===null);
  if(empty===-1){
   showItemMessage("MOCHILA CHEIA!");
   return;
  }
-
  if(heldItem.type==="flashlight"){
   flashlightOn=false;
   flashlightBeam.visible=false;
  }
-
  inventory[empty]=heldItem;
  heldItem=null;
  syncHeldVisual();
  updateInventoryUI();
  showItemMessage("OBJETO GUARDADO NO ESPAÇO "+(empty+1)+".");
 }
-
 function selectInventorySlot(index){
  if(index<0||index>3)return;
  selectedSlot=index;
  const chosen=inventory[index];
-
  if(!chosen){
   updateInventoryUI();
   showItemMessage("ESPAÇO "+(index+1)+" VAZIO.");
   return;
  }
-
  if(heldItem){
   if(heldItem.type==="flashlight"){
    flashlightOn=false;
@@ -591,53 +568,42 @@ function selectInventorySlot(index){
  }else{
   inventory[index]=null;
  }
-
  heldItem=chosen;
  syncHeldVisual();
  updateInventoryUI();
  showItemMessage(heldItem.name+" EQUIPADO.");
 }
-
 // OBJETOS COLETÁVEIS
 function createPickup(type,name,icon,x,z,description){
  const group=new THREE.Group();
-
  const baseMat=new THREE.MeshStandardMaterial({
   color:type==="battery"?0x263d32:0x9b7629,
   metalness:.45,roughness:.55
  });
-
  const body=new THREE.Mesh(new THREE.BoxGeometry(.34,.42,.22),baseMat);
  group.add(body);
-
  const stripe=new THREE.Mesh(
   new THREE.BoxGeometry(.36,.09,.235),
   new THREE.MeshStandardMaterial({color:0x54c77b})
  );
  stripe.position.y=.08;
  group.add(stripe);
-
  const top=new THREE.Mesh(new THREE.BoxGeometry(.16,.06,.15),metalMat);
  top.position.y=.24;
  group.add(top);
-
  group.position.set(x,.45,z);
  scene.add(group);
-
  itemObjects.push({
   group,
   data:{type,name,icon,description}
  });
 }
-
 createPickup("battery","Pilha","🔋",-12,4,"Uma pilha industrial. Recupera 40% da bateria.");
 createPickup("battery","Pilha","🔋",13,5,"Uma pilha industrial. Recupera 40% da bateria.");
 createPickup("battery","Pilha","🔋",25,-17,"Uma pilha industrial. Recupera 40% da bateria.");
-
 function getNearestPickup(){
  let nearest=null;
  let distance=2.7;
-
  for(const item of itemObjects){
   const d=Math.hypot(player.x-item.group.position.x,player.z-item.group.position.z);
   if(d<distance){
@@ -647,20 +613,16 @@ function getNearestPickup(){
  }
  return nearest;
 }
-
 function pickupItem(){
  const nearest=getNearestPickup();
-
  if(!nearest){
   showItemMessage("NENHUM OBJETO POR PERTO.");
   return;
  }
-
  if(heldItem){
   showItemMessage("SUAS MÃOS ESTÃO OCUPADAS. GUARDE OU SOLTE O OBJETO.");
   return;
  }
-
  heldItem=nearest.data;
  scene.remove(nearest.group);
  itemObjects=itemObjects.filter(item=>item!==nearest);
@@ -668,39 +630,32 @@ function pickupItem(){
  showItemMessage(heldItem.name+" RECOLHIDO.");
  updateInventoryUI();
 }
-
 function dropHeldItem(){
  if(!heldItem){
   showItemMessage("VOCÊ NÃO ESTÁ SEGURANDO NENHUM OBJETO.");
   return;
  }
-
  if(heldItem.type==="flashlight"){
   flashlightOn=false;
   flashlightBeam.visible=false;
  }
-
  const dropped=heldItem;
  heldItem=null;
-
  createPickup(
   dropped.type,dropped.name,dropped.icon,
   player.x-Math.sin(yaw)*1.2,
   player.z-Math.cos(yaw)*1.2,
   dropped.description
  );
-
  syncHeldVisual();
  updateInventoryUI();
  showItemMessage("OBJETO SOLTO.");
 }
-
 function useHeldItem(){
  if(!heldItem){
   showItemMessage("NÃO HÁ NENHUM OBJETO NAS SUAS MÃOS.");
   return;
  }
-
  if(heldItem.type==="battery"){
   battery=Math.min(100,battery+40);
   updateBatteryUI();
@@ -710,22 +665,18 @@ function useHeldItem(){
   showItemMessage("PILHA UTILIZADA. BATERIA +40%.");
   return;
  }
-
  showItemMessage("ESSE OBJETO NÃO PODE SER UTILIZADO AGORA.");
 }
-
-// MOCHILA
+ // MOCHILA
 function toggleBackpack(){
  if(passwordOpen||inspectOpen)return;
  backpackOpen=!backpackOpen;
  backpackPanel.style.display=backpackOpen?"flex":"none";
-
  if(backpackOpen){
   updateInventoryUI();
   document.exitPointerLock?.();
  }
 }
-
 document.getElementById("backpackButton").onclick=toggleBackpack;
 document.getElementById("backpackClose").onclick=toggleBackpack;
 document.getElementById("mobilePick").onclick=pickupItem;
@@ -733,7 +684,6 @@ document.getElementById("mobileStore").onclick=storeHeldItem;
 document.getElementById("mobileDrop").onclick=dropHeldItem;
 document.getElementById("mobileLight").onclick=toggleFlashlight;
 document.getElementById("mobileUse").onclick=useHeldItem;
-
 // EXAMINAR
 function inspectHeldItem(){
  if(!heldItem){
@@ -745,13 +695,11 @@ function inspectHeldItem(){
  inspectPanel.style.display="flex";
  inspectOpen=true;
 }
-
 document.getElementById("mobileInspect").onclick=inspectHeldItem;
 document.getElementById("inspectClose").onclick=()=>{
  inspectPanel.style.display="none";
  inspectOpen=false;
 };
-
 // SENHA DA PORTA
 function openPassword(){
  if(doorOpened){
@@ -765,19 +713,15 @@ function openPassword(){
  passwordModal.style.display="flex";
  document.exitPointerLock?.();
 }
-
 function closePassword(){
  passwordOpen=false;
  passwordModal.style.display="none";
  enteredCode="";
 }
-
 document.getElementById("closePassword").onclick=closePassword;
-
 function updatePasswordDisplay(){
  passwordDisplay.textContent=enteredCode.padEnd(4,"-");
 }
-
 function submitPassword(){
  if(enteredCode===ACCESS_CODE){
   passwordStatus.textContent="ACESSO LIBERADO!";
@@ -792,29 +736,23 @@ function submitPassword(){
   updatePasswordDisplay();
  }
 }
-
 document.querySelectorAll("#keypadButtons button").forEach(button=>{
  button.addEventListener("click",()=>{
   const key=button.dataset.key;
-
   if(key==="clear")enteredCode="";
   else if(key==="back")enteredCode=enteredCode.slice(0,-1);
   else if(key==="confirm"){
    submitPassword();
    return;
   }else if(enteredCode.length<4)enteredCode+=key;
-
   updatePasswordDisplay();
  });
 });
-
 function distanceToDoor(){
  return Math.hypot(player.x,player.z+27.1);
 }
-
 function interact(){
  if(backpackOpen||inspectOpen)return;
-
  if(distanceToDoor()<5.5){
   if(!doorOpened)openPassword();
   else showItemMessage("A PORTA ESTÁ DESTRANCADA.");
@@ -822,18 +760,14 @@ function interact(){
  }
  pickupItem();
 }
-
 interactButton.onclick=interact;
-
 // TECLADO
 document.addEventListener("keydown",event=>{
  if(!started)return;
-
  if(passwordOpen){
   if(event.key==="Escape")closePassword();
   return;
  }
-
  if(inspectOpen){
   if(event.key==="Escape"||event.key.toLowerCase()==="r"){
    inspectPanel.style.display="none";
@@ -841,85 +775,67 @@ document.addEventListener("keydown",event=>{
   }
   return;
  }
-
  const key=event.key.toLowerCase();
-
  if(key==="i"){
   toggleBackpack();
   return;
  }
-
  if(backpackOpen){
   if(["1","2","3","4"].includes(key))selectInventorySlot(Number(key)-1);
   return;
  }
-
  keys[key]=true;
-
  if(key==="e")interact();
  if(key==="g")storeHeldItem();
  if(key==="q")dropHeldItem();
  if(key==="f")toggleFlashlight();
  if(key==="r")inspectHeldItem();
  if(key==="t")useHeldItem();
-
  if(["1","2","3","4"].includes(key)){
   selectInventorySlot(Number(key)-1);
  }
 });
-
 document.addEventListener("keyup",event=>{
  keys[event.key.toLowerCase()]=false;
 });
-
 // BOTÕES DE MOVIMENTO
 function bindMoveButton(id,key){
  const button=document.getElementById(id);
-
  button.addEventListener("pointerdown",event=>{
   event.preventDefault();
   keys[key]=true;
  });
-
  const release=event=>{
   event.preventDefault();
   keys[key]=false;
  };
-
  button.addEventListener("pointerup",release);
  button.addEventListener("pointercancel",release);
  button.addEventListener("pointerleave",release);
 }
-
 bindMoveButton("up","w");
 bindMoveButton("down","s");
 bindMoveButton("left","a");
 bindMoveButton("right","d");
-
 // MOUSE
 let pointerLocked=false;
-
 renderer.domElement.addEventListener("click",()=>{
  if(started&&!backpackOpen&&!passwordOpen&&!inspectOpen){
   renderer.domElement.requestPointerLock?.();
  }
 });
-
 document.addEventListener("pointerlockchange",()=>{
  pointerLocked=document.pointerLockElement===renderer.domElement;
 });
-
 document.addEventListener("mousemove",event=>{
  if(!pointerLocked||!started)return;
  yaw-=event.movementX*.002;
  pitch-=event.movementY*.002;
  pitch=Math.max(-1.35,Math.min(1.35,pitch));
 });
-
 // TOQUE PARA OLHAR
 let touchLook=false;
 let lastTouchX=0,lastTouchY=0;
-
 renderer.domElement.addEventListener("pointerdown",event=>{
  if(event.pointerType==="mouse")return;
  if(!started||backpackOpen||passwordOpen||inspectOpen)return;
@@ -927,25 +843,19 @@ renderer.domElement.addEventListener("pointerdown",event=>{
  lastTouchX=event.clientX;
  lastTouchY=event.clientY;
 });
-
 renderer.domElement.addEventListener("pointermove",event=>{
  if(!touchLook||event.pointerType==="mouse")return;
-
  const dx=event.clientX-lastTouchX;
  const dy=event.clientY-lastTouchY;
-
  yaw-=dx*.004;
  pitch-=dy*.004;
  pitch=Math.max(-1.35,Math.min(1.35,pitch));
-
  lastTouchX=event.clientX;
  lastTouchY=event.clientY;
 });
-
 function stopTouchLook(){touchLook=false}
 renderer.domElement.addEventListener("pointerup",stopTouchLook);
 renderer.domElement.addEventListener("pointercancel",stopTouchLook);
-
 // INICIAR
 document.getElementById("play").onclick=()=>{
  started=true;
@@ -954,25 +864,19 @@ document.getElementById("play").onclick=()=>{
  document.getElementById("interact").style.display="block";
  document.getElementById("actionButtons").style.display="flex";
  document.getElementById("backpackButton").style.display="block";
-
  updateInventoryUI();
  updateBatteryUI();
-
  if(innerWidth>700)renderer.domElement.requestPointerLock?.();
 };
-
 // COLISÕES DOS NOVE GERADORES
 const generators=[
  [-17,-9],[0,-9],[17,-9],
  [-17,10],[0,10],[17,10],
  [-17,-20],[0,-20],[17,-20]
 ];
-
 const moveSpeed=5.2;
-
 function canMoveTo(x,z){
  if(x<-34||x>34||z<-26.8||z>26.8)return false;
-
  for(const [gx,gz] of generators){
   if(
    Math.abs(x-gx)<3.2+.45 &&
@@ -981,37 +885,26 @@ function canMoveTo(x,z){
    return false;
   }
  }
-
  if(!doorOpened&&z<-25.9&&Math.abs(x)<2.5)return false;
-
  return true;
 }
-
 function updatePlayer(delta){
  if(!started||backpackOpen||passwordOpen||inspectOpen)return;
-
  let forward=0,sideways=0;
-
  if(keys["w"]||keys["arrowup"])forward+=1;
  if(keys["s"]||keys["arrowdown"])forward-=1;
  if(keys["a"]||keys["arrowleft"])sideways-=1;
  if(keys["d"]||keys["arrowright"])sideways+=1;
-
  if(forward===0&&sideways===0)return;
-
  const length=Math.hypot(forward,sideways);
  forward/=length;
  sideways/=length;
-
  const speed=moveSpeed*delta;
-
  const dx=(-Math.sin(yaw)*forward+Math.cos(yaw)*sideways)*speed;
  const dz=(-Math.cos(yaw)*forward-Math.sin(yaw)*sideways)*speed;
-
  if(canMoveTo(player.x+dx,player.z))player.x+=dx;
  if(canMoveTo(player.x,player.z+dz))player.z+=dz;
 }
-
 // CÂMERA
 function updateCamera(){
  camera.position.set(player.x,1.7,player.z);
@@ -1019,7 +912,6 @@ function updateCamera(){
  camera.rotation.y=yaw;
  camera.rotation.x=pitch;
 }
-
 // PORTA
 function updateDoor(delta){
  if(doorOpened&&doorAngle<Math.PI/2){
@@ -1027,67 +919,52 @@ function updateDoor(delta){
   doorPivot.rotation.y=-doorAngle;
  }
 }
-
 // BATERIA
 function updateFlashlight(delta){
  if(flashlightOn&&heldItem&&heldItem.type==="flashlight"){
   battery=Math.max(0,battery-.12*delta);
-
   if(battery<=0){
    flashlightOn=false;
    flashlightBeam.visible=false;
    showItemMessage("A LANTERNA DESCARREGOU.");
   }
-
   updateBatteryUI();
  }
 }
-
 // OBJETOS
 let elapsed=0;
-
 function updatePickups(delta){
  elapsed+=delta;
-
  for(const item of itemObjects){
   item.group.position.y=.45+Math.sin(elapsed*2+item.group.position.x)*.07;
   item.group.rotation.y+=delta*.5;
  }
 }
-
 // INTERAÇÃO COM A PORTA
 function updateInteractionPrompt(){
  if(!started||backpackOpen||passwordOpen||inspectOpen){
   doorPrompt.style.display="none";
   return;
  }
-
  doorPrompt.style.display=
   distanceToDoor()<5.5&&!doorOpened?"block":"none";
 }
-
 // LOOP
 let previousTime=performance.now();
-
 function animate(){
  requestAnimationFrame(animate);
-
  const now=performance.now();
  const delta=Math.min((now-previousTime)/1000,.05);
  previousTime=now;
-
  updatePlayer(delta);
  updateCamera();
  updateDoor(delta);
  updateFlashlight(delta);
  updatePickups(delta);
  updateInteractionPrompt();
-
  renderer.render(scene,camera);
 }
-
 animate();
-
 // REDIMENSIONAMENTO
 window.addEventListener("resize",()=>{
  camera.aspect=innerWidth/innerHeight;
@@ -1095,10 +972,8 @@ window.addEventListener("resize",()=>{
  renderer.setSize(innerWidth,innerHeight);
  renderer.setPixelRatio(Math.min(devicePixelRatio,1.5));
 });
-
 updateInventoryUI();
 updateBatteryUI();
-
 })();
 </script>
 </body>
