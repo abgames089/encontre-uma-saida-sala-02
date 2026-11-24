@@ -6,152 +6,47 @@
 <title>ENCONTRE UMA SAÍDA! — SALA 02</title>
 <style>
 *{box-sizing:border-box}
-body{
- margin:0;overflow:hidden;background:#080a0d;
- font-family:Arial;color:white;touch-action:none
-}
+body{margin:0;overflow:hidden;background:#000;font-family:Arial;color:white;touch-action:none}
 canvas{display:block}
-#menu{
- position:fixed;inset:0;z-index:5;
- display:flex;align-items:center;justify-content:center;
- flex-direction:column;text-align:center;
- background:radial-gradient(#252a30,#080a0d 75%);
-}
-h1{font-size:clamp(28px,6vw,52px)}
-h1 span{color:#d71920}
-#menu p{color:#aaa;letter-spacing:2px;font-size:12px}
-button{
- background:#a80f18;color:white;border:1px solid #ed4545;
- padding:13px 22px;border-radius:4px;font-weight:bold;
- touch-action:none;
-}
+button{background:#a80f18;color:white;border:1px solid #ed4545;padding:12px 17px;border-radius:4px;font-weight:bold;touch-action:none}
+#menu{position:fixed;inset:0;z-index:5;display:flex;align-items:center;justify-content:center;flex-direction:column;text-align:center;background:radial-gradient(#171a1e,#000 75%)}
+#menu h1{font-size:clamp(28px,6vw,52px)}
+#menu h1 span{color:#d71920}
+#menu p{color:#999;letter-spacing:2px;font-size:12px}
 #hud{display:none;position:fixed;inset:0;pointer-events:none}
 #brand{position:absolute;top:15px;left:15px;font-size:13px;letter-spacing:2px}
+#crosshair{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:7px;height:7px;border:1px solid #ddd;border-radius:50%}
 #controls{position:absolute;bottom:20px;left:15px;pointer-events:auto}
-.pad{
- display:grid;
- grid-template-columns:repeat(3,53px);
- grid-template-rows:repeat(2,53px);gap:5px
-}
-.pad button{
- padding:0;background:#252a30cc;
- border-color:#777;font-size:20px
-}
+.pad{display:grid;grid-template-columns:repeat(3,53px);grid-template-rows:repeat(2,53px);gap:5px}
+.pad button{padding:0;background:#252a30cc;border-color:#777;font-size:20px}
 #up{grid-column:2}
 #left{grid-column:1;grid-row:2}
 #down{grid-column:2;grid-row:2}
 #right{grid-column:3;grid-row:2}
-#crosshair{
- position:absolute;left:50%;top:50%;
- transform:translate(-50%,-50%);
- width:7px;height:7px;border:1px solid #ddd;border-radius:50%;
-}
-#footer{
- position:absolute;bottom:8px;width:100%;
- text-align:center;color:#777;font-size:10px
-}
-#doorPrompt{
- position:absolute;left:50%;bottom:105px;transform:translateX(-50%);
- display:none;background:#090d11dd;border:1px solid #a80f18;
- padding:10px 14px;border-radius:4px;font-size:13px;text-align:center;
-}
-#interact{
- display:none;position:absolute;right:18px;bottom:28px;
- pointer-events:auto;padding:14px 18px;
-}
-#passwordModal{
- display:none;position:fixed;inset:0;z-index:10;
- align-items:center;justify-content:center;
- background:#000b;pointer-events:auto;padding:16px;
-}
-#passwordBox{
- width:min(330px,100%);background:#151a20;
- border:1px solid #a80f18;border-radius:8px;
- padding:18px;box-shadow:0 12px 40px #000;
- text-align:center;
-}
-#passwordBox h2{margin:0 0 8px;font-size:19px}
-#passwordDisplay{
- background:#05080b;border:1px solid #58616a;
- color:#65e6c1;letter-spacing:9px;font-size:25px;
- padding:12px;margin:14px 0;font-family:monospace;
- min-height:52px;
-}
-#keypadButtons{
- display:grid;grid-template-columns:repeat(3,1fr);gap:8px;
-}
-#keypadButtons button{
- padding:14px 8px;background:#252c34;border-color:#68727d;
- font-size:17px;
-}
-#keypadButtons button.action{background:#8d1119;border-color:#e34b50}
+#footer{position:absolute;bottom:8px;width:100%;text-align:center;color:#666;font-size:10px}
+#doorPrompt{position:absolute;left:50%;bottom:105px;transform:translateX(-50%);display:none;background:#090d11dd;border:1px solid #a80f18;padding:10px 14px;border-radius:4px;font-size:13px;text-align:center}
+#interact{display:none;position:absolute;right:18px;bottom:28px;pointer-events:auto}
+#passwordModal,#backpackPanel,#inspectPanel{display:none;position:fixed;inset:0;z-index:10;align-items:center;justify-content:center;background:#000e;pointer-events:auto;padding:16px}
+#passwordBox,#backpackBox,#inspectBox{width:min(360px,100%);background:#131a20;border:1px solid #a80f18;border-radius:8px;padding:18px;box-shadow:0 12px 40px #000;text-align:center}
+#passwordDisplay{background:#05080b;border:1px solid #58616a;color:#65e6c1;letter-spacing:9px;font-size:25px;padding:12px;margin:14px 0;font-family:monospace}
+#keypadButtons{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+#keypadButtons button{padding:14px 8px;background:#252c34;border-color:#68727d;font-size:17px}
+#keypadButtons button.action{background:#8d1119}
 #passwordStatus{min-height:20px;color:#f0b5b5;font-size:12px;margin:10px 0}
-#closePassword{margin-top:8px;background:#343a40;border-color:#777}
-
-/* MOCHILA E INVENTÁRIO */
-#inventoryHud{
- position:absolute;top:48px;left:15px;color:#fff;
- background:#080d12dd;border:1px solid #65717b;
- padding:8px 10px;border-radius:5px;font-size:12px;
- letter-spacing:1px;pointer-events:none
-}
-#batteryHud{
- position:absolute;top:15px;right:15px;width:150px;
- background:#080d12dd;border:1px solid #65717b;
- padding:9px;border-radius:5px;font-size:11px;
-}
+#closePassword,#backpackClose,#inspectClose{background:#343a40;border-color:#777}
+#inventoryHud{position:absolute;top:48px;left:15px;background:#080d12dd;border:1px solid #65717b;padding:8px 10px;border-radius:5px;font-size:12px}
+#batteryHud{position:absolute;top:15px;right:15px;width:150px;background:#080d12dd;border:1px solid #65717b;padding:9px;border-radius:5px;font-size:11px}
 #batteryBar{height:7px;background:#343b42;margin-top:6px;border-radius:5px;overflow:hidden}
-#batteryFill{height:100%;width:100%;background:#69d69a;transition:width .15s}
-#backpackButton{
- position:absolute;right:15px;bottom:95px;pointer-events:auto;
- padding:12px 15px;background:#171e25;border-color:#a80f18
-}
-#actionButtons{
- position:absolute;right:15px;bottom:18px;display:flex;
- flex-direction:column;gap:7px;pointer-events:auto
-}
+#batteryFill{height:100%;width:100%;background:#69d69a}
+#backpackButton{position:absolute;right:15px;bottom:95px;pointer-events:auto;background:#171e25;border-color:#a80f18}
+#actionButtons{position:absolute;right:15px;bottom:18px;display:flex;flex-direction:column;gap:7px;pointer-events:auto}
 #actionButtons button{padding:10px 13px;min-width:104px;background:#202830dd;border-color:#68737e}
-#backpackPanel{
- display:none;position:fixed;inset:0;z-index:9;
- background:#000c;align-items:center;justify-content:center;
- padding:16px;pointer-events:auto
-}
-#backpackBox{
- width:min(360px,100%);background:#131a20;
- border:1px solid #a80f18;border-radius:8px;padding:18px;
- box-shadow:0 15px 45px #000;text-align:center
-}
-#backpackBox h2{margin:0 0 5px;letter-spacing:2px}
-#backpackBox p{font-size:11px;color:#9ca7b1}
-#inventorySlots{
- display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin:16px 0
-}
-.inventorySlot{
- min-height:90px;background:#080d12;border:1px solid #65717b;
- border-radius:5px;color:#ddd;padding:10px;display:flex;
- flex-direction:column;align-items:center;justify-content:center;gap:5px
-}
+#inventorySlots{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin:16px 0}
+.inventorySlot{min-height:90px;background:#080d12;border:1px solid #65717b;border-radius:5px;color:#ddd;padding:10px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px}
 .inventorySlot.selected{border:2px solid #e3343e;background:#2a1115}
-.inventorySlot .slotNumber{font-size:10px;color:#aab3bb}
-.inventorySlot .slotIcon{font-size:25px}
-#backpackClose{background:#343a40;border-color:#777}
-#itemMessage{
- position:absolute;left:50%;top:64%;transform:translateX(-50%);
- display:none;background:#090d11eF;border:1px solid #a80f18;
- padding:9px 13px;border-radius:4px;font-size:12px;text-align:center;
- max-width:85%;white-space:normal
-}
-#inspectPanel{
- display:none;position:fixed;inset:0;z-index:11;
- background:#000d;align-items:center;justify-content:center;
- padding:20px;pointer-events:auto
-}
-#inspectBox{
- width:min(330px,100%);background:#151a20;
- border:1px solid #a80f18;border-radius:8px;padding:20px;text-align:center
-}
-#inspectBox h3{margin-top:0}
-#inspectClose{background:#343a40;border-color:#777}
+.slotNumber{font-size:10px;color:#aab3bb}
+.slotIcon{font-size:25px}
+#itemMessage{position:absolute;left:50%;top:64%;transform:translateX(-50%);display:none;background:#090d11ef;border:1px solid #a80f18;padding:9px 13px;border-radius:4px;font-size:12px;text-align:center;max-width:85%}
 @media(max-width:700px){
  #batteryHud{top:12px;right:10px;width:125px}
  #inventoryHud{top:55px;left:10px}
@@ -168,8 +63,8 @@ button{
 <div id="menu">
  <h1>ENCONTRE UMA <span>SAÍDA!</span></h1>
  <p>AB GAMES APRESENTA</p>
- <h2>SALA 02 — V1.3</h2>
- <p>INSTALAÇÃO DE ENERGIA</p>
+ <h2>SALA 02 — CENTRAL DE ENERGIA</h2>
+ <p>INSTALAÇÃO DESATIVADA</p>
  <button id="play">ENTRAR NA SALA</button>
  <p>PC: WASD + MOUSE<br>CELULAR: BOTÕES + ARRASTAR NA TELA</p>
 </div>
@@ -188,19 +83,19 @@ button{
  <div id="footer">ENCONTRE UMA SAÍDA! — AB GAMES</div>
 </div>
 
-<div id="doorPrompt">
- PORTA BLOQUEADA — pressione <b>E</b> ou toque em INTERAGIR
-</div>
+<div id="doorPrompt">PORTA BLOQUEADA — pressione E</div>
 <button id="interact">INTERAGIR</button>
 
 <div id="inventoryHud">MOCHILA: <span id="slotCount">1/4</span></div>
 <div id="batteryHud">
- <div style="display:flex;justify-content:space-between;gap:8px">
+ <div style="display:flex;justify-content:space-between">
   <b>BATERIA DA LANTERNA</b><span id="batteryText">100%</span>
  </div>
  <div id="batteryBar"><div id="batteryFill"></div></div>
 </div>
+
 <button id="backpackButton">🎒 MOCHILA (I)</button>
+
 <div id="actionButtons">
  <button id="mobilePick">PEGAR (E)</button>
  <button id="mobileStore">GUARDAR (G)</button>
@@ -209,12 +104,13 @@ button{
  <button id="mobileUse">USAR (T)</button>
  <button id="mobileInspect">EXAMINAR (R)</button>
 </div>
+
 <div id="itemMessage"></div>
 
 <div id="backpackPanel">
  <div id="backpackBox">
   <h2>🎒 MOCHILA</h2>
-  <p>SELECIONE UM ESPAÇO PARA RETIRAR OU EQUIPAR UM OBJETO</p>
+  <p>SELECIONE UM ESPAÇO PARA EQUIPAR UM OBJETO</p>
   <div id="inventorySlots"></div>
   <p>1–4: selecionar • I: fechar • T: usar pilha</p>
   <button id="backpackClose">FECHAR</button>
@@ -235,18 +131,10 @@ button{
   <p style="color:#aaa;font-size:12px">DIGITE A SENHA DE 4 DÍGITOS</p>
   <div id="passwordDisplay">----</div>
   <div id="keypadButtons">
-   <button data-key="1">1</button>
-   <button data-key="2">2</button>
-   <button data-key="3">3</button>
-   <button data-key="4">4</button>
-   <button data-key="5">5</button>
-   <button data-key="6">6</button>
-   <button data-key="7">7</button>
-   <button data-key="8">8</button>
-   <button data-key="9">9</button>
-   <button data-key="clear">LIMPAR</button>
-   <button data-key="0">0</button>
-   <button data-key="back">⌫</button>
+   <button data-key="1">1</button><button data-key="2">2</button><button data-key="3">3</button>
+   <button data-key="4">4</button><button data-key="5">5</button><button data-key="6">6</button>
+   <button data-key="7">7</button><button data-key="8">8</button><button data-key="9">9</button>
+   <button data-key="clear">LIMPAR</button><button data-key="0">0</button><button data-key="back">⌫</button>
    <button class="action" data-key="confirm" style="grid-column:span 3">CONFIRMAR</button>
   </div>
   <div id="passwordStatus"></div>
@@ -258,32 +146,24 @@ button{
 <script>
 (()=>{
 if(!window.THREE){
- document.getElementById("menu").innerHTML=
- "<h2>Erro ao carregar o jogo</h2><p>Verifique sua conexão.</p>";
+ document.getElementById("menu").innerHTML="<h2>Erro ao carregar o jogo</h2><p>Verifique sua conexão.</p>";
  return;
 }
 
 const scene=new THREE.Scene();
-scene.background=new THREE.Color(0x090c11);
-scene.fog=new THREE.Fog(0x090c11,45,105);
+scene.background=new THREE.Color(0x000000);
+scene.fog=new THREE.Fog(0x000000,22,75);
 
-const camera=new THREE.PerspectiveCamera(
- 75,innerWidth/innerHeight,.1,150
-);
-
+const camera=new THREE.PerspectiveCamera(75,innerWidth/innerHeight,.1,150);
 const renderer=new THREE.WebGLRenderer({antialias:false});
 renderer.setSize(innerWidth,innerHeight);
 renderer.setPixelRatio(Math.min(devicePixelRatio,1.5));
 renderer.outputColorSpace=THREE.SRGBColorSpace;
 document.body.appendChild(renderer.domElement);
 
-// MATERIAIS
 function mat(color,roughness=1,metalness=0){
- return new THREE.MeshStandardMaterial({
-  color,roughness,metalness
- });
+ return new THREE.MeshStandardMaterial({color,roughness,metalness});
 }
-
 const floorMat=mat(0x30343a);
 const wallMat=mat(0x242930);
 const metalMat=mat(0x65717b,.65,.7);
@@ -291,68 +171,36 @@ const darkMetal=mat(0x171d23,.8,.5);
 const blackMat=mat(0x090d11);
 const yellowMat=mat(0xd1a12a);
 const bodyMat=mat(0x39444b,.65,.55);
-const rubberMat=mat(0x16191c);
 const redMat=mat(0x8e151b);
 
 const screenMat=new THREE.MeshStandardMaterial({
- color:0x17404a,
- emissive:0x09242d,
- emissiveIntensity:.8
+ color:0x17404a,emissive:0x000000,emissiveIntensity:0
 });
-
 const greenMat=new THREE.MeshStandardMaterial({
- color:0x178b55,
- emissive:0x07552b,
- emissiveIntensity:.8
+ color:0x178b55,emissive:0x000000,emissiveIntensity:0
 });
-
 const orangeMat=new THREE.MeshStandardMaterial({
- color:0xc17b21,
- emissive:0x5c3105,
- emissiveIntensity:.7
+ color:0xc17b21,emissive:0x000000,emissiveIntensity:0
 });
 
-// FUNÇÕES 3D
 function box(x,y,z,w,h,d,material){
- const obj=new THREE.Mesh(
-  new THREE.BoxGeometry(w,h,d),material
- );
- obj.position.set(x,y,z);
- scene.add(obj);
- return obj;
+ const obj=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),material);
+ obj.position.set(x,y,z);scene.add(obj);return obj;
 }
-
 function cylinder(x,y,z,r1,r2,h,material,segments=16){
- const obj=new THREE.Mesh(
-  new THREE.CylinderGeometry(r1,r2,h,segments),
-  material
- );
- obj.position.set(x,y,z);
- scene.add(obj);
- return obj;
+ const obj=new THREE.Mesh(new THREE.CylinderGeometry(r1,r2,h,segments),material);
+ obj.position.set(x,y,z);scene.add(obj);return obj;
 }
-
 function pipe(x1,y1,z1,x2,y2,z2,r,material=metalMat){
- const a=new THREE.Vector3(x1,y1,z1);
- const b=new THREE.Vector3(x2,y2,z2);
+ const a=new THREE.Vector3(x1,y1,z1),b=new THREE.Vector3(x2,y2,z2);
  const dir=new THREE.Vector3().subVectors(b,a);
-
- const obj=new THREE.Mesh(
-  new THREE.CylinderGeometry(r,r,dir.length(),12),
-  material
- );
-
+ const obj=new THREE.Mesh(new THREE.CylinderGeometry(r,r,dir.length(),12),material);
  obj.position.copy(a).add(b).multiplyScalar(.5);
-
- obj.quaternion.setFromUnitVectors(
-  new THREE.Vector3(0,1,0),dir.normalize()
- );
-
- scene.add(obj);
- return obj;
+ obj.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0),dir.normalize());
+ scene.add(obj);return obj;
 }
 
-// ESTRUTURA DA SALA — 70 x 55
+// SALA INDUSTRIAL
 box(0,-.25,0,70,.5,55,floorMat);
 
 // PAREDES
@@ -363,54 +211,41 @@ box(0,8,27.5,70,16,.5,wallMat);
 box(-35,8,0,.5,16,55,wallMat);
 box(35,8,0,.5,16,55,wallMat);
 
-// PORTA INDUSTRIAL E PAINEL NUMÉRICO
+// PORTA
 const doorPivot=new THREE.Group();
 doorPivot.position.set(-2.4,0,-27.15);
 scene.add(doorPivot);
 
-const doorLeaf=new THREE.Mesh(
- new THREE.BoxGeometry(4.8,7.3,.28),darkMetal
-);
+const doorLeaf=new THREE.Mesh(new THREE.BoxGeometry(4.8,7.3,.28),darkMetal);
 doorLeaf.position.set(2.4,3.65,0);
 doorPivot.add(doorLeaf);
 
 for(const y of [1,3.65,6.3]){
- const bar=new THREE.Mesh(
-  new THREE.BoxGeometry(4.35,.16,.34),metalMat
- );
+ const bar=new THREE.Mesh(new THREE.BoxGeometry(4.35,.16,.34),metalMat);
  bar.position.set(2.4,y,.02);
  doorPivot.add(bar);
 }
-
 for(const x of [.55,4.25]){
- const bar=new THREE.Mesh(
-  new THREE.BoxGeometry(.14,6.9,.34),metalMat
- );
+ const bar=new THREE.Mesh(new THREE.BoxGeometry(.14,6.9,.34),metalMat);
  bar.position.set(x,3.65,.02);
  doorPivot.add(bar);
 }
-
-const doorSign=new THREE.Mesh(
- new THREE.BoxGeometry(1.45,.55,.08),yellowMat
-);
+const doorSign=new THREE.Mesh(new THREE.BoxGeometry(1.45,.55,.08),yellowMat);
 doorSign.position.set(2.4,6.55,.2);
 doorPivot.add(doorSign);
 
-// Batentes
 box(-2.55,3.75,-27.12,.18,7.7,.35,metalMat);
 box(2.55,3.75,-27.12,.18,7.7,.35,metalMat);
 box(0,7.55,-27.12,5.25,.18,.35,metalMat);
 
-// Painel eletrônico ao lado direito da porta
+// PAINEL DA SENHA
 box(3.55,1.65,-27.05,.95,1.45,.22,darkMetal);
 box(3.55,2.02,-26.91,.68,.32,.06,screenMat);
-
 for(let row=0;row<3;row++){
-  for(let col=0;col<3;col++){
+ for(let col=0;col<3;col++){
   box(3.31+col*.24,1.58-row*.25,-26.91,.15,.14,.07,metalMat);
  }
 }
-
 box(3.55,.78,-26.91,.4,.13,.07,redMat);
 
 let doorOpened=false;
@@ -419,37 +254,32 @@ let doorAngle=0;
 // TETO
 box(0,16,0,70,.5,55,wallMat);
 
-// FAIXAS INDUSTRIAIS NAS PAREDES
+// MARCAÇÕES INDUSTRIAIS
 for(let x=-30;x<=30;x+=10){
  box(x,1,-27.2,3,.18,.08,yellowMat);
  box(x,1,27.2,3,.18,.08,yellowMat);
 }
 
-// ILUMINAÇÃO
-scene.add(new THREE.HemisphereLight(
- 0xb5c4d5,0x17191d,.18
-));
+// ILUMINAÇÃO AMBIENTE: ZERO
+scene.add(new THREE.HemisphereLight(0x000000,0x000000,0));
 
-const ceilingLight=new THREE.PointLight(0xb5c9df,0,65);
+const ceilingLight=new THREE.PointLight(0x000000,0,65);
 ceilingLight.position.set(0,13,0);
 scene.add(ceilingLight);
 
-const sideLight1=new THREE.PointLight(0x65778d,0,40);
+const sideLight1=new THREE.PointLight(0x000000,0,40);
 sideLight1.position.set(-20,9,-8);
 scene.add(sideLight1);
 
-const sideLight2=new THREE.PointLight(0x65778d,0,40);
+const sideLight2=new THREE.PointLight(0x000000,0,40);
 sideLight2.position.set(20,9,8);
 scene.add(sideLight2);
 
-// GERADOR INDUSTRIAL DETALHADO
+// GERADOR INDUSTRIAL
 function createGenerator(x,z,id){
-
- // Base de concreto e metal
  box(x,.16,z,6.2,.32,4.8,darkMetal);
  box(x,.36,z,5.8,.15,4.4,metalMat);
 
- // Pés de apoio
  for(const sx of [-2.35,2.35]){
   for(const sz of [-1.65,1.65]){
    box(x+sx,.55,z+sz,.42,.45,.42,blackMat);
@@ -457,152 +287,93 @@ function createGenerator(x,z,id){
   }
  }
 
- // Corpo central
  box(x,1.75,z,5.15,2.45,3.65,bodyMat);
-
- // Camada superior
  box(x,3.05,z,4.85,.2,3.4,metalMat);
-
- // Painéis laterais
  box(x-2.61,1.75,z,.12,2.1,3.4,darkMetal);
  box(x+2.61,1.75,z,.12,2.1,3.4,darkMetal);
 
- // MOTOR CILÍNDRICO NA FRENTE
  cylinder(x,1.65,z+1.95,.82,.82,1.05,darkMetal,24);
  cylinder(x,1.65,z+2.51,.68,.68,.12,metalMat,24);
  cylinder(x,1.65,z+2.59,.4,.4,.08,blackMat,20);
 
- // Anéis do motor
  for(let i=0;i<4;i++){
-  cylinder(
-   x,1.65,z+2.08+i*.12,
-   .84,.84,.045,metalMat,24
-  );
+  cylinder(x,1.65,z+2.08+i*.12,.84,.84,.045,metalMat,24);
  }
 
- // Parafusos do motor
  for(let i=0;i<8;i++){
   const a=i*Math.PI/4;
-
-  cylinder(
-   x+Math.cos(a)*.57,
-   1.65+Math.sin(a)*.57,
-   z+2.62,
-   .055,.055,.045,yellowMat,8
-  );
+  cylinder(x+Math.cos(a)*.57,1.65+Math.sin(a)*.57,z+2.62,.055,.055,.045,yellowMat,8);
  }
 
- // Tampa superior
  box(x,3.22,z,3.7,.15,2.5,metalMat);
-
- // Grades de ventilação na lateral esquerda
- for(let i=0;i<9;i++){
-  box(
-   x-2.69,
-   .95+i*.18,
-   z-.95,
-   .08,.075,1.7,metalMat
-  );
- }
-
- // Grades de ventilação na lateral direita
- for(let i=0;i<9;i++){
-  box(
-   x+2.69,
-   .95+i*.18,
-   z-.95,
-   .08,.075,1.7,metalMat
-  );
- }
-
- // Painel frontal de controle
  box(x,2.35,z+1.91,1.65,1.2,.16,darkMetal);
  box(x,2.4,z+2.01,1.35,.72,.07,blackMat);
  box(x,2.48,z+2.06,.82,.35,.04,screenMat);
 
- // Luzes de estado
  box(x-.48,1.97,z+2.07,.14,.14,.06,greenMat);
  box(x-.2,1.97,z+2.07,.14,.14,.06,orangeMat);
  box(x+.08,1.97,z+2.07,.14,.14,.06,redMat);
 
- // Botões de comando
  for(let i=0;i<3;i++){
-  cylinder(
-   x-.45+i*.45,1.65,z+2.05,
-   .09,.09,.07,
-   i===0?greenMat:(i===1?yellowMat:redMat),12
-  );
+  cylinder(x-.45+i*.45,1.65,z+2.05,.09,.09,.07,i===0?greenMat:(i===1?yellowMat:redMat),12);
  }
 
- // Placa com número do equipamento
  box(x,3.35,z+1.65,.85,.2,.08,yellowMat);
 
- // Parafusos externos do corpo
  for(const sx of [-2.42,2.42]){
   for(const sy of [.8,2.7]){
    cylinder(x+sx,sy,z+1.87,.065,.065,.08,yellowMat,8);
   }
  }
 
- // Tubos superiores de conexão
  for(let i=0;i<3;i++){
   const px=x-1.5+i*1.5;
-
   cylinder(px,3.48,z-.7,.16,.16,.6,metalMat);
   cylinder(px,3.8,z-.7,.12,.12,.1,yellowMat);
  }
 
- // Grandes tubos laterais
  pipe(x+2.65,2.5,z-.8,x+3.4,2.5,z-.8,.2);
  pipe(x+3.4,2.5,z-.8,x+3.4,3.4,z-.8,.2);
 
- // Pequenas saídas de ventilação
  for(let i=0;i<3;i++){
-  const px=x-1+i;
-
-  box(px,3.4,z-1.5,.45,.12,.5,darkMetal);
+  box(x-1+i,3.4,z-1.5,.45,.12,.5,darkMetal);
  }
 
- // Apoios inferiores frontais
  for(let i=-2;i<=2;i++){
   box(x+i*.85,.57,z+2.03,.16,.25,.12,metalMat);
  }
 }
 
-// POSIÇÃO DOS GERADORES — 6 NO TOTAL
-// FILEIRA 1
+// NOVE GERADORES — TRÊS FILEIRAS
 createGenerator(-17,-9,1);
 createGenerator(0,-9,2);
 createGenerator(17,-9,3);
 
-// FILEIRA 2 — NOVOS GERADORES
 createGenerator(-17,10,4);
 createGenerator(0,10,5);
 createGenerator(17,10,6);
 
-// TUBULAÇÕES PRINCIPAIS
+createGenerator(-17,-20,7);
+createGenerator(0,-20,8);
+createGenerator(17,-20,9);
+
+// TUBULAÇÕES
 pipe(-17,4,-9,17,4,-9,.18);
 pipe(-17,4,-9,-17,5.8,-9,.15);
 pipe(0,4,-9,0,5.8,-9,.15);
 pipe(17,4,-9,17,5.8,-9,.15);
 
-// Tubos ao fundo da instalação
 for(let x=-30;x<=30;x+=10){
  pipe(x,10,-26.5,x,10,26.5,.12);
  pipe(x,10,-26.5,x,10.7,-26.5,.08,yellowMat);
-}
-
-// Suportes dos tubos
-for(let x=-30;x<=30;x+=10){
  box(x,9.5,-26,.35,1,.35,darkMetal);
  box(x,9.5,26,.35,1,.35,darkMetal);
 }
 
-// VIGAS DO TETO
+// VIGAS
 for(let x=-30;x<=30;x+=10){
  box(x,15.4,0,.3,.3,54,metalMat);
 }
-
 for(let z=-25;z<=25;z+=10){
  box(0,15.4,z,69,.3,.3,metalMat);
 }
@@ -611,8 +382,8 @@ for(let z=-25;z<=25;z+=10){
 const player=new THREE.Vector3(0,0,19);
 let yaw=0,pitch=0;
 const keys={};
-
 let started=false;
+
 const ACCESS_CODE="2402";
 let enteredCode="";
 let passwordOpen=false;
@@ -623,14 +394,14 @@ const passwordStatus=document.getElementById("passwordStatus");
 const doorPrompt=document.getElementById("doorPrompt");
 const interactButton=document.getElementById("interact");
 
-// SISTEMA DE MOCHILA — MESMO PADRÃO DA SALA 01
+// MOCHILA
 const inventory=[null,null,null,null];
 
 inventory[0]={
  type:"flashlight",
  name:"Lanterna",
  icon:"🔦",
- description:"Uma lanterna portátil. A bateria está carregada, mas a energia da instalação está desligada."
+ description:"Uma lanterna portátil. A bateria está carregada."
 };
 
 let selectedSlot=0;
@@ -654,19 +425,20 @@ function showItemMessage(message){
  itemMessage.textContent=message;
  itemMessage.style.display="block";
  clearTimeout(messageTimer);
- messageTimer=setTimeout(()=>itemMessage.style.display="none",2200);
+ messageTimer=setTimeout(()=>{
+  itemMessage.style.display="none";
+ },2200);
 }
 
 function updateBatteryUI(){
  batteryText.textContent=Math.ceil(battery)+"%";
  batteryFill.style.width=battery+"%";
- batteryFill.style.background=
-  battery>35?"#69d69a":battery>15?"#e4b64d":"#e34b50";
+ batteryFill.style.background=battery>35?"#69d69a":battery>15?"#e4b64d":"#e34b50";
 }
 
 function updateInventoryUI(){
  inventorySlots.innerHTML="";
- let count=inventory.filter(Boolean).length+(heldItem?1:0);
+ const count=inventory.filter(Boolean).length+(heldItem?1:0);
  document.getElementById("slotCount").textContent=count+"/4";
 
  inventory.forEach((item,index)=>{
@@ -676,20 +448,18 @@ function updateInventoryUI(){
    '<span class="slotNumber">ESPAÇO '+(index+1)+'</span>'+
    '<span class="slotIcon">'+(item?item.icon:"＋")+'</span>'+
    '<b>'+(item?item.name:"VAZIO")+'</b>';
-
   slot.addEventListener("click",()=>selectInventorySlot(index));
   inventorySlots.appendChild(slot);
  });
 }
 
+// MODELO DA LANTERNA
 function createFlashlightModel(){
  const group=new THREE.Group();
 
  const body=new THREE.Mesh(
   new THREE.CylinderGeometry(.075,.095,.48,12),
-  new THREE.MeshStandardMaterial({
-   color:0x20252b,metalness:.65,roughness:.45
-  })
+  new THREE.MeshStandardMaterial({color:0x20252b,metalness:.65,roughness:.45})
  );
  body.rotation.x=Math.PI/2;
  body.position.z=-.18;
@@ -697,9 +467,7 @@ function createFlashlightModel(){
 
  const head=new THREE.Mesh(
   new THREE.CylinderGeometry(.115,.09,.13,12),
-  new THREE.MeshStandardMaterial({
-   color:0x65717b,metalness:.7,roughness:.35
-  })
+  new THREE.MeshStandardMaterial({color:0x65717b,metalness:.7,roughness:.35})
  );
  head.rotation.x=Math.PI/2;
  head.position.z=-.45;
@@ -714,7 +482,7 @@ function createFlashlightModel(){
 
  const grip=new THREE.Mesh(
   new THREE.CylinderGeometry(.082,.082,.2,12),
-  new THREE.MeshStandardMaterial({color:0x111519,roughness:.95})
+  new THREE.MeshStandardMaterial({color:0x111519})
  );
  grip.rotation.x=Math.PI/2;
  grip.position.z=-.02;
@@ -725,18 +493,26 @@ function createFlashlightModel(){
 
 flashlightObject=createFlashlightModel();
 flashlightObject.position.set(.32,-.27,-.65);
-flashlightObject.rotation.x=.08;
-camera.add(flashlightObject);
-scene.add(camera);
 flashlightObject.visible=false;
+camera.add(flashlightObject);
 
+// LANTERNA NA CÂMERA
+const flashlightBeam=new THREE.SpotLight(
+ 0xfff1d2,4.2,24,Math.PI/7,.38,1.2
+);
+flashlightBeam.position.set(0,0,0);
+flashlightBeam.target.position.set(0,0,-1);
+flashlightBeam.visible=false;
+camera.add(flashlightBeam);
+camera.add(flashlightBeam.target);
+scene.add(camera);
+
+// OBJETO SEGURADO
 const heldBatteryVisual=new THREE.Group();
 
 const heldBatteryBody=new THREE.Mesh(
  new THREE.BoxGeometry(.18,.27,.12),
- new THREE.MeshStandardMaterial({
-  color:0x263d32,metalness:.45,roughness:.55
- })
+ new THREE.MeshStandardMaterial({color:0x263d32,metalness:.45})
 );
 heldBatteryVisual.add(heldBatteryBody);
 
@@ -746,49 +522,29 @@ const heldBatteryStripe=new THREE.Mesh(
 );
 heldBatteryStripe.position.y=.045;
 heldBatteryVisual.add(heldBatteryStripe);
-
 heldBatteryVisual.position.set(.32,-.28,-.62);
 heldBatteryVisual.visible=false;
 camera.add(heldBatteryVisual);
 
-// Lanterna acompanha a câmera e ilumina para a frente.
-const flashlightBeam=new THREE.SpotLight(
- 0xfff1d2,4.2,24,Math.PI/7,.38,1.2
-);
-flashlightBeam.position.set(0,0,0);
-flashlightBeam.target.position.set(0,0,-1);
-camera.add(flashlightBeam);
-camera.add(flashlightBeam.target);
-flashlightBeam.visible=false;
-
 function syncHeldVisual(){
- flashlightObject.visible=!!(
-  heldItem && heldItem.type==="flashlight"
- );
- heldBatteryVisual.visible=!!(
-  heldItem && heldItem.type==="battery"
- );
+ flashlightObject.visible=!!(heldItem&&heldItem.type==="flashlight");
+ heldBatteryVisual.visible=!!(heldItem&&heldItem.type==="battery");
 }
 
 function toggleFlashlight(){
- if(!heldItem || heldItem.type!=="flashlight"){
+ if(!heldItem||heldItem.type!=="flashlight"){
   showItemMessage("PEGUE A LANTERNA DA MOCHILA PRIMEIRO.");
   return;
  }
-
  if(battery<=0){
   flashlightOn=false;
   flashlightBeam.visible=false;
   showItemMessage("BATERIA DESCARREGADA. PROCURE UMA PILHA.");
   return;
  }
-
  flashlightOn=!flashlightOn;
  flashlightBeam.visible=flashlightOn;
-
- showItemMessage(
-  flashlightOn?"LANTERNA LIGADA":"LANTERNA DESLIGADA"
- );
+ showItemMessage(flashlightOn?"LANTERNA LIGADA":"LANTERNA DESLIGADA");
 }
 
 function storeHeldItem(){
@@ -798,7 +554,6 @@ function storeHeldItem(){
  }
 
  const empty=inventory.findIndex(item=>item===null);
-
  if(empty===-1){
   showItemMessage("MOCHILA CHEIA!");
   return;
@@ -807,21 +562,17 @@ function storeHeldItem(){
  if(heldItem.type==="flashlight"){
   flashlightOn=false;
   flashlightBeam.visible=false;
-  flashlightObject.visible=false;
  }
 
  inventory[empty]=heldItem;
  heldItem=null;
-
  syncHeldVisual();
  updateInventoryUI();
-
  showItemMessage("OBJETO GUARDADO NO ESPAÇO "+(empty+1)+".");
 }
 
 function selectInventorySlot(index){
- if(index<0 || index>3)return;
-
+ if(index<0||index>3)return;
  selectedSlot=index;
  const chosen=inventory[index];
 
@@ -835,7 +586,6 @@ function selectInventorySlot(index){
   if(heldItem.type==="flashlight"){
    flashlightOn=false;
    flashlightBeam.visible=false;
-   flashlightObject.visible=false;
   }
   inventory[index]=heldItem;
  }else{
@@ -845,10 +595,11 @@ function selectInventorySlot(index){
  heldItem=chosen;
  syncHeldVisual();
  updateInventoryUI();
-
  showItemMessage(heldItem.name+" EQUIPADO.");
 }
- function createPickup(type,name,icon,x,z,description){
+
+// OBJETOS COLETÁVEIS
+function createPickup(type,name,icon,x,z,description){
  const group=new THREE.Group();
 
  const baseMat=new THREE.MeshStandardMaterial({
@@ -856,23 +607,17 @@ function selectInventorySlot(index){
   metalness:.45,roughness:.55
  });
 
- const body=new THREE.Mesh(
-  new THREE.BoxGeometry(.34,.42,.22),baseMat
- );
+ const body=new THREE.Mesh(new THREE.BoxGeometry(.34,.42,.22),baseMat);
  group.add(body);
 
  const stripe=new THREE.Mesh(
   new THREE.BoxGeometry(.36,.09,.235),
-  new THREE.MeshStandardMaterial({
-   color:type==="battery"?0x54c77b:0xe4c15b
-  })
+  new THREE.MeshStandardMaterial({color:0x54c77b})
  );
  stripe.position.y=.08;
  group.add(stripe);
 
- const top=new THREE.Mesh(
-  new THREE.BoxGeometry(.16,.06,.15),metalMat
- );
+ const top=new THREE.Mesh(new THREE.BoxGeometry(.16,.06,.15),metalMat);
  top.position.y=.24;
  group.add(top);
 
@@ -885,30 +630,26 @@ function selectInventorySlot(index){
  });
 }
 
-createPickup("battery","Pilha","🔋",-12,4,
- "Uma pilha industrial. Recupera 40% da bateria da lanterna.");
+createPickup("battery","Pilha","🔋",-12,4,"Uma pilha industrial. Recupera 40% da bateria.");
+createPickup("battery","Pilha","🔋",13,5,"Uma pilha industrial. Recupera 40% da bateria.");
+createPickup("battery","Pilha","🔋",25,-17,"Uma pilha industrial. Recupera 40% da bateria.");
 
-createPickup("battery","Pilha","🔋",13,5,
- "Uma pilha industrial. Recupera 40% da bateria da lanterna.");
-
-createPickup("battery","Pilha","🔋",25,-17,
- "Uma pilha industrial. Recupera 40% da bateria da lanterna.");
-
-function pickupItem(){
+function getNearestPickup(){
  let nearest=null;
- let nearestDistance=2.7;
+ let distance=2.7;
 
  for(const item of itemObjects){
-  const distance=Math.hypot(
-   player.x-item.group.position.x,
-   player.z-item.group.position.z
-  );
-
-  if(distance<nearestDistance){
-   nearestDistance=distance;
+  const d=Math.hypot(player.x-item.group.position.x,player.z-item.group.position.z);
+  if(d<distance){
+   distance=d;
    nearest=item;
   }
  }
+ return nearest;
+}
+
+function pickupItem(){
+ const nearest=getNearestPickup();
 
  if(!nearest){
   showItemMessage("NENHUM OBJETO POR PERTO.");
@@ -923,10 +664,9 @@ function pickupItem(){
  heldItem=nearest.data;
  scene.remove(nearest.group);
  itemObjects=itemObjects.filter(item=>item!==nearest);
-
  syncHeldVisual();
- updateInventoryUI();
  showItemMessage(heldItem.name+" RECOLHIDO.");
+ updateInventoryUI();
 }
 
 function dropHeldItem(){
@@ -938,174 +678,116 @@ function dropHeldItem(){
  if(heldItem.type==="flashlight"){
   flashlightOn=false;
   flashlightBeam.visible=false;
-  flashlightObject.visible=false;
  }
 
  const dropped=heldItem;
  heldItem=null;
 
- syncHeldVisual();
-
  createPickup(
-  dropped.type,
-  dropped.name,
-  dropped.icon,
-  player.x,
-  player.z,
+  dropped.type,dropped.name,dropped.icon,
+  player.x-Math.sin(yaw)*1.2,
+  player.z-Math.cos(yaw)*1.2,
   dropped.description
  );
 
+ syncHeldVisual();
  updateInventoryUI();
- showItemMessage(dropped.name+" SOLTO.");
+ showItemMessage("OBJETO SOLTO.");
 }
 
 function useHeldItem(){
  if(!heldItem){
-  showItemMessage("NENHUM OBJETO NAS MÃOS.");
+  showItemMessage("NÃO HÁ NENHUM OBJETO NAS SUAS MÃOS.");
   return;
  }
 
  if(heldItem.type==="battery"){
   battery=Math.min(100,battery+40);
   updateBatteryUI();
-
   heldItem=null;
   syncHeldVisual();
   updateInventoryUI();
-
-  showItemMessage("PILHA UTILIZADA: +40% DE BATERIA.");
+  showItemMessage("PILHA UTILIZADA. BATERIA +40%.");
   return;
  }
 
- showItemMessage("NÃO É POSSÍVEL USAR ESTE OBJETO AGORA.");
+ showItemMessage("ESSE OBJETO NÃO PODE SER UTILIZADO AGORA.");
 }
 
-function openBackpack(){
- if(!started || passwordOpen || inspectOpen)return;
+// MOCHILA
+function toggleBackpack(){
+ if(passwordOpen||inspectOpen)return;
+ backpackOpen=!backpackOpen;
+ backpackPanel.style.display=backpackOpen?"flex":"none";
 
- backpackOpen=true;
- updateInventoryUI();
- backpackPanel.style.display="flex";
-
- if(document.pointerLockElement){
-  document.exitPointerLock();
+ if(backpackOpen){
+  updateInventoryUI();
+  document.exitPointerLock?.();
  }
 }
 
-function closeBackpack(){
- backpackOpen=false;
- backpackPanel.style.display="none";
-}
+document.getElementById("backpackButton").onclick=toggleBackpack;
+document.getElementById("backpackClose").onclick=toggleBackpack;
+document.getElementById("mobilePick").onclick=pickupItem;
+document.getElementById("mobileStore").onclick=storeHeldItem;
+document.getElementById("mobileDrop").onclick=dropHeldItem;
+document.getElementById("mobileLight").onclick=toggleFlashlight;
+document.getElementById("mobileUse").onclick=useHeldItem;
 
-document.getElementById("backpackButton").addEventListener("click",()=>{
- if(backpackOpen)closeBackpack();
- else openBackpack();
-});
-
-document.getElementById("backpackClose").addEventListener("click",closeBackpack);
-document.getElementById("mobilePick").addEventListener("click",pickupItem);
-document.getElementById("mobileStore").addEventListener("click",storeHeldItem);
-document.getElementById("mobileDrop").addEventListener("click",dropHeldItem);
-document.getElementById("mobileLight").addEventListener("click",toggleFlashlight);
-document.getElementById("mobileInspect").addEventListener("click",inspectHeldItem);
-document.getElementById("mobileUse").addEventListener("click",useHeldItem);
-
-document.getElementById("inspectClose").addEventListener("click",()=>{
- inspectOpen=false;
- inspectPanel.style.display="none";
-});
-
+// EXAMINAR
 function inspectHeldItem(){
  if(!heldItem){
   showItemMessage("PEGUE UM OBJETO PARA EXAMINÁ-LO.");
   return;
  }
-
- inspectOpen=true;
-
- document.getElementById("inspectTitle").textContent=
-  heldItem.name.toUpperCase();
-
- document.getElementById("inspectDescription").textContent=
-  heldItem.description||"Um objeto encontrado na instalação.";
-
+ document.getElementById("inspectTitle").textContent=heldItem.name;
+ document.getElementById("inspectDescription").textContent=heldItem.description||"Sem informações.";
  inspectPanel.style.display="flex";
-
- if(document.pointerLockElement){
-  document.exitPointerLock();
- }
+ inspectOpen=true;
 }
 
-function handleInventoryKey(e){
- if(e.code==="KeyI"){
-  if(backpackOpen)closeBackpack();
-  else openBackpack();
-  return true;
+document.getElementById("mobileInspect").onclick=inspectHeldItem;
+document.getElementById("inspectClose").onclick=()=>{
+ inspectPanel.style.display="none";
+ inspectOpen=false;
+};
+
+// SENHA DA PORTA
+function openPassword(){
+ if(doorOpened){
+  showItemMessage("A PORTA JÁ ESTÁ ABERTA.");
+  return;
  }
-
- if(backpackOpen || passwordOpen || inspectOpen)return false;
-
- if(e.code==="Digit1"){selectInventorySlot(0);return true;}
- if(e.code==="Digit2"){selectInventorySlot(1);return true;}
- if(e.code==="Digit3"){selectInventorySlot(2);return true;}
- if(e.code==="Digit4"){selectInventorySlot(3);return true;}
- if(e.code==="KeyF"){toggleFlashlight();return true;}
- if(e.code==="KeyG"){storeHeldItem();return true;}
- if(e.code==="KeyQ"){dropHeldItem();return true;}
- if(e.code==="KeyR"){inspectHeldItem();return true;}
- if(e.code==="KeyT"){useHeldItem();return true;}
-
- if(e.code==="KeyE"){
-  const nearDoorNow=
-   Math.hypot(player.x-3.55,player.z+26.2)<4.2 ||
-   Math.hypot(player.x,player.z+24.8)<3.5;
-
-  if(nearDoorNow && !doorOpened){
-   openPasswordPanel();
-  }else{
-   pickupItem();
-  }
-
-  return true;
- }
-
- return false;
+ passwordOpen=true;
+ enteredCode="";
+ passwordDisplay.textContent="----";
+ passwordStatus.textContent="";
+ passwordModal.style.display="flex";
+ document.exitPointerLock?.();
 }
 
-updateInventoryUI();
-updateBatteryUI();
+function closePassword(){
+ passwordOpen=false;
+ passwordModal.style.display="none";
+ enteredCode="";
+}
+
+document.getElementById("closePassword").onclick=closePassword;
 
 function updatePasswordDisplay(){
  passwordDisplay.textContent=enteredCode.padEnd(4,"-");
 }
 
-function openPasswordPanel(){
- if(!started || doorOpened)return;
-
- passwordOpen=true;
- enteredCode="";
- passwordStatus.textContent="";
- passwordStatus.style.color="#f0b5b5";
-
- updatePasswordDisplay();
- passwordModal.style.display="flex";
-}
-
-function closePasswordPanel(){
- passwordOpen=false;
- passwordModal.style.display="none";
-}
-
-function confirmPassword(){
+function submitPassword(){
  if(enteredCode===ACCESS_CODE){
+  passwordStatus.textContent="ACESSO LIBERADO!";
+  passwordStatus.style.color="#69d69a";
   doorOpened=true;
-  passwordStatus.style.color="#75e6a1";
-  passwordStatus.textContent="ACESSO LIBERADO";
-
-  setTimeout(closePasswordPanel,650);
+  showItemMessage("SENHA CORRETA. PORTA DESTRANCADA!");
+  setTimeout(closePassword,700);
  }else{
+  passwordStatus.textContent="SENHA INCORRETA.";
   passwordStatus.style.color="#ff7777";
-  passwordStatus.textContent="ACESSO NEGADO";
   enteredCode="";
   updatePasswordDisplay();
  }
@@ -1115,245 +797,309 @@ document.querySelectorAll("#keypadButtons button").forEach(button=>{
  button.addEventListener("click",()=>{
   const key=button.dataset.key;
 
-  if(key==="confirm"){
-   confirmPassword();
+  if(key==="clear")enteredCode="";
+  else if(key==="back")enteredCode=enteredCode.slice(0,-1);
+  else if(key==="confirm"){
+   submitPassword();
    return;
-  }
-
-  if(key==="clear"){
-   enteredCode="";
-  }else if(key==="back"){
-   enteredCode=enteredCode.slice(0,-1);
-  }else if(enteredCode.length<4){
-   enteredCode+=key;
-  }
+  }else if(enteredCode.length<4)enteredCode+=key;
 
   updatePasswordDisplay();
  });
 });
 
-document.getElementById("closePassword").addEventListener("click",closePasswordPanel);
-interactButton.addEventListener("click",openPasswordPanel);
-
-function start(){
- started=true;
-
- document.getElementById("menu").style.display="none";
- document.getElementById("hud").style.display="block";
-
- camera.position.set(player.x,1.7,player.z);
+function distanceToDoor(){
+ return Math.hypot(player.x,player.z+27.1);
 }
 
-document.getElementById("play").addEventListener("click",start);
+function interact(){
+ if(backpackOpen||inspectOpen)return;
+
+ if(distanceToDoor()<5.5){
+  if(!doorOpened)openPassword();
+  else showItemMessage("A PORTA ESTÁ DESTRANCADA.");
+  return;
+ }
+ pickupItem();
+}
+
+interactButton.onclick=interact;
 
 // TECLADO
-const keyMap={
- KeyW:"w",ArrowUp:"w",
- KeyS:"s",ArrowDown:"s",
- KeyA:"a",ArrowLeft:"a",
- KeyD:"d",ArrowRight:"d"
-};
+document.addEventListener("keydown",event=>{
+ if(!started)return;
 
-addEventListener("keydown",e=>{
- if(started && handleInventoryKey(e)){
-  e.preventDefault();
+ if(passwordOpen){
+  if(event.key==="Escape")closePassword();
   return;
  }
 
- if(e.code==="Escape" && passwordOpen)closePasswordPanel();
-
- if(e.code==="Escape" && backpackOpen)closeBackpack();
-
- if(e.code==="Escape" && inspectOpen){
-  inspectOpen=false;
-  inspectPanel.style.display="none";
+ if(inspectOpen){
+  if(event.key==="Escape"||event.key.toLowerCase()==="r"){
+   inspectPanel.style.display="none";
+   inspectOpen=false;
+  }
+  return;
  }
 
- if(keyMap[e.code]){
-  keys[keyMap[e.code]]=true;
-  e.preventDefault();
+ const key=event.key.toLowerCase();
+
+ if(key==="i"){
+  toggleBackpack();
+  return;
+ }
+
+ if(backpackOpen){
+  if(["1","2","3","4"].includes(key))selectInventorySlot(Number(key)-1);
+  return;
+ }
+
+ keys[key]=true;
+
+ if(key==="e")interact();
+ if(key==="g")storeHeldItem();
+ if(key==="q")dropHeldItem();
+ if(key==="f")toggleFlashlight();
+ if(key==="r")inspectHeldItem();
+ if(key==="t")useHeldItem();
+
+ if(["1","2","3","4"].includes(key)){
+  selectInventorySlot(Number(key)-1);
  }
 });
 
-addEventListener("keyup",e=>{
- if(keyMap[e.code]){
-  keys[keyMap[e.code]]=false;
- }
+document.addEventListener("keyup",event=>{
+ keys[event.key.toLowerCase()]=false;
 });
 
-// CONTROLES CELULAR
-const padMap={
- up:"w",
- down:"s",
- left:"a",
- right:"d"
-};
+// BOTÕES DE MOVIMENTO
+function bindMoveButton(id,key){
+ const button=document.getElementById(id);
 
-document.querySelectorAll(".pad button").forEach(button=>{
- const key=padMap[button.id];
-
- button.addEventListener("pointerdown",e=>{
-  e.preventDefault();
+ button.addEventListener("pointerdown",event=>{
+  event.preventDefault();
   keys[key]=true;
  });
 
- ["pointerup","pointerleave","pointercancel"].forEach(event=>{
-  button.addEventListener(event,()=>keys[key]=false);
- });
-});
+ const release=event=>{
+  event.preventDefault();
+  keys[key]=false;
+ };
 
-// CÂMERA PELO ARRASTO
-let touchId=null;
-let lastX=0,lastY=0;
-
-renderer.domElement.addEventListener("pointerdown",e=>{
- if(!started || e.pointerType!=="touch")return;
- if(backpackOpen || passwordOpen || inspectOpen)return;
-
- touchId=e.pointerId;
- lastX=e.clientX;
- lastY=e.clientY;
-
- renderer.domElement.setPointerCapture(e.pointerId);
-});
-
-renderer.domElement.addEventListener("pointermove",e=>{
- if(touchId!==e.pointerId)return;
-
- const dx=e.clientX-lastX;
- const dy=e.clientY-lastY;
-
- yaw-=dx*.006;
- pitch-=dy*.004;
-
- pitch=Math.max(-1.2,Math.min(1.2,pitch));
-
- lastX=e.clientX;
- lastY=e.clientY;
-});
-
-function stopTouch(e){
- if(touchId===e.pointerId){
-  touchId=null;
- }
+ button.addEventListener("pointerup",release);
+ button.addEventListener("pointercancel",release);
+ button.addEventListener("pointerleave",release);
 }
 
-renderer.domElement.addEventListener("pointerup",stopTouch);
-renderer.domElement.addEventListener("pointercancel",stopTouch);
+bindMoveButton("up","w");
+bindMoveButton("down","s");
+bindMoveButton("left","a");
+bindMoveButton("right","d");
 
-// MOUSE PC
+// MOUSE
+let pointerLocked=false;
+
 renderer.domElement.addEventListener("click",()=>{
- if(
-  started &&
-  innerWidth>700 &&
-  !backpackOpen &&
-  !passwordOpen &&
-  !inspectOpen
- ){
+ if(started&&!backpackOpen&&!passwordOpen&&!inspectOpen){
   renderer.domElement.requestPointerLock?.();
  }
 });
 
-document.addEventListener("mousemove",e=>{
- if(document.pointerLockElement===renderer.domElement){
-  yaw-=e.movementX*.002;
-  pitch-=e.movementY*.002;
-
-  pitch=Math.max(-1.2,Math.min(1.2,pitch));
- }
+document.addEventListener("pointerlockchange",()=>{
+ pointerLocked=document.pointerLockElement===renderer.domElement;
 });
 
-// MOVIMENTO
-const clock=new THREE.Clock();
+document.addEventListener("mousemove",event=>{
+ if(!pointerLocked||!started)return;
+ yaw-=event.movementX*.002;
+ pitch-=event.movementY*.002;
+ pitch=Math.max(-1.35,Math.min(1.35,pitch));
+});
+
+// TOQUE PARA OLHAR
+let touchLook=false;
+let lastTouchX=0,lastTouchY=0;
+
+renderer.domElement.addEventListener("pointerdown",event=>{
+ if(event.pointerType==="mouse")return;
+ if(!started||backpackOpen||passwordOpen||inspectOpen)return;
+ touchLook=true;
+ lastTouchX=event.clientX;
+ lastTouchY=event.clientY;
+});
+
+renderer.domElement.addEventListener("pointermove",event=>{
+ if(!touchLook||event.pointerType==="mouse")return;
+
+ const dx=event.clientX-lastTouchX;
+ const dy=event.clientY-lastTouchY;
+
+ yaw-=dx*.004;
+ pitch-=dy*.004;
+ pitch=Math.max(-1.35,Math.min(1.35,pitch));
+
+ lastTouchX=event.clientX;
+ lastTouchY=event.clientY;
+});
+
+function stopTouchLook(){touchLook=false}
+renderer.domElement.addEventListener("pointerup",stopTouchLook);
+renderer.domElement.addEventListener("pointercancel",stopTouchLook);
+
+// INICIAR
+document.getElementById("play").onclick=()=>{
+ started=true;
+ document.getElementById("menu").style.display="none";
+ document.getElementById("hud").style.display="block";
+ document.getElementById("interact").style.display="block";
+ document.getElementById("actionButtons").style.display="flex";
+ document.getElementById("backpackButton").style.display="block";
+
+ updateInventoryUI();
+ updateBatteryUI();
+
+ if(innerWidth>700)renderer.domElement.requestPointerLock?.();
+};
+
+// COLISÕES DOS NOVE GERADORES
+const generators=[
+ [-17,-9],[0,-9],[17,-9],
+ [-17,10],[0,10],[17,10],
+ [-17,-20],[0,-20],[17,-20]
+];
+
+const moveSpeed=5.2;
+
+function canMoveTo(x,z){
+ if(x<-34||x>34||z<-26.8||z>26.8)return false;
+
+ for(const [gx,gz] of generators){
+  if(
+   Math.abs(x-gx)<3.2+.45 &&
+   Math.abs(z-gz)<2.4+.45
+  ){
+   return false;
+  }
+ }
+
+ if(!doorOpened&&z<-25.9&&Math.abs(x)<2.5)return false;
+
+ return true;
+}
+
+function updatePlayer(delta){
+ if(!started||backpackOpen||passwordOpen||inspectOpen)return;
+
+ let forward=0,sideways=0;
+
+ if(keys["w"]||keys["arrowup"])forward+=1;
+ if(keys["s"]||keys["arrowdown"])forward-=1;
+ if(keys["a"]||keys["arrowleft"])sideways-=1;
+ if(keys["d"]||keys["arrowright"])sideways+=1;
+
+ if(forward===0&&sideways===0)return;
+
+ const length=Math.hypot(forward,sideways);
+ forward/=length;
+ sideways/=length;
+
+ const speed=moveSpeed*delta;
+
+ const dx=(-Math.sin(yaw)*forward+Math.cos(yaw)*sideways)*speed;
+ const dz=(-Math.cos(yaw)*forward-Math.sin(yaw)*sideways)*speed;
+
+ if(canMoveTo(player.x+dx,player.z))player.x+=dx;
+ if(canMoveTo(player.x,player.z+dz))player.z+=dz;
+}
+
+// CÂMERA
+function updateCamera(){
+ camera.position.set(player.x,1.7,player.z);
+ camera.rotation.order="YXZ";
+ camera.rotation.y=yaw;
+ camera.rotation.x=pitch;
+}
+
+// PORTA
+function updateDoor(delta){
+ if(doorOpened&&doorAngle<Math.PI/2){
+  doorAngle=Math.min(Math.PI/2,doorAngle+delta*1.1);
+  doorPivot.rotation.y=-doorAngle;
+ }
+}
+
+// BATERIA
+function updateFlashlight(delta){
+ if(flashlightOn&&heldItem&&heldItem.type==="flashlight"){
+  battery=Math.max(0,battery-.12*delta);
+
+  if(battery<=0){
+   flashlightOn=false;
+   flashlightBeam.visible=false;
+   showItemMessage("A LANTERNA DESCARREGOU.");
+  }
+
+  updateBatteryUI();
+ }
+}
+
+// OBJETOS
+let elapsed=0;
+
+function updatePickups(delta){
+ elapsed+=delta;
+
+ for(const item of itemObjects){
+  item.group.position.y=.45+Math.sin(elapsed*2+item.group.position.x)*.07;
+  item.group.rotation.y+=delta*.5;
+ }
+}
+
+// INTERAÇÃO COM A PORTA
+function updateInteractionPrompt(){
+ if(!started||backpackOpen||passwordOpen||inspectOpen){
+  doorPrompt.style.display="none";
+  return;
+ }
+
+ doorPrompt.style.display=
+  distanceToDoor()<5.5&&!doorOpened?"block":"none";
+}
+
+// LOOP
+let previousTime=performance.now();
 
 function animate(){
  requestAnimationFrame(animate);
 
- const dt=Math.min(clock.getDelta(),.04);
+ const now=performance.now();
+ const delta=Math.min((now-previousTime)/1000,.05);
+ previousTime=now;
 
- if(started){
-  const forward=new THREE.Vector3(
-   -Math.sin(yaw),0,-Math.cos(yaw)
-  );
-
-  const right=new THREE.Vector3(
-   Math.cos(yaw),0,-Math.sin(yaw)
-  );
-
-  const move=new THREE.Vector3();
-
-  if(keys.w)move.add(forward);
-  if(keys.s)move.sub(forward);
-  if(keys.d)move.add(right);
-  if(keys.a)move.sub(right);
-
-  if(move.lengthSq()>0){
-   move.normalize().multiplyScalar(5*dt);
-   player.add(move);
-  }
-
-  // LIMITES DA SALA
-  player.x=THREE.MathUtils.clamp(player.x,-33.5,33.5);
-  player.z=THREE.MathUtils.clamp(player.z,-25.5,25.5);
-
-  // A porta bloqueia a passagem até a senha ser aceita
-  if(!doorOpened && Math.abs(player.x)<2.9 && player.z< -23.6){
-   player.z=-23.6;
-  }
-
-  const nearDoor=
-   Math.hypot(player.x-3.55,player.z+26.2)<4.2 ||
-   Math.hypot(player.x,player.z+24.8)<3.5;
-
-  doorPrompt.style.display=
-   (nearDoor && !doorOpened && !passwordOpen)?"block":"none";
-
-  interactButton.style.display=
-   (nearDoor && !doorOpened && !passwordOpen)?"block":"none";
-
-  if(doorOpened && doorAngle<Math.PI/2){
-   doorAngle=Math.min(Math.PI/2,doorAngle+dt*1.25);
-   doorPivot.rotation.y=-doorAngle;
-  }
-
-  if(flashlightOn && heldItem && heldItem.type==="flashlight"){
-   battery=Math.max(0,battery-dt*.12);
-   updateBatteryUI();
-
-   if(battery<=0){
-    flashlightOn=false;
-    flashlightBeam.visible=false;
-    showItemMessage("A BATERIA DA LANTERNA ACABOU.");
-   }
-  }
-
-  for(const pickup of itemObjects){
-   pickup.group.rotation.y+=dt*.45;
-   pickup.group.position.y=
-    .45+Math.sin(performance.now()*.002+pickup.group.position.x)*.045;
-  }
-
-  camera.position.set(player.x,1.7,player.z);
-  camera.rotation.order="YXZ";
-  camera.rotation.y=yaw;
-  camera.rotation.x=pitch;
- }
+ updatePlayer(delta);
+ updateCamera();
+ updateDoor(delta);
+ updateFlashlight(delta);
+ updatePickups(delta);
+ updateInteractionPrompt();
 
  renderer.render(scene,camera);
 }
 
 animate();
 
-addEventListener("resize",()=>{
+// REDIMENSIONAMENTO
+window.addEventListener("resize",()=>{
  camera.aspect=innerWidth/innerHeight;
  camera.updateProjectionMatrix();
-
  renderer.setSize(innerWidth,innerHeight);
  renderer.setPixelRatio(Math.min(devicePixelRatio,1.5));
 });
 
+updateInventoryUI();
+updateBatteryUI();
+
 })();
 </script>
-
 </body>
 </html>
